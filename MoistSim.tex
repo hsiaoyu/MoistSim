@@ -1,10 +1,18 @@
-\documentclass[sigconf]{acmart}
+\documentclass[anonymous,timestamp,review,acmtog]{acmart}
 
 \usepackage{booktabs} % For formal tables
 %\usepackage{subfigure}
 \usepackage{subcaption}
 \usepackage{graphicx}
 %\graphicspath{{C:/Users/black/OneDrive/Documents/UT/Research/Shell/MoistInducedSim}}
+
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\br}{\mathbf{r}}
+\DeclareMathOperator{\tr}{tr}
+\newcommand{\hn}{\hat{\mathbf{n}}}
 
 \acmPrice{15.00}
 
@@ -84,59 +92,54 @@
 
 \section{Introduction}
 
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor accumsan nulla, vitae pharetra ipsum sagittis sit amet. \cite{Park:2006:DSI, notes2002} Donec ac metus consectetur, venenatis magna sit amet, viverra sapien. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Phasellus eleifend sem sit amet arcu congue tempus. Proin at iaculis orci. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. \cite{Pellacini:2005:LAH} Etiam feugiat dui sit amet ante pellentesque, sed malesuada libero ornare. Curabitur tempor ligula leo, in feugiat urna ornare luctus. Fusce quis metus sit amet neque sagittis elementum. Quisque facilisis quam quis tortor volutpat, et sodales urna efficitur.
-%
-%\begin{figure}[ht]
-%  \centering
-%  \includegraphics[width=\linewidth]{aaafiles/teapots}
-%  \caption{Cel-shaded teapots. Image by Nicolas Sourd [CC-BY-SA-3.0 (http://creativecommons.org/licenses/by-sa/3.0/)], via Wikimedia Commons. (\url{https://goo.gl/5e6tNk}).}
-%\end{figure}
-%
-%Duis sagittis massa odio, consequat ornare mauris imperdiet blandit. \cite{levoy:2000:TDM} Donec vel pulvinar nisl. Nam pretium vitae risus a consectetur. \cite{sako:2001:SSB, fedkiw:2001:VSO, Jobs95} Vestibulum efficitur auctor mauris. Vestibulum nec orci suscipit, faucibus mauris vel, elementum dolor. Phasellus ornare est id commodo cursus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec iaculis enim urna, vitae tincidunt est dictum id. Suspendisse lobortis justo id enim ornare euismod. Fusce quis turpis rhoncus, laoreet lorem eu, porttitor enim. \cite{kartch:2000:ERA, yee:2000:SSA, parke:1996:CFA} Etiam eget tempus velit. Duis iaculis id eros et mollis. Pellentesque non magna a massa rhoncus gravida id eget ex. Donec magna risus, posuere eu velit sit amet, tincidunt cursus leo. Curabitur non ultricies turpis, at sodales sapien.
 
-\section{Method}
+\paragraph{Contribution} We present a low-order discrete shell model tailored to simulating non-unform, anisotropic, differential swelling and shrinking of thin shells. In contrast to previous methods for simulating related phenomena, such as burning and growth, our formulation builds on discrete geometric shell theory and supports arbitrary rest curvature and strain, and physical settings such as thickness and Lam\'{e} parameters. We couple our shell model to a simple formulation of moisture diffusion in both the lateral and thickness directions, which takes into account anisotropy of the material grain. In a series of experiments, we show that our model successfully predicts the qualitative behavior of thin shells undergoing complex, dynamic deformations due to swelling or shrinking, such as occurs when paper is moistened, leaves dry in the sun, or thin plastic melts.
 
-%Nullam mollis in lectus vitae tempus. Nam pellentesque tincidunt leo id dapibus. Etiam in euismod diam. \cite{ceres-solver, Asaro:1976:POT} Phasellus feugiat ante et dui rhoncus, at dictum elit vehicula. Nunc ut finibus neque. Sed vehicula tristique - as shown in Table \ref{soccer} - odio at interdum. Morbi ex lectus, porttitor vel ipsum id, scelerisque facilisis metus. Cras orci sapien, luctus in eros in, suscipit rhoncus neque. Duis pharetra elit vitae sagittis maximus. Curabitur fermentum justo massa, sed placerat odio aliquam quis. Nam facilisis hendrerit ante eget maximus. Nulla et porttitor nibh, et malesuada turpis. Suspendisse potenti. Nunc ultricies suscipit quam, eget ultrices nisi viverra vitae.
-%
-%\begin{table}[ht]
-%\begin{center}
-%    \caption{Soccer, or football?}
-%\label{soccer}
-%\begin{tabular}{l*{6}{c}r}
-%Team              & P & W & D & L & F  & A & Pts \\
-%\hline
-%Manchester United & 6 & 4 & 0 & 2 & 10 & 5 & 12  \\
-%Celtic            & 6 & 3 & 0 & 3 &  8 & 9 &  9  \\
-%Benfica           & 6 & 2 & 1 & 3 &  7 & 8 &  7  \\
-%FC Copenhagen     & 6 & 2 & 1 & 3 &  5 & 8 &  7  \\
-%\end{tabular}
-%\end{center}
-%\end{table}
-%
-%Aliquam sed vehicula neque. Praesent placerat, nisi sit amet condimentum porta, justo tellus dictum eros, quis vestibulum erat massa id sapien. Vestibulum euismod purus dolor, ornare consectetur quam egestas volutpat. Curabitur sollicitudin convallis purus ultrices facilisis. Pellentesque sollicitudin maximus orci quis rutrum. Phasellus a mauris maximus sem mollis sagittis. Vivamus sagittis faucibus tincidunt. Vivamus vel suscipit leo.
-%
-%\begin{figure}[h]
-%  \centering
-%  \includegraphics[width=\linewidth]{aaafiles/franklin}
-%  \caption{1907 Franklin Model D roadster. Photograph by Harris \& Ewing, Inc. [Public domain], via Wikimedia Commons. (\url{https://goo.gl/VLCRBB}).}
-%\end{figure}
-%
-%\subsubsection{Participants}
-%
-%Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus maximus a lectus sed dictum. Curabitur pulvinar lectus nec magna molestie consequat. Donec ligula urna, scelerisque et felis sed, euismod feugiat sem. (See equation \ref{eqn:01}.) Donec urna libero, auctor sit amet sem id, malesuada tempor risus. Morbi malesuada lobortis consequat. Aliquam lacinia quam ac tristique sodales. Class aptent taciti sociosqu ad 
-%\begin{equation}
-%\label{eqn:01}
-%P(t)=\frac{b^{\frac{t+1}{T+1}}-b^{\frac{t}{T+1}}}{b-1},
-%\end{equation}
-%where $t=0,{\ldots}\,,T$, and $b$ is a number greater than $1$, litora torquent per conubia nostra, per inceptos himenaeos.
-%
-%\begin{multline}
-%\label{the-rendering-equation}
-%L_o(x, \omega_o, \lambda, t) = L_e(x, \omega_o, \lambda, t)  + \\
-%\int_{\Omega} f_r(x, \omega_i, \omega_o, \lambda, t) L_i(x, \omega_i, \lambda, t)(\omega_i \cdot n) \text{d} \omega_i
-%\end{multline}
-%
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor accumsan nulla, vitae pharetra ipsum sagittis sit amet. Donec ac metus consectetur, venenatis magna sit amet, viverra sapien. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Phasellus eleifend sem sit amet arcu congue tempus. Proin at iaculis orci. (See equation \ref{the-rendering-equation}.) Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam feugiat dui sit amet ante pellentesque, sed malesuada libero ornare. Curabitur tempor ligula leo, in feugiat urna ornare luctus. Fusce quis metus sit amet neque sagittis elementum. Quisque facilisis quam quis tortor volutpat, et sodales urna efficitur.
+\subsection{Related Work}
+
+in-plane growth with Loop subdivision~\cite{Vetter13}
+
+\section{Continuous Formulation}
+Before describing our discretization of shells, we briefly review the formulation in the continuous setting, as this formulation will guide our discretization. 
+
+\paragraph{Shell Geometry} We can represent shells $S\subset \mathbb{R}^3$ of thickness $h$ by a parameter domain $\Omega$ in the plane and an embedding $\phi: \Omega\times [-h/2, h/2]\to\mathbb{R}^3$ with $S$ the image of $\phi$ (see Figure~\ref{fig:XXX}). We adopt the common \emph{Kirchhoff-Love} assumption that the shell does not undergo any transverse shear; ie, that the shell volume is foliated by normal offsets of the shell's \emph{midsurface} $\br:\Omega\to\mathbb{R}^3$. In other words,
+$$\phi(x,y,z) = \br(x,y) + z\hn(x,y)$$
+where $\hn = (\br_x \times \br_y)/\|\br_x \times \br_y\|$ is the midsurface normal. The shell's deformation is thus completely determined by the deformation of the midsurface. The metric $\bg$ on the slab $\Omega \times [-h/2,h/2]$, pulled back from $\mathbb{R}^3$, can be expressed in terms of the geometry of the midsurface:
+$$\bg = \left[\begin{array}{cc}\ba - 2z\bb + z^2 \bc & 0\\0 & 1\end{array}\right],$$
+where
+$$\ba = d\br^Td\br \quad \bb = -d\br^Td\hn \quad \bc = d\hn^Td\hn$$
+are the classical first, second, and third fundamental forms of the surface $\br$.
+
+Oftentimes, the parameterization domain of a thin shell is assumed to be also the rest state of the shell, so that the strain in the material of the shell can be determined directly from looking at $\bg$. We cannot assume this: consider for instance a piece of paper whose center has been moistened by spilled coffee. The fibers in the coffee stain stretch; since they are confined by the surrounding non-wet region of the paper, the paper cannot globally stretch in such a way that both the wet and dry regions of the paper are simultaneously at rest. Instead, the paper will \emph{buckle} out of plane, into a shape that compromises between relaxing the in-plane (stretching) strain and the introduced bending strain. At this point the paper's rest state is \emph{non-Euclidean}---it is impossible to find any embedding of the paper into $\mathbb{R}^3$ that is entirely strain-free.
+
+We therefore record the rest state of the shell using a \emph{rest metric} $\bar\bg(x,y,z).$\footnote{Here and throughout the paper, we use an overbar to denote quantities associated to the shell rest state.} Since our model is tailored to simulating differential in-plane swelling or shrinking across the thickness of the shell, we make the simplifying assumption that this rest metric is linear in the thickness direction, and does not affect the shell thickness:
+$$\bar\bg(x,y,z) = \bar\ba(x,y) - 2z\bar\bb(x,y).$$
+A shell that begins a simulation at rest will simply have $\bar\ba = \ba$ and $\bar\bb = \bb$; similarly, in the case that the shell \emph{does} have a rest state $\bar\br$ that is isometrically embeddable in $\mathbb{R}^3$, $\ba$ and $\bb$ are the first and second fundamental forms of the surface $\bar\br$. Therefore $\ba$ and $\bb$ can be thought of as representing the ``rest metric'' and ``rest curvature'' of the shell, respectively.\footnote{We stress, though, that these labels are to provide intuition only---$\bar\ba$ and $\bar\bb$ must not, and generally will not, satisfy usual relationships from differential geometry such as the Gauss-Codazzi-Mainardi equations.}
+
+Finally, we cannot assume that the shell has uniform density, since different parts of the shell might gain or lose mass due to absorbing or releasing moisture. We therefore allow the density per unit \emph{rest} volume $\rho(x,y)$ to vary over $\Omega$. (In principle, we could also model the variation in density across the shell thickness; however doing so leads only to a small ($O(h^3)$) correction to the shell's kinetic energy, and since the swelling phenomena we are interested in simulating tend to happen over relatively long time scales, there is no need for such accuracy.)
+
+To summarize, our parameterization of thin shells involves the following kinematic elements:
+\begin{itemize}
+\item a thickness $h$ and parameterization domain $\Omega\subset\mathbb{R}^2$, both of which are fixed over the course of the simulation;
+\item an embeddding $\br:\Omega\to\mathbb{R}^3$ representing the shell midsurface's ``current''/``deformed'' geometry, and which evolves over time. From this midsurface embedding, the embedding of the full shell volume $\phi$, and the midsurface fundamental forms, can be calculated;
+\item a rest metric and density, parameterized by the pair of tensor field $\bar\ba, \bar\bb$ and a scalar field $\rho$ over $\Omega$, respectively. These might also evolve over time, due to changes in the shell rest state via growth or shrinkage.
+\end{itemize}
+
+\subsection{Shell Dynamics}
+Motivated by the common observation that a sufficiently thin shell bends much more readily than it will stretch, we assume that the shell's deformation involves \emph{large rotations} but only small in-plane strain of the midsurface: $\|\bar\ba^{-1}\ba-I\|_{\infty} < h.$ We also assume that the shell's material is uniform and isotropic. The simplest constitutive law consistent with these assumptions is to use a St. Venant-Kirchhoff material model\footnote{The neo-Hookean material model is also popular in computer graphics and could be used instead, although there is little benefit to doing so when simulating thin shells since strains are typically small.} together with Green strain; it can be shown~\cite{} that these choices yield an elastic energy density that can be approximated up to $O(h^4)$ by
+$$W(x,y) = \left(\frac{h}{4} \|\bar\ba^{-1}\ba - I\|^2_{SV} + \frac{h^3}{12}\|\bar\ba^{-1}(\bb-\bar\bb)\|^2_{SV}\right)\sqrt{\det \bar\ba}$$
+where $\|\|_{SV}$ is the ``St. Venant-Kirchhoff norm''\cite{}
+$$\|M\|_{SV} = \frac{\alpha}{2}\tr^2 M + \beta \tr\left(M^2\right),$$
+for Lam\'e parameters $\alpha, \beta$. In terms of the Young's modulus $E$ and Poisson's ratio $\nu$,
+$$\alpha = \frac{E\nu}{(1+\nu)(1-2\nu)}, \quad \beta = \frac{E}{2(1+\nu)}.$$
+
+We thus have a formulation of kinetic energy and potential energy
+$$T[\dot\br] = \int_{\Omega} h\rho\|\dot\br\|^2 \sqrt{\det\bar\ba}\,dxdy, \quad V[\br] = \int_{\Omega} W(x,y)\,dxdy,$$
+to which additional external energies and forces (gravity, constraint forces, etc) can be added to yield equations of motion via the usual principle of least action.
+
+\section{Discretization}
+
+\section{Moisture Diffusion}
 
 \section{Result}
 \subsubsection{Radially Wet Disc}
@@ -286,5 +289,5 @@
 %\end{acks}
 
 \bibliographystyle{ACM-Reference-Format}
-\bibliography{aaatemplate}
+\bibliography{MoistSim}
 \end{document}
