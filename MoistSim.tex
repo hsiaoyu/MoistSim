@@ -11,8 +11,14 @@
 \newcommand{\bc}{\mathbf{c}}
 \newcommand{\bg}{\mathbf{g}}
 \newcommand{\br}{\mathbf{r}}
+\newcommand{\bff}{\mathbf{f}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\be}{\mathbf{e}}
+\newcommand{\bd}{\mathbf{d}}
+\newcommand{\bF}{\mathbf{F}}
 \DeclareMathOperator{\tr}{tr}
 \newcommand{\hn}{\hat{\mathbf{n}}}
+\newcommand{\fT}{\mathcal{T}}
 
 \acmPrice{15.00}
 
@@ -101,14 +107,14 @@
 Steps towards a principled physical model include the use of a mass-spring network to represent the shell, with update rules for how spring rest lengths should change due to physical processes in the shell. Such rules are simplest to formulate in the case where growth or shrinkage is uniform through the shell thickness, and the shell can be represented using a single spring layer; Larboulette et al~\shortcite{Larboulette2013} present such a rule, which includes handling of the \emph{machine direction} of paper: a bias in the orientation of the fibers composing the paper which causes the paper to swell anisotropically. We adopt this parameter in our material model. 
 
 \paragraph{Mechanics of Shells}
-The mathematics and geometry underpinning the physics of thin shells is a venerable topic: Ciarlet's book~\shortcite{Ciarlet2000} on elasticity as applied to shells offers a thorough overview. Our work is based on the common \emph{Kirchhoff-Love} assumption that the shell does not undergo any transverse shear; ie, that the shell volume is foliated by normal offsets of the shell's \emph{midsurface}: the problem of studying deformation of the 3D shell volume then reduces to that of deformation of a 2D surface, and tools from Riemannian geometry can be applied. (We adopt the so-called ``intrinsic'' view~\cite{Neff2004} that shells can be understood in terms of Kirchhoff-Love and geometric principles, as this view allows us to easily discretize shell physics by leveraging discrete differential geometry, but we note in passing that the validity of the Kirchhoff-Love assumption, and of reduced shell models in general, remains unsettled, and the literature documents numerous alternative shell theories.) One key property of the shells we want to simulate is that they are \emph{non-Euclidean}: they do not have a rest (strain-free) state that is realizable in three-dimensional space. Non-Euclidean shells have received substantial attention recently in the physics community~\cite{Klein2007,Kim2012}, thanks to their potential applications in fabrication and robotics, and their connection to biological growth; Sharon and Efrati~\cite{Efrati2009,Sharon2010} pioneered the study of shell mechanics in this setting.
+The mathematics and geometry underpinning the physics of thin shells is a venerable topic: Ciarlet's book~\shortcite{Ciarlet2000} on elasticity as applied to shells offers a thorough overview. Our work is based on the common \emph{Kirchhoff-Love} assumption that the shell does not undergo any transverse shear; ie, that the shell volume is foliated by normal offsets of the shell's \emph{midsurface}: the problem of studying deformation of the 3D shell volume then reduces to that of deformation of a 2D surface, and tools from Riemannian geometry can be applied~\cite{Simo1989}. (We adopt the so-called ``intrinsic'' view~\cite{Neff2004} that shells can be understood in terms of Kirchhoff-Love and geometric principles, as this view allows us to easily discretize shell physics by leveraging discrete differential geometry, but we note in passing that the validity of the Kirchhoff-Love assumption, and of reduced shell models in general, remains unsettled, and the literature documents numerous alternative shell theories.) One key property of the shells we want to simulate is that they are \emph{non-Euclidean}: they do not have a rest (strain-free) state that is realizable in three-dimensional space. Non-Euclidean shells have received substantial attention recently in the physics community~\cite{Klein2007,Kim2012}, thanks to their potential applications in fabrication and robotics, and their connection to biological growth; Sharon and Efrati~\cite{Efrati2009,Sharon2010} pioneered the study of shell mechanics in this setting.
 
 For the sake of being self-contained, we briefly review the geometric foundations of shell mechanics in Section \ref{sec:continuous}.
 
 \paragraph{Computational Modeling of Thin Shells} 
 Thin shells first caught the interest of the graphics community in the context of simulating cloth~\cite{Baraff1998,Bridson2002}. These early methods tended to focus on thin \emph{plates}, i.e. shells that are rest flat, and formulate shell dynamics either in terms of either hinge-based bending energies~\cite{Sullivan2008,Tamstorf2013} or the insight that the bending energy can be written in terms of the intrinsic Laplace-Beltrami operator applied to the shell's embedding function~\cite{Bobenko2005,Bergou2006,Wardetzky2007}. Grinspun et al~\shortcite{Grinspun2003} introduced to graphics the simulation of shells with non-flat rest curvature. Their formulation is based on \emph{differences of squared mean curvature}, leading to a simple and easy-to-discrete bending energy; this model is physically suspect, however: consider a half-cylinder at rest when curled around the $x$-axis. Unbend the shell and re-bend it around the $y$-axis; the deformed configuraiton's strain cannot be captured by looking at mean curvature alone, as it is pointwise identical to the mean curvature of the rest configuration. Complete support for rest curvature requires a bending energy that incorporates full information about the extrinsic deformation of the shell~\cite{Grinspun2006}. One recent such discrete energy is described in Weischedel's under-appreciated work on discrete Cosserat shells~\shortcite{Weischedel2012}; our exposition is modeled closesly on hers, though we make different modeling choices (we use an intrinsic rather than Cosserat shell model, and require more flexible handling of the shell rest geometry).
 
-Higher-order methods for simulating shells (including with e.g. NURBS or subdivision elements) are common in computational mechanics and isogeometric analysis~\cite{Cirak2000,Kiendl2009,Benson2010,Bandara2018} and have also been proposed for computer graphics~\cite{Wawrzinek2011}. High-order methods have some obvious advantages (better convergence behavior in the thin limit, especially for shell deformations involving large strains; continuous surface normals) at the cost of additional computational cost and complexity, especially when handling contact.
+Higher-order methods for simulating shells (including with e.g. NURBS or subdivision elements) are common in computational mechanics and isogeometric analysis~\cite{Batoz1980,Bathe1983,Cirak2000,Kiendl2009,Benson2010,Bandara2018} and have also been proposed for computer graphics~\cite{Wawrzinek2011}. High-order methods have some obvious advantages (better convergence behavior in the thin limit, especially for shell deformations involving large strains; continuous surface normals) at the cost of additional computational cost and complexity, especially when handling contact.
 
 In this paper, we ignore the problem of mesh tesselation, or of adapting the mesh in response to either large deflections or large amounts of growth; such remeshing is an important component of a practical shell simulation but orthogonal to our focus on shell dynamics. ArcSim~\cite{Narain2012} incorporates a method of adaptive remeshing while avoiding significant popping artifacts, and has been used to generate impressive simulations of creasing paper. Vetter et al~\shortcite{Vetter13} study the companion problem of remeshing due to large in-plane growth, and present a solution based on adaptive Loop subdivision.
 
@@ -118,7 +124,9 @@ Before describing our discretization of shells, we briefly review the formulatio
 \paragraph{Shell Geometry} We can represent shells $S\subset \mathbb{R}^3$ of thickness $h$ by a parameter domain $\Omega$ in the plane and an embedding $\phi: \Omega\times [-h/2, h/2]\to\mathbb{R}^3$ with $S$ the image of $\phi$ (see Figure~\ref{fig:XXX}). We adopt the common \emph{Kirchhoff-Love} assumption that the shell does not undergo any transverse shear; ie, that the shell volume is foliated by normal offsets of the shell's \emph{midsurface} $\br:\Omega\to\mathbb{R}^3$. In other words,
 $$\phi(x,y,z) = \br(x,y) + z\hn(x,y)$$
 where $\hn = (\br_x \times \br_y)/\|\br_x \times \br_y\|$ is the midsurface normal. The shell's deformation is thus completely determined by the deformation of the midsurface. The metric $\bg$ on the slab $\Omega \times [-h/2,h/2]$, pulled back from $\mathbb{R}^3$, can be expressed in terms of the geometry of the midsurface:
-$$\bg = \left[\begin{array}{cc}\ba - 2z\bb + z^2 \bc & 0\\0 & 1\end{array}\right],$$
+\begin{equation}
+\bg = \left[\begin{array}{cc}\ba - 2z\bb + z^2 \bc & 0\\0 & 1\end{array}\right],\label{eq:offset}
+\end{equation}
 where
 $$\ba = d\br^Td\br \quad \bb = -d\br^Td\hn \quad \bc = d\hn^Td\hn$$
 are the classical first, second, and third fundamental forms of the surface $\br$.
@@ -140,8 +148,10 @@ To summarize, our parameterization of thin shells involves the following kinemat
 
 \subsection{Shell Dynamics}
 Motivated by the common observation that a sufficiently thin shell bends much more readily than it will stretch, we assume that the shell's deformation involves \emph{large rotations} but only small in-plane strain of the midsurface: $\|\bar\ba^{-1}\ba-I\|_{\infty} < h.$ We also assume that the shell's material is uniform and isotropic. The simplest constitutive law consistent with these assumptions is to use a St. Venant-Kirchhoff material model\footnote{The neo-Hookean material model is also popular in computer graphics and could be used instead, although there is little benefit to doing so when simulating thin shells since strains are typically small.} together with Green strain; it can be shown~\cite{XXX} that these choices yield an elastic energy  density~(the \emph{Koiter shell model}) that can be approximated up to $O(h^4)$ by
-$$W(x,y) = \left(\frac{h}{4} \|\bar\ba^{-1}\ba - I\|^2_{SV} + \frac{h^3}{12}\|\bar\ba^{-1}(\bb-\bar\bb)\|^2_{SV}\right)\sqrt{\det \bar\ba}$$
-where $\|\|_{SV}$ is the ``St. Venant-Kirchhoff norm''\cite{}
+\begin{equation}
+W(x,y) = \left(\frac{h}{4} \|\bar\ba^{-1}\ba - I\|^2_{SV} + \frac{h^3}{12}\|\bar\ba^{-1}(\bb-\bar\bb)\|^2_{SV}\right)\sqrt{\det \bar\ba} \label{eq:koiter}
+\end{equation}
+where $\|\|_{SV}$ is the ``St. Venant-Kirchhoff norm''\cite{Weischedel2012}
 $$\|M\|_{SV} = \frac{\alpha}{2}\tr^2 M + \beta \tr\left(M^2\right),$$
 for Lam\'e parameters $\alpha, \beta$. In terms of the Young's modulus $E$ and Poisson's ratio $\nu$,
 $$\alpha = \frac{E\nu}{(1+\nu)(1-2\nu)}, \quad \beta = \frac{E}{2(1+\nu)}.$$
@@ -151,6 +161,85 @@ $$T[\dot\br] = \int_{\Omega} h\rho\|\dot\br\|^2 \sqrt{\det\bar\ba}\,dxdy, \quad 
 to which additional external energies and forces (gravity, constraint forces, etc) can be added to yield equations of motion via the usual principle of least action.
 
 \section{Discretization}
+We approximate the midsurface $\br$ with a triangle mesh $(V,E,F)$; the positions of the vertices $\bv = [\bv_1, \bv_2\,\ldots]$ take the place of the embedding function $\br$. The general strategy we will use is to assume that $\ba$ and $\bb$, as well as their rest counterparts $\bar\ba$ and $\bar\bb$, are constant over each face of a triangle mesh representing the shell midsurface; it will then be relatively straightforward to write down a discrete analogue of the Koiter elastic energy density in Equation~\eqref{eq:koiter}. 
+
+\paragraph{Discrete Shell Model} As in the continuous setting, the discrete shell does not necessarily have a rest state embeddable as a mesh in $\mathbb{R}^3$, making it impossible to parameterize the deformed configuration of the shell in terms of the rest configuration; additionally we do not want to assume (or compute) a global parameterization of the midsurface. Instead, we independently parameterize each triangle in its own barycentric coordinates (see Figure~\ref{XXX}). Let $\bff_{ijk}$ be a face in $F$ containing the vertices $\bv_i$,$\bv_j$, $\bv_k$, and denote by $\fT$ the canonical unit triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$. Then locally the face $\bff_{ijk}$ is embedded by the affine function
+$$\br_{ijk}:\fT\to\mathbb{R}^3, \quad \br_{ijk}(u_1,u_2) = \bv_i + u_1(\bv_j-\bv_i)+u_2(\bv_k-\bv_i);$$
+under this embedding, the Euclidean metric on face $\bff_{ijk}$ pulls back to the constant first fundamental form
+$$\ba_{ijk} = \left[\begin{array}{cc} \|\bv_j-\bv_i\|^2 & (\bv_j-\bv_i)\cdot(\bv_k-\bv_i)\\
+(\bv_j-\bv_i)\cdot(\bv_k-\bv_i) & \|\bv_k-\bv_i\|^2\end{array}\right]$$
+on $\fT$. If we are given an explicit rest configration $\bar\bv_i$ of the shell, we can compute the rest first fundamental form $\bar\ba_{ijk}$ analogously; or alternatively we can set $\bar\ba_{ijk}$ to any desired symmetric positive-definite $2\times 2$ matrix. Notice that any such matrix corresponds to some choice of ``rest lengths'' for the edges of face $\bff_{ijk}$ that obey the triangle inequality, but that two faces sharing a common edge do not necessarily agree about that length. 
+
+These discrete fundamental forms are enough to discretize the stretching term in Equation~\eqref{eq:koiter}: each face contributes a term 
+\begin{align*}
+&\int_{\fT} \frac{h}{4} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - I\|^2_{SV}\sqrt{\det{\bar\ba_{ijk}}}\\
+&\quad = \frac{h}{8} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - I\|^2_{SV}\sqrt{\det{\bar\ba_{ijk}}}.
+\end{align*}
+This energy is quartic in the positions of the mesh vertices, and is exactly the energy of constant-strain triangle stretching elements commony used in cloth simulation.
+
+For the bending term, we also need a discretization of the second fundamental form. Here there is a significant departure between the smooth theory and the discrete approximation: we would like to apply the Kirchhoff=Love principle to extrude the mid-surface into a shell volume, but unfortunately distance offsets of triangle meshes are no longer guaranteed to be triangle meshes (or even piecewise-affine). One can instead look at weaker notions of mesh parallellity~\cite{Bobenko2010}:
+\begin{itemize}
+\item \emph{vertex offsets} require choosing a normal at each mesh vertex (itself a problem without an obvious solution), and moving each vertex a constant distance along this normal usually does not result in faces parallel to the original faces;
+\item \emph{edge offsets} likewise do not guarantee parallel faces;
+\item \emph{face offsets} are not conforming: moving each face around a vertex of valence four or higher in their normal direction yields new faces that are not guaranteed to still intersect at a common point.
+\end{itemize}
+
+We use the discretization that arises from edge parallelity, leading to the so-called ``mid-edge'' discretization of the second fundamental form~\cite{Grinspun2006,Weischedel2012}: let $\be_i$ denote the edge opposite vertex $i$ on face $\bf_{ijk}$, and define the \emph{mid-edge normal} $\hn_i$ by:
+\begin{itemize}
+\item the face normal $\frac{(\bv_j-\bv_i)\times (\bv_k-\bv_i)}{\|(\bv_j-\bv_i)\times (\bv_k-\bv_i)\|}$, if $\be_i$ is a boundary edge;
+\item the mean of the face normals of the two faces incident on $\be_i$, otherwise.
+\end{itemize}
+
+Let $\bff_{ijk}^{\epsilon}$ denote the triangle formed by offsetting all of $\bff_{ijk}$'s edges in their mid-edge normal direction by a distance $\epsilon$, and let $\ba^{\epsilon}_{ijk}$ be the discrete first fundamental form of that offset triangle. Then the discrete second fundamental form $\bb$ can be defined, by analogy to Equation~\eqref{eq:offset}, as the first-order correction
+$$\ba^{\epsilon}_{ijk} = \ba_{ijk} - 2\epsilon \bb_{ijk} + O(\epsilon^2),$$
+leading to the formula
+$$\bb_{ijk} = \frac{1}{2}\left[\begin{array}{cc}(\hn_i-\hn_j)\cdot(\bv_i-\bv_j) & (\hn_i-\hn_j)\cdot(\bv_i-\bv_k) \\ (\hn_i-\hn_k)\cdot(\bv_i-\bv_j) & (\hn_i-\hn_k)\cdot(\bv_i-\bv_k)\end{array}\right].$$
+(Alternatively, this formula can be derived by discretizing the relation $\bb = -d\br^Td\hn$ using divided differences). Although it may not appear so at first, the matrix $\bb_{ijk}$ is always symmetric (since each mid-edge normal is orthogonal to that edge); it is not in general positive-definite.\footnote{As observed by Grinspun et al~\shortcite{Grinspun2006}, the \emph{shape operator} $d\hn$ in the continuous setting always maps tangent vectors to tangent vectors, whereas in the discrete setting the finite difference of mid-edge normals is not always parallel to the mesh triangle. This discrepancy is a consequence of the failure of edge-offset meshes to also be face-offsets. Corrections to the shape operator have been proposed to remedy this quirk, though we found them unnecessary (and in any case, any components of $d\hn$ that lie orthogonal to the face are annihilated when forming the second fundamental form $-d\br^Td\hn$).} We represent the rest second fundamental form $\bar\bb_{ijk}$ by an arbitrary symmetric $2\times 2$ matrix assigned to each face.
+
+\paragraph{Choosing Rest Fundamental Forms}
+Depending on the mechanism for growth being simulated, there are several choices for how to set and update $\bar\ba$ and $\bar\bb$:
+\begin{itemize}
+\item \textbf{No Growth}: A classic shell, whose rest state is fixed, simply has $\bar\ba=\ba^0$ and $\bar\bb=\bb^0$, where $\ba^0$ denotes the first fundamental form induced by $\bv^0$, the positions of the midsurface vertices at the beginning of the simulation. (And if the shell is pre-stressed, $\bar\ba, \bar\bb$ can be adjusted appropriately).
+\item \textbf{Isotropic Growth}: In many cases growth is isotropic and uniform through the thickness of the shell (for instance, when plastic shrinks in response to heat, or plant tissue grows through cell division). In this case 
+$$\bar\ba = e^{2s_{ijk}}\ba^0, \qquad \bar\bb = \bb^0$$
+for a conformal factor $s$ encoding the amount of growth (or shrinking, if negative).
+\item \textbf{Differential Swelling}: Porous materials like paper swell when moistened, and differences in water concentration through the thickness of a thin shell can induce metric frustration and buckling. This mechanism is responsible for the buckling of paper when wet, and the curling of leaves as they dry. We assume that the amount of moisture varies linearly in the thickness direction of the shell, and represent the saturation of the shell on each face by two scalars $m^+_{ijk}, m^-_{ijk}\in [0,1]$, so that the saturation at distance $z$ from the mid-surface is given by $\frac{(2z+h)m^-_{ijk} + (2z-h)m^+_{ijk}}{2h}.$ The water saturation induces swelling, which changes the rest geometry,
+\end{itemize}
+
+\paragraph{Elastic Energy} We can now write down the full elastic energy of the shell, in exact analogy to the Koiter energy:
+\begin{align*}
+E_{\mathrm{elastic}}(\bv) &= \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\Bigg(\frac{h}{4} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - I\|^2_{SV}\\
+&\qquad + \frac{h^3}{12}\|\bar\ba_{ijk}^{-1}(\bb_{ijk}-\bar\bb_{ijk})\|^2_{SV}\Bigg)
+\end{align*}
+It is worth making a few observations about this energy. First, the matrices $\ba$, $\bar\ba$, etc. are \emph{coordinate-dependent}: replacing the parameterization domain $\fT$, or even cyclically permuting the order of vertices around a face, would alter the values in the matrix. However, the generalized eigenvalues of $\ba-\bar\ba$ and $\bb-\bar\bb$ with respect to the inner product $\bar\ba$ are coordinate-\emph{independent}, as is the total energy. Perhaps the easiest way to see this fact is to note that these spectra measure the geometrically exact strain induced by an affine embedding of $\fT$, and so \emph{must} be independent of the coordinates chosen. Second, the terms of the form $\|\bar\ba^{-1}M\|^2_{SV}$ are sometimes instead written as $\|\bar\ba^{-1/2}M\bar\ba^{-1/2}\|^2_{SV}$, where $\bar\ba^{-1/2}$ is the unique positive-definite square root of $\bar\ba$. The two expressions are equivalent, since the spectrum of a product of matrices is invariant under cyclic permutation, but the form used above is slightly more convenient for computation. Finally, as a sanity check, observe that when $\bar\bb=0$ and the Poisson ratio $\nu=0$, the bending energy reduces to the square of mean curvature, as expected for thin plates.
+
+\paragraph{Mass Matrix} As in the continuous formulation, the density $\rho_{ijk}$ of each face might change over time due to absorption or evaporation of moisture. We use a piecewise-constant discretization of density
+$$\rho_{ijk} = \rho_{\mathrm{shell}} + \frac{m_{ijk}^+ +m_{ijk}^-}{2}\rho_{\mathrm{water}},$$
+where $\rho_{\mathrm{shell}}$ and $\rho_{\mathrm{water}}$ are the densities of the shell material and water, respectively, and construct a typical Galerkin mass marix $M$ for the midsurface vertices. (In simulations where shell deformation is driven by a mechanism other than moisture changes, we drop the second term and use a constant density.)
+
+\paragraph{Viscous Damping} Since the growth and swelling phenomena we want to simulate all take place at relatively long time scales, and paper and plastic are viscoelastic, a damping model is needed to dissipate the elastic waves in the material. We implement a simple Kelvin-Voigt damping model by including a damping potential
+\begin{align*}
+E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) &= \eta\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\Bigg(\frac{h}{4} \left\|\bar\ba_{ijk}^{-1}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\\
+&\qquad + \frac{h^3}{12}\left\|\bar\ba_{ijk}^{-1}\frac{\bb_{ijk}-\bb_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\Bigg)
+\end{align*}
+where $\Delta t$ is the time step size, $\bv^{prev}$ denotes the values of $\bv$ in the previous time step (and likewise for $\ba^{\mathrm{prev}}$, etc), and $\eta$ is a viscosity parameter.
+
+\paragraph{Summary} In the discrete simulation, we track the following variables:
+\begin{itemize} 
+\item The configration $\bv$ and configurational velocity $\dot\bv$. These vertex positions completely encode the kinematics of the discrete shell. 
+\item Two matrices $\bar \ba$ and $\bar \bb$ per face in $F$, both symmetric, and with $\bar \ba$ positive-definite. These matrices store information about the rest state of the discrete shell, and may change over the course of the simulation. In most of our simulations, the mechanism for changes in the shell rest state is absorption or evaporation of moisture; in this case we store two scalars $m^+$ and $m^-$ per face, indicating moisture concentration on the top and bottom boundary of the shell, and $\bar\ba$ and $\bar\bb$ are computed from these scalars, as described above.
+\end{itemize}
+In addition, we track a machine direction $\bd$ per face, which doesn't change over the course of the simulation; finally Table~\ref{XXX} lists the physical parameters and constants on which the simulation depends, as well as reasonable values of these parameters for the special case of ordinary paper. We use these default values in all experiments described below, unless specified otherwise.
+
+
+\paragraph{Time Integration} We integrate the equations of motion using implicit Euler:
+\begin{align*}
+M\frac{\dot\bv^{i+1}-\dot\bv^{i}}{\Delta t} &= \bF_{\mathrm{ext}}\left(\bv^{i+1}\right) - \nabla E_{\mathrm{elastic}}\left(\bv^{i+1}\right) - \nabla E_{\mathrm{damp}}\left(\bv^{i+1},\bv^i\right)\\
+\bv^{i+1} &= \bv^i + \Delta t \dot\bv^{i+1},
+\end{align*}
+where superscripts denote the time step index and $\bF_{\mathrm{ext}}$ encapsulates contact forces and exernal forces like gravity. Solving these equations requires computing first and second derivatives of the elastic energy; the derivatives of a triangle's stretching term depend only on the vertices of that triangle, whereas the derivatives of the bending term also depend on vertices of the neighboring three triangles (due to the dependence of $\bb$ on the mid-edge normals). The bending term in particular is somewhat unpleasant to differentiate due to its high degree of nonlinearity, and special cases that arise for triangles adjacent to the mesh boundary. We provide formulas for the derivatives in the Appendix, and source code for calculating the derivatives in the supplemental material.
+
+
 
 \section{Moisture Diffusion}
 
