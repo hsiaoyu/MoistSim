@@ -244,6 +244,51 @@ where superscripts denote the time step index and $\bF_{\mathrm{ext}}$ encapsula
 \section{Moisture Diffusion}
 
 \section{Result}
+We evaluate the simulation on a variety of examples, both didactic and complex.
+
+\subsection{Analytic Benchmarks}
+We first test the method on examples where the equilibrium state can be computed exactly. When an embedding $\br$ exists for which $\ba = \bar \ba$ and $\bb = \bar\bb$, that embedding is clearly a global minimizer of the elastic energy, regardless of material parameters. We ran all of the following experiments using the default values in Table~\ref{XXX}. We assigned a viscosity $\gamma=XXX$ to the material and ran the simuation for $YYY$ seconds, enough time for the simulation to reach steady state.
+
+\paragraph{Uniform Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\mathrm{id}$, and assign a constant $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. We ran the simulation using a coarse, fine, and nonuniform mesh (XXX, YYY, and ZZZ vertices respectively); simulated and exact solutions are compared in Figure~\ref{XXX}. For all experiments except the hyperboloid, we compute the Hausdorff error between the steady state simulation mesh and the analytic solution. The hyperboloid does not have a single equilibrium state; the energy landscape is "sombrero-like" with a curve of possible solutions, corresponding to intrisic rotation of the hyperboloid. For this experiment we instead measure the sum of squared mean and Gauss curvature, where the mesh's curvatures were measured using quadratic fitting~\cite{XXX}.
+\begin{table*}
+\begin{tabular}{cccccccc}
+$\bar\ba$ & $\bar\bb$ & Expected Shape & $H$  & $K$ & Error (coarse) & Error (fine) & Error (nonuniform)\\
+$2I$ & $0$ & Enlarged Square & $0$ & $0$ & XXX & XXX & XXX\\
+$I$ & $I$ & Spherical Cap & $2$ & $1$  & XXX & XXX & XXX\\
+$I$ & $-I$ & Hyperboloid Cap & $-2$ & $-1$ & XXX & XXX & XXX\\
+$\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & XXX & XXX & XXX\\
+$I$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0$ & XXX & XXX & XXX
+\end{tabular}
+\caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed uniformly over the square, and in each case we compare the simulated steady state to the expected analytic solution.}
+\label{tab:analytic}
+\end{table*}
+
+\paragraph{Isotropic Growth} The Riemann mapping theorem guarantees that every surface $M$ with disk topology can be parameterized by the unit disk, with metric conformally equivalent to the Euclidean metric. This insight was exploited by Kim et al~\cite{} to grow a sphere from a square. In the case that $M$ is flat, and this conformal metric is $\ba = e^{2s}I$ for conformal factor $s$, then a disk with prescribed fundamental forms
+$$\bar\ba = e^{2s}I, \qquad \bar\bb = 0$$
+is expected to grow into $M$ (up to rigid motion), since $M$ is a global minimizer of the elastic energy. We use this fact as a basis for a test: we conformally map a XXX to the unit disk using the method of Crane~\cite{}, assign a rest metric $\bar\ba$ per the above formula, and simulate the resulting growth of the shell. Figure~\ref{XXX} compares the inital shape to the simulation steady state.
+
+When $M$ is not flat, we do not expect the shell to grow exactly into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially for small shell thickness $h$. Figure~\ref{XXX} shows the result of attempting to swell the unit disk into a sphere, using the rest fundamental forms from Kim et al~\cite{XXX},
+$$\bar\ba = XXX, \qquad \bar\bb = 0.$$
+
+\subsection{Comparisons to Experiments}
+\paragraph{Radial Swelling of Disk}
+\paragraph{Curling of Paper}
+
+\subsection{Effects of Parameters}
+\paragraph{Poisson's Ratio}
+\paragraph{Thickness}
+\paragraph{Machine Direction}
+
+\subsection{Comparison to Jeong et al}
+
+\subsection{Qualitative Experiments}
+We end with several experiments that demonstrate the flexibility of the method to simulate complex geometry undergoing complex nonlinear deformations due to differential swelling.
+\paragraph{The Walker}
+\paragraph{The Caterpillar}
+\paragraph{The Spoon}
+
+\section{Old Text}
+
 \subsubsection{Radially Wet Disc}
 \begin{figure}[h]
 
