@@ -288,13 +288,13 @@ We evaluate the simulation on a variety of examples, both didactic and complex.
 \subsection{Analytic Benchmarks}
 We first test the method on examples where the equilibrium state can be computed exactly. When an embedding $\br$ exists for which $\ba = \bar \ba$ and $\bb = \bar\bb$, that embedding is clearly a global minimizer of the elastic energy, regardless of material parameters. We ran all of the following experiments using the default values in Table~\ref{XXX}. We assigned a viscosity $\gamma=XXX$ to the material and ran the simuation for $YYY$ seconds, enough time for the simulation to reach steady state.
 
-\paragraph{Uniform Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\mathrm{id}$, and assign a constant $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. We ran the simulation using a coarse, fine, and nonuniform mesh (XXX, YYY, and ZZZ vertices respectively); simulated and exact solutions are compared in Figure~\ref{XXX}. For all experiments except the hyperboloid, we compute the Hausdorff error between the steady state simulation mesh and the analytic solution. The hyperboloid does not have a single equilibrium state; the energy landscape is "sombrero-like" with a curve of possible solutions, corresponding to intrisic rotation of the hyperboloid. For this experiment we instead measure the sum of squared mean and Gauss curvature, where the mesh's curvatures were measured using quadratic fitting~\cite{XXX}.
+\paragraph{Uniform Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\mathrm{id}$, and assign a constant $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. We ran the simulation using a coarse, fine, and nonuniform mesh (XXX, YYY, and ZZZ vertices respectively); simulated and exact solutions are compared in Figure~\ref{XXX}. For all experiments except the hyperboloid, we compute the Hausdorff error between the steady state simulation mesh and the analytic solution. The hyperboloid does not have a single equilibrium state; the energy landscape is "sombrero-like" with a curve of possible solutions, corresponding to intrisic rotation of the hyperboloid. For this experiment we instead measure the sum of squared mean and Gauss curvature, where the mesh's curvatures were measured using quadratic fitting~\cite{Meyer2003}.
 \begin{table*}
-\begin{tabular}{cccccccc}
+\begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & $H$  & $K$ & Error (coarse) & Error (fine) & Error (nonuniform)\\
-$2I$ & $0$ & Enlarged Square & $0$ & $0$ & XXX & XXX & XXX\\
-$I$ & $I$ & Spherical Cap & $2$ & $1$  & XXX & XXX & XXX\\
-$I$ & $-I$ & Hyperboloid Cap & $-2$ & $-1$ & XXX & XXX & XXX\\
+$4I$ & $0$ & Enlarged Square & $0$ & $0$ & XXX & XXX & XXX\\
+$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & XXX & XXX & XXX\\
+$\begin{pmatrix}1+x^2 & -xy \\ -xy & 1+y^2\end{pmatrix}$ & $\frac{1}{\sqrt{1+x^2+y^2}}\begin{pmatrix}-1 & 0\\0 & 1\end{pmatrix}$ & Hyperboloid Cap & varies & $<-1$ & XXX & XXX & XXX\\
 $\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & XXX & XXX & XXX\\
 $I$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0$ & XXX & XXX & XXX
 \end{tabular}
@@ -302,29 +302,53 @@ $I$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0
 \label{tab:analytic}
 \end{table*}
 
-\paragraph{Isotropic Growth} The Riemann mapping theorem guarantees that every surface $M$ with disk topology can be parameterized by the unit disk, with metric conformally equivalent to the Euclidean metric. This insight was exploited by Kim et al~\cite{} to grow a sphere from a square. In the case that $M$ is flat, and this conformal metric is $\ba = e^{2s}I$ for conformal factor $s$, then a disk with prescribed fundamental forms
+\paragraph{Isotropic Growth} The Riemann mapping theorem guarantees that every surface $M$ with disk topology can be parameterized by the unit disk, with metric conformally equivalent to the Euclidean metric. This insight was exploited by Kim et al~\shortcite{Kim2012} to grow a sphere from a square. In the case that $M$ is flat, and this conformal metric is $\ba = e^{2s}I$ for conformal factor $s$, then a disk with prescribed fundamental forms
 $$\bar\ba = e^{2s}I, \qquad \bar\bb = 0$$
-is expected to grow into $M$ (up to rigid motion), since $M$ is a global minimizer of the elastic energy. We use this fact as a basis for a test: we conformally map a XXX to the unit disk using the method of Crane~\cite{}, assign a rest metric $\bar\ba$ per the above formula, and simulate the resulting growth of the shell. Figure~\ref{XXX} compares the inital shape to the simulation steady state.
+is expected to grow into $M$ (up to rigid motion), since $M$ is a global minimizer of the elastic energy. We use this fact as a basis for a test: we conformally map an outline of the United States to the unit disk using the method of Crane~\shortcite{}, assign a rest metric $\bar\ba$ per the above formula, and simulate the resulting growth of the shell. Figure~\ref{XXX} compares the inital shape to the simulation steady state.
 
-When $M$ is not flat, we do not expect the shell to grow exactly into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially for small shell thickness $h$. Figure~\ref{XXX} shows the result of attempting to swell the unit disk into a sphere, using the rest fundamental forms from Kim et al~\cite{XXX},
+When $M$ is not flat, we do not expect the shell to grow exactly into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially when $M$ is convex and the shell thickness $h$ is small. Figure~\ref{XXX} shows the result of attempting to swell the unit disk into a sphere, using the rest fundamental forms from Kim et al~\shortcite{Kim2012},
 $$\bar\ba = XXX, \qquad \bar\bb = 0.$$
 
 \subsection{Comparisons to Experiments}
-\paragraph{Radial Swelling of Disk}
+We validate our simulated results against several real-world experiments.
 \paragraph{Curling of Paper}
+Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. In figure~\ref{XXX}, we compare experiments and simulations of this behavior, for paper strips of a variety of dimensions and machine direction.
+
+\paragraph{Radial Swelling of Disk}
+Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geometry of non-Euclidean plates, induced non-uniform growth in a punctured disk of NIPA polymer by varying the cross-linking ratio as a function of the radius away from the disk's center. Our simulations are able to reproduce the geometries they observed experimentally, for both plate-like and tube-like structures. Figure~\ref{XXX} compares experiment and simulations, and lists the rest metrics used for each experiment.
 
 \subsection{Effects of Parameters}
+One advantage of our formulation of swelling thin shells is that it supports physical material parameters. In this section, we show results highlighting the importance of these parameters and their effects on the behavior of swelling and shrinking thin objects.
+
 \paragraph{Poisson's Ratio}
+The Poisson's ratio of a material specifies the stress in the material due to strain in a perpendicular direction. An ideal volume-conserving material has Poisson's ratio $0.5$, and models the everyday phenomenon of an elastic ball that bulges at the equator when squeezed at the poles. A material that deforms in each direction independently, such as cork, has Poisson's ratio close to zero. The Poisson's ratio has a profound effect on the behavior of a swelling shell... TODO based on results
+
 \paragraph{Thickness}
+Since it controls the relative importance of stretching and bending, the thickness of a shell is its most important physical parameter. Changing the thickness will often dramatically change how a shell deforms. For example, when a paper annulus is moistened, it rolls up into a cylinder. Depending on its thickness, the annulus transitions through several intermediate shapes before rolling up completely: the outer boundary of the annulus lifts to form an $n$-sided polygon, with $n$ decreasing over time as one metastable configuation cascades into the next. Figure~\ref{XXX} compares simulation and experiment for an annulus of inner radius XXX mm and outer radius YYY mm, and several paper thicknesses (XXX, YYY, and ZZZ mm).
+
 \paragraph{Machine Direction}
+As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{XXX} we compare the change in shape when paper of identical geometry, but differing magnitude and direction of anisotropy, is moistened.
 
 \subsection{Comparison to Jeong et al}
+A classic example of differential shrinking is the drying of leaves in autumn, where dessication, rather than moisture, drives the change in shape. Jeong et al~\shortcite{Jeong2013} studied this phenomenon and proposed a method, based on a dual pair of Delaunay and Voronoi meshes, to model drying of leaves. Jeong et al. model several additional phenomena, such as the effect of the leaf vasculature on its bending resistance and water transport. Although we make no effort to reproduce these additional features, our simulations are nevertheless able to qualitatively predict the shapes of drying leaves. Figure~\ref{XXX} compares real leaves to the curling predicted by our method and by Jeong et al.
 
 \subsection{Qualitative Experiments}
 We end with several experiments that demonstrate the flexibility of the method to simulate complex geometry undergoing complex nonlinear deformations due to differential swelling.
 \paragraph{The Walker}
+Chung et al.~\shortcite{Chung2014} have experimentally created a \emph{perpetually moving} paper strip, which exploits curling of paper due to differential moisture. Figure~\ref{XXX} shows the setup: a strip of paper is taped on opposite ends on its two sides, blocking absorption of moisture in the taped areas. The strip is placed on a warm, moist surface, such as the palm of a hand. Moisture diffuses into the paper from below, and evaporates from above; the difference in moisture concentration across the thickness causes the paper to curl up and tip over onto its other side, and the process repeats. In figure~\ref{XXX} we show frames from a simulation replicating this behavior. A video of the simulated motion is available in the supplemental material.
+
 \paragraph{The Caterpillar}
+Consider the bunched-up paper wrapper of a plastic straw, such as occurs when the wrapper is opened. It has been experimentally observed that when the wrapper is moistened, it unbunches and expand substantially, much like an inching caterpillar. Figure~\ref{XXX} compares simulation and experiment.
+
 \paragraph{The Spoon}
+Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Apply heat to the curve portion of a spoon thus induces a dramatic change in shape; figure~\ref{XXX} compares a simulation of this process to video of a real-world experiment.
+
+\paragraph{Shape-changing Food} Differential growth has been used to design gelatin films that fold into novel shapes, by exploiting the ability to fabricate the film into a bilayer of differening density and porosity~\cite{Wang2017}. Wang et al. validated their designs using a volumetric simulation in ABAQUS; in figure~\ref{XXX} we compare their simulated and experimental results to our thin shell simulations, demonstrating that a reduced shell model can accurately predict the behavior of the bilayer without need of a volumetric simulation.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{MoistSim}
+\end{document}
+
 
 \section{Old Text}
 
@@ -474,6 +498,3 @@ We end with several experiments that demonstrate the flexibility of the method t
 %21 and ~\grantnum[http://www.nnsf.cn/youngscientists]{GS501100001809}{Young Scientists' Support Program}.
 %\end{acks}
 
-\bibliographystyle{ACM-Reference-Format}
-\bibliography{MoistSim}
-\end{document}
