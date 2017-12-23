@@ -16,6 +16,8 @@
 \newcommand{\be}{\mathbf{e}}
 \newcommand{\bd}{\mathbf{d}}
 \newcommand{\bF}{\mathbf{F}}
+\newcommand{\bJ}{\mathbf{J}}
+\newcommand{\bx}{\mathbf{x}}
 \DeclareMathOperator{\tr}{tr}
 \newcommand{\hn}{\hat{\mathbf{n}}}
 \newcommand{\fT}{\mathcal{T}}
@@ -281,6 +283,31 @@ where superscripts denote the time step index and $\bF_{\mathrm{ext}}$ encapsula
 
 
 \section{Moisture Diffusion}
+Galerkin finite element method is used to solve the diffusion equation
+$$\frac{\partial u}{\partial t} = D \nabla^2 u + s$$
+of water distribution inside the thin shell, where $D$ is the diffusion coefficient and $s$ is the source. We approximate the solution $u$ by $u_h$ as a linear combination of basis functions $\phi_i$. The triangular prism element is adopted instead of the more common triangular element to capture the diffusion in between the top and bottom layer. For systematic calculation, a reference coordinate $\bar\bx = (\bar x_1,\bar x_2,\bar x_3)$ is defined with basis functions
+\begin{align*}
+&\bar\phi_1 = (1-\bar x_1-\bar x_2)(\bar x_3+1)/2\\
+&\bar\phi_2 = \bar x_1(\bar x_3+1)/2\\
+&\bar\phi_3 = \bar x_2(\bar x_3+1)/2\\
+&\bar\phi_4 = (1-\bar x_1-\bar x_2)(1-\bar x_3)/2\\ 
+&\bar\phi_5 = \bar x_1(1-\bar x_3)/2\\
+&\bar\phi_6 = \bar x_2(1-\bar x_3)/2
+\end{align*}
+
+and the mapping between the reference coordinate $\bar\bx$ to the physical coordinate $\bx$ is 
+$$\varphi(\bar\bx) = v_1+\bar x_1(v_2-v_1)+\bar x_2(v_3-v_1)+\bar x_3\hn t/2 $$
+where $v_1, v_2, v_3$ are the physical coordinate of vertices at the mid surface, $\hn$ is the normal vector, and t is the thickness of the shell. The values of $\phi_i$ on the physical element is defined as
+\begin{align*}
+&\phi_i(\bx) = \bar\phi_i(\varphi^{-1}(\bx))\\
+&\nabla\bar\phi = \bJ\nabla\phi
+\end{align*}
+with $\bJ$ as the Jacobian of the inverse mapping. After applying the weak formulation and time discretization to the diffusion equation, it is now converted to a linear system
+$$\mathbf{M} \frac{u^{k+1}-u^k}{h}+ \mathbf{K} u^{k+1} = \mathbf{s}$$
+where M is the mass matrix, and K is the stiffness matrix, and in each element we have
+$$\mathbf{M}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-\bar x_2} \bar\phi_i \bar \phi_j |det\bJ| \,d\bar x_1 \, d\bar x_2 \, d\bar x_3 $$
+$$\mathbf{K}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-\bar x_2} (\bJ^{-1}\nabla\bar\phi_i) \cdot (\bJ^{-1}\nabla\bar\phi_j) |det\bJ| \,d\bar x_1 \, d\bar x_2 \, d\bar x_3 $$
+$$\mathbf{s}_{i} = \int_{-1}^1  \int_0^1 \int_0^{1-\bar x_2} \mathbf{s} \cdot \bar\phi_i |det\bJ| \,d\bar x_1 \, d\bar x_2 \, d\bar x_3 $$
 
 \section{Result}
 We evaluate the simulation on a variety of examples, both didactic and complex.
