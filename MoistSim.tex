@@ -283,6 +283,15 @@ where superscripts denote the time step index and $\bF_{\mathrm{ext}}$ encapsula
 
 
 \section{Moisture Diffusion}
+Moisture diffuses in both the thickness and in-plane directions of the shell, and from the environment into the shell. We assume that within the shell, moisture diffuses isotropically at a rate uniform throughout the shell, so that the percentage of additional moisture $m(x,y,z;t): \Omega\times [-h/2,h/2]\times \mathbb{R}\to\mathbb{R}$ obeys the diffusion equation
+\begin{equation}
+\frac{\partial m}{\partial t}(x,y,z) = \begin{cases}D\Delta_{\bg} m, & -h/2 < z < h/2\\
+s(x,y,z), & z=\pm h/2,\end{cases} \label{eq:diffusion}
+\end{equation}
+where $\Delta_{\bg}$ is the intrinsic Laplace-Beltrami operator with respect to the metric $\bg$ and $s$ is a source term describing diffusion into (or out) of the shell from the environment.
+
+We discretize equation~\eqref{eq:diffusion} with bilinear Galerkin finite elements on the triangular prisms $F\times[-h/2,h/2]$;
+
 Galerkin finite element method is used to solve the diffusion equation
 $$\frac{\partial u}{\partial t} = D \nabla^2 u + s$$
 of water distribution inside the thin shell, where $D$ is the diffusion coefficient and $s$ is the source. We approximate the solution $u$ by $u_h$ as a linear combination of basis functions $\phi_i$. The triangular prism element is adopted instead of the more common triangular element to capture the diffusion in between the top and bottom layer. For systematic calculation, a reference coordinate $\bar\bx = (\bar x_1,\bar x_2,\bar x_3)$ is defined with basis functions
