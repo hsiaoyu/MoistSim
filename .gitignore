@@ -1,2 +1,16 @@
 *.log
 *.gz
+
+# Latex temp files
+*.swp
+*.bst
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.out
+*.xcp
+*.cls
+*.pdf
