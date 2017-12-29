@@ -214,9 +214,11 @@ for a conformal factor $s$ encoding the amount of growth (or shrinking, if negat
 
 \item \textbf{Linear Differential Swelling}: Porous materials like paper swell when moistened, and differences in water concentration through the thickness of a thin shell can induce metric frustration and buckling. This mechanism is responsible for the buckling of paper when wet, and the curling of leaves as they dry. 
 
-We model this swelling mechanism by assuming that the amount of moisture varies linearly in the thickness direction of the shell, and present the percentage of additional moisture present in the material at the top and bottom of the shell by two scalars $m^+_{ijk}, m^-_{ijk}\in \mathbb{R}$. For example, complete dessication of the top of the shell, and doubling of the moisture content at the bottom, would be presented by values $m^+ = -100$, $m^- = 100$. The additional water content induces swelling, which changes the rest geometry; assuming a linear relationship between rest length and moisture concentration~\cite{XXX}, the rest metric of the shell at the top and bottom of the thickness is given by
+We model this swelling mechanism by assuming that the amount of moisture varies linearly in the thickness direction of the shell, and present the percentage of additional moisture present in the material at the top and bottom of the shell by two scalars $m^+_{ijk}, m^-_{ijk}\in \mathbb{R}$. The additional water content induces swelling, which changes the rest geometry; assuming a linear relationship between rest length and moisture concentration~\cite{iggesund1993paperboard}, moisture expansion coefficient $\mu$ of the paper is defined as
+$$\mu = \frac{\Delta L}{L \Delta m}$$
+where $\Delta L$ is the change of length of the paper. In this paper, we set the initial moisture of the paper as reference moisture to 0 and the initial length as L. The rest metric of the shell at the top and bottom of the thickness is given by
 $$\bar\bg^+ = (1 + m^+\mu)^2(\ba^0 - h \bb^0), \qquad \bar\bg^- = (1+m^-\mu)^2(\ba^0 + h \bb^0),$$
-for an experimentally determined parameter $\mu$ relating moisture to length. Then
+Then
 \begin{align*}
 \bar\ba &= \frac{(1+m^+\mu)^2 + (1+m^-\mu)^2}{2}\ba^0 + h\frac{(1+m^-\mu)^2 - (1+m^+\mu)^2}{2}\bb^0\\
 \bar\bb &= \frac{(1+m^-\mu)^2 - (1+m^+\mu)^2}{2h}\ba^0 + \frac{(1+m^+\mu)^2 + (1+m^-\mu)^2}{2}\bb^0.
@@ -239,7 +241,7 @@ where $\mu^+$ and $\mu^-$ encode the differing moisture-length relationship in t
 \bar\bg^- &= T^T M^- T^{-T} (\ba^0 + h \bb^0) T^{-1}M^-T.
 \end{align*}
 where 
-$$T = \left[\begin{array}{cc} \bd & \bd_{\perp}\end{array}\right]$$
+$$T = \left[\begin{array}{cc} \bd & \bd_{\perp}\end{array}\right]^{-1}$$
 transforms from the triangle's barycentric coordinates to the $\bd,\bd_{\perp}$ coordinate system, and
 $$M^{\pm} = \left[\begin{array}{cc}
 (1 + m^{\pm}\mu) & 0\\0 & (1+m^{\pm} \mu_{\perp})\end{array}\right]$$
@@ -261,8 +263,8 @@ where $\rho_{\mathrm{shell}}$ and $\rho_{\mathrm{water}}$ are the densities of t
 
 \paragraph{Viscous Damping} Since the growth and swelling phenomena we want to simulate all take place at relatively long time scales, and paper and plastic are viscoelastic, a damping model is needed to dissipate the elastic waves in the material. We implement a simple Kelvin-Voigt damping model by including a damping potential
 \begin{align*}
-E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) &= \eta\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\Bigg(\frac{h}{4} \left\|\bar\ba_{ijk}^{-1}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\\
-&\qquad + \frac{h^3}{12}\left\|\bar\ba_{ijk}^{-1}\frac{\bb_{ijk}-\bb_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\Bigg)
+E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) &= \eta\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \ba_{ijk}^{\mathrm{prev}}}}{2}\Bigg(\frac{h}{4} \left\|\ba_{ijk}^{-\mathrm{prev}}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\\
+&\qquad + \frac{h^3}{12}\left\|\ba_{ijk}^{-\mathrm{prev}}\frac{\bb_{ijk}-\bb_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\Bigg)
 \end{align*}
 where $\Delta t$ is the time step size, $\bv^{prev}$ denotes the values of $\bv$ in the previous time step (and likewise for $\ba^{\mathrm{prev}}$, etc), and $\eta$ is a viscosity parameter.
 
@@ -280,8 +282,6 @@ M\frac{\dot\bv^{i+1}-\dot\bv^{i}}{\Delta t} &= \bF_{\mathrm{ext}}\left(\bv^{i+1}
 \end{align*}
 where superscripts denote the time step index and $\bF_{\mathrm{ext}}$ encapsulates contact forces and external forces like gravity. Solving these equations requires computing first and second derivatives of the elastic energy; the derivatives of a triangle's stretching term depend only on the vertices of that triangle, whereas the derivatives of the bending term also depend on vertices of the neighboring three triangles (due to the dependence of $\bb$ on the mid-edge normals). The bending term in particular is somewhat unpleasant to differentiate due to its high degree of nonlinearity, and special cases that arise for triangles adjacent to the mesh boundary. We provide formulas for the derivatives in the Appendix, and source code for calculating the derivatives in the supplemental material.
 
-
-
 \section{Moisture Diffusion}
 Moisture diffuses in both the thickness and in-plane directions of the shell, and from the environment into the shell. We assume that within the shell, moisture diffuses isotropically at a rate uniform throughout the shell, so that the percentage of additional moisture $m(x,y,z;t): \Omega\times [-h/2,h/2]\times \mathbb{R}\to\mathbb{R}$ obeys the diffusion equation
 \begin{equation}
@@ -290,33 +290,31 @@ s(x,y,z), & z=\pm h/2,\end{cases} \label{eq:diffusion}
 \end{equation}
 where $\Delta_{\bg}$ is the intrinsic Laplace-Beltrami operator with respect to the metric $\bg$ and $s$ is a source term describing diffusion into (or out) of the shell from the environment.
 
-We discretize equation~\eqref{eq:diffusion} with bilinear Galerkin finite elements on the triangular prisms $F\times[-h/2,h/2]$;
+We discretize equation~\eqref{eq:diffusion} with bilinear Galerkin finite elements on the triangular prisms $F\times[-h/2,h/2]$; The solution $m$ is approximated by $m_h$ as a linear combination of basis functions $\phi_i$. The triangular prism element is adopted instead of the more common triangular element to capture the diffusion in between the top and bottom layer. For systematic calculation, we extend the previous defined canonical unit triangle to a canonical unit triangle prism $\tilde{\fT}$ with vertices $(0,0,1)$, $(1,0,1)$, $(0,1,1)$, $(0,0,-1)$, $(1,0,-1)$, $(0,1,-1)$ and defined the affine transformation as
 
-Galerkin finite element method is used to solve the diffusion equation
-$$\frac{\partial u}{\partial t} = D \nabla^2 u + s$$
-of water distribution inside the thin shell, where $D$ is the diffusion coefficient and $s$ is the source. We approximate the solution $u$ by $u_h$ as a linear combination of basis functions $\phi_i$. The triangular prism element is adopted instead of the more common triangular element to capture the diffusion in between the top and bottom layer. For systematic calculation, a reference coordinate $\bar\bx = (\bar x_1,\bar x_2,\bar x_3)$ is defined with basis functions
+$$\tilde{\br_{ijk}}:\tilde{\fT}\to\mathbb{R}^3, \quad \br_{ijk}(u_1,u_2,u_3) = \bv_i + u_1(\bv_j-\bv_i)+u_2(\bv_k-\bv_i) + \frac{h u_3 \hn}{2};$$
+
+The basis functions on the canonical triangle prism element are given as
 \begin{align*}
-&\bar\phi_1 = (1-\bar x_1-\bar x_2)(\bar x_3+1)/2\\
-&\bar\phi_2 = \bar x_1(\bar x_3+1)/2\\
-&\bar\phi_3 = \bar x_2(\bar x_3+1)/2\\
-&\bar\phi_4 = (1-\bar x_1-\bar x_2)(1-\bar x_3)/2\\ 
-&\bar\phi_5 = \bar x_1(1-\bar x_3)/2\\
-&\bar\phi_6 = \bar x_2(1-\bar x_3)/2
+&\bar\phi_1 = (1-u_1-u_2)(u_3+1)/2\\
+&\bar\phi_2 = u_1(u_3+1)/2\\
+&\bar\phi_3 = u_2(u_3+1)/2\\
+&\bar\phi_4 = (1-u_1-u_2)(1-u_3)/2\\ 
+&\bar\phi_5 = u_1(1-u_3)/2\\
+&\bar\phi_6 = u_2(1-u_3)/2
 \end{align*}
-
-and the mapping between the reference coordinate $\bar\bx$ to the physical coordinate $\bx$ is 
-$$\varphi(\bar\bx) = v_1+\bar x_1(v_2-v_1)+\bar x_2(v_3-v_1)+\bar x_3\hn t/2 $$
-where $v_1, v_2, v_3$ are the physical coordinate of vertices at the mid surface, $\hn$ is the normal vector, and t is the thickness of the shell. The values of $\phi_i$ on the physical element is defined as
+The values of $\phi_i$ on the physical element is defined as
 \begin{align*}
 &\phi_i(\bx) = \bar\phi_i(\varphi^{-1}(\bx))\\
 &\nabla\bar\phi = \bJ\nabla\phi
 \end{align*}
 with $\bJ$ as the Jacobian of the inverse mapping. After applying the weak formulation and time discretization to the diffusion equation, it is now converted to a linear system
-$$\mathbf{M} \frac{u^{k+1}-u^k}{h}+ \mathbf{K} u^{k+1} = \mathbf{s}$$
+$$\mathbf{M} \frac{m^{k+1}-m^k}{h}+ \mathbf{K} m^{k+1} = \mathbf{s}$$
 where M is the mass matrix, and K is the stiffness matrix, and in each element we have
-$$\mathbf{M}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-\bar x_2} \bar\phi_i \bar \phi_j |det\bJ| \,d\bar x_1 \, d\bar x_2 \, d\bar x_3 $$
-$$\mathbf{K}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-\bar x_2} (\bJ^{-1}\nabla\bar\phi_i) \cdot (\bJ^{-1}\nabla\bar\phi_j) |det\bJ| \,d\bar x_1 \, d\bar x_2 \, d\bar x_3 $$
-$$\mathbf{s}_{i} = \int_{-1}^1  \int_0^1 \int_0^{1-\bar x_2} \mathbf{s} \cdot \bar\phi_i |det\bJ| \,d\bar x_1 \, d\bar x_2 \, d\bar x_3 $$
+$$\mathbf{M}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} \bar\phi_i \bar \phi_j |det\bJ| \,du_1 \, du_2 \, du_3 $$
+$$\mathbf{K}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} (\bJ^{-1}\nabla\bar\phi_i) \cdot (\bJ^{-1}\nabla\bar\phi_j) |det\bJ| \,du_1 \, du_2 \, du_3 $$
+$$\mathbf{s}_{i} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} \mathbf{s} \cdot \bar\phi_i |det\bJ| \,du_1 \, du_2 \, du_3 $$
+To avoid error due to our discretization, the source terms are constructed as a linear function across the thickness and in-plane.
 
 \section{Result}
 We evaluate the simulation on a variety of examples, both didactic and complex.
