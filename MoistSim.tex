@@ -314,7 +314,9 @@ where M is the mass matrix, and K is the stiffness matrix, and in each element w
 $$\mathbf{M}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} \bar\phi_i \bar \phi_j |det\bJ| \,du_1 \, du_2 \, du_3 $$
 $$\mathbf{K}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} (\bJ^{-1}\nabla\bar\phi_i) \cdot (\bJ^{-1}\nabla\bar\phi_j) |det\bJ| \,du_1 \, du_2 \, du_3 $$
 $$\mathbf{s}_{i} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} \mathbf{s} \cdot \bar\phi_i |det\bJ| \,du_1 \, du_2 \, du_3 $$
-To avoid error due to our discretization, the source terms are constructed as a linear function across the thickness and in-plane.
+To avoid error due to our discretization, the source terms are constructed as a linear function across the thickness and in-plane. For example, to paint water on top surface of the paper, we construct the source term as 
+$$ \mathbf{s} = \frac{\mathbf{C}_{a}(1+u_3)}{2}$$
+where $\mathbf{C}_{a}$ is the absorption rate of the paper. 
 
 \section{Result}
 We evaluate the simulation on a variety of examples, both didactic and complex.
