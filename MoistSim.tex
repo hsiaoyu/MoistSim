@@ -21,6 +21,8 @@
 \DeclareMathOperator{\tr}{tr}
 \newcommand{\hn}{\hat{\mathbf{n}}}
 \newcommand{\fT}{\mathcal{T}}
+\newcommand{\bmm}{\mathbf{m}}
+\newcommand{\bs}{\mathbf{s}}
 
 \acmPrice{15.00}
 
@@ -276,10 +278,10 @@ where $\Delta t$ is the time step size, $\bv^{prev}$ denotes the values of $\bv$
 In addition, we track a machine direction $\bd$ per face, which doesn't change over the course of the simulation; finally Table~\ref{XXX} lists the physical parameters and constants on which the simulation depends, as well as reasonable values of these parameters for the special case of ordinary paper. We use these default values in all experiments described below, unless specified otherwise.
 
 \paragraph{Time Integration} We integrate the equations of motion using implicit Euler:
-\begin{align*}
-M\frac{\dot\bv^{i+1}-\dot\bv^{i}}{\Delta t} &= \bF_{\mathrm{ext}}\left(\bv^{i+1}\right) - \nabla E_{\mathrm{elastic}}\left(\bv^{i+1}\right) - \nabla E_{\mathrm{damp}}\left(\bv^{i+1},\bv^i\right)\\
-\bv^{i+1} &= \bv^i + \Delta t \dot\bv^{i+1},
-\end{align*}
+\begin{align}
+M\frac{\dot\bv^{i+1}-\dot\bv^{i}}{\Delta t} &= \bF_{\mathrm{ext}}\left(\bv^{i+1}\right) - \nabla E_{\mathrm{elastic}}\left(\bv^{i+1}\right) - \nabla E_{\mathrm{damp}}\left(\bv^{i+1},\bv^i\right) \notag\\
+\bv^{i+1} &= \bv^i + \Delta t \dot\bv^{i+1},\label{eq:implicit}
+\end{align}
 where superscripts denote the time step index and $\bF_{\mathrm{ext}}$ encapsulates contact forces and external forces like gravity. Solving these equations requires computing first and second derivatives of the elastic energy; the derivatives of a triangle's stretching term depend only on the vertices of that triangle, whereas the derivatives of the bending term also depend on vertices of the neighboring three triangles (due to the dependence of $\bb$ on the mid-edge normals). The bending term in particular is somewhat unpleasant to differentiate due to its high degree of nonlinearity, and special cases that arise for triangles adjacent to the mesh boundary. We provide formulas for the derivatives in the Appendix, and source code for calculating the derivatives in the supplemental material.
 
 \section{Moisture Diffusion}
@@ -290,33 +292,24 @@ s(x,y,z), & z=\pm h/2,\end{cases} \label{eq:diffusion}
 \end{equation}
 where $\Delta_{\bg}$ is the intrinsic Laplace-Beltrami operator with respect to the metric $\bg$ and $s$ is a source term describing diffusion into (or out) of the shell from the environment.
 
-We discretize equation~\eqref{eq:diffusion} with bilinear Galerkin finite elements on the triangular prisms $F\times[-h/2,h/2]$; The solution $m$ is approximated by $m_h$ as a linear combination of basis functions $\phi_i$. The triangular prism element is adopted instead of the more common triangular element to capture the diffusion in between the top and bottom layer. For systematic calculation, we extend the previous defined canonical unit triangle to a canonical unit triangle prism $\tilde{\fT}$ with vertices $(0,0,1)$, $(1,0,1)$, $(0,1,1)$, $(0,0,-1)$, $(1,0,-1)$, $(0,1,-1)$ and defined the affine transformation as
+We discretize equation~\eqref{eq:diffusion} with bilinear Galerkin finite elements on the triangular prisms $F\times[-h/2,h/2]$; The solution $m$ in the prism surrounding face $\bff_{ijk}$ is approximated by a linear combination of basis functions 
+$$m(u,v,z) = \sum_{v\in \{i,j,k\}} \left(m_v^+ \phi_v^+ + m_v^- \phi_v^-\right)$$
+parameterized over the prism $\mathcal{T}\times [-h/2,h/2]$ surrounding the canonical unit triangle. In other words
+$$\phi_i^\pm = \frac{(1-u-v)}{h}\left(\frac{h}{2}\pm z\right); \phi_j^{\pm} = \frac{u}{h}\left(\frac{h}{2}\pm z\right); \phi_j^{\pm} = \frac{u}{h}\left(\frac{h}{2}\pm z\right).$$
+Formulas for the mass and stiffness matrices $M$ and $K$ are derived in Appendix~\ref{XXX}; from these the moisture is updated each time step using implicit time integration,
+$$(M/h + DK)\bmm^{i+1} = M(\bmm^i + \bs^i)$$
+where $D$ is the diffusion coefficient, and $\bs^i$, the discretized source term, is described below.
+\paragraph{Source Term} 
+%To avoid error due to our discretization, the source terms are constructed as a linear function across the thickness and in-plane. For example, to paint water on top surface of the paper, we construct the source term as 
+%$$ \mathbf{s} = \frac{\mathbf{C}_{a}(1+u_3)}{2}$
+%where $\mathbf{C}_{a}$ is the absorption rate of the paper. 
 
-$$\tilde{\br_{ijk}}:\tilde{\fT}\to\mathbb{R}^3, \quad \br_{ijk}(u_1,u_2,u_3) = \bv_i + u_1(\bv_j-\bv_i)+u_2(\bv_k-\bv_i) + \frac{h u_3 \hn}{2};$$
-
-The basis functions on the canonical triangle prism element are given as
-\begin{align*}
-&\bar\phi_1 = (1-u_1-u_2)(u_3+1)/2\\
-&\bar\phi_2 = u_1(u_3+1)/2\\
-&\bar\phi_3 = u_2(u_3+1)/2\\
-&\bar\phi_4 = (1-u_1-u_2)(1-u_3)/2\\ 
-&\bar\phi_5 = u_1(1-u_3)/2\\
-&\bar\phi_6 = u_2(1-u_3)/2
-\end{align*}
-The values of $\phi_i$ on the physical element is defined as
-\begin{align*}
-&\phi_i(\bx) = \bar\phi_i(\varphi^{-1}(\bx))\\
-&\nabla\bar\phi = \bJ\nabla\phi
-\end{align*}
-with $\bJ$ as the Jacobian of the inverse mapping. After applying the weak formulation and time discretization to the diffusion equation, it is now converted to a linear system
-$$\mathbf{M} \frac{m^{k+1}-m^k}{h}+ \mathbf{K} m^{k+1} = \mathbf{s}$$
-where M is the mass matrix, and K is the stiffness matrix, and in each element we have
-$$\mathbf{M}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} \bar\phi_i \bar \phi_j |det\bJ| \,du_1 \, du_2 \, du_3 $$
-$$\mathbf{K}_{ij} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} (\bJ^{-1}\nabla\bar\phi_i) \cdot (\bJ^{-1}\nabla\bar\phi_j) |det\bJ| \,du_1 \, du_2 \, du_3 $$
-$$\mathbf{s}_{i} = \int_{-1}^1  \int_0^1 \int_0^{1-u_2} \mathbf{s} \cdot \bar\phi_i |det\bJ| \,du_1 \, du_2 \, du_3 $$
-To avoid error due to our discretization, the source terms are constructed as a linear function across the thickness and in-plane. For example, to paint water on top surface of the paper, we construct the source term as 
-$$ \mathbf{s} = \frac{\mathbf{C}_{a}(1+u_3)}{2}$$
-where $\mathbf{C}_{a}$ is the absorption rate of the paper. 
+\section{Numerical Issues}
+Integrating the physics~\eqref{eq:implicit} requires some care, as the scale-separation between the stretching and bending forces, along with the very high stiffnesses involved, pose numerical challenges.
+\paragraph{Problem Scaling} 
+\paragraph{Inexact Hessian}
+\paragraph{Inverted Triangles}
+\paragraph{Symmetry-Breaking}
 
 \section{Result}
 We evaluate the simulation on a variety of examples, both didactic and complex.
