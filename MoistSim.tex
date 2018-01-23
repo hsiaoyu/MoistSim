@@ -177,7 +177,7 @@ are the classical first, second, and third fundamental forms of the surface $\br
 
 Oftentimes, the parameterization domain of a thin shell is assumed to be also the rest state of the shell, so that the strain in the material of the shell can be determined directly from looking at $\bg$. We cannot assume this: consider for instance a piece of paper whose center has been moistened by spilled coffee. The fibers in the coffee stain stretch; since they are confined by the surrounding non-wet region of the paper, the paper cannot globally stretch in such a way that both the wet and dry regions of the paper are simultaneously at rest. Instead, the paper will \emph{buckle} out of plane, into a shape that compromises between relaxing the in-plane (stretching) strain and the introduced bending strain. At this point the paper's rest state is \emph{non-Euclidean}---it is impossible to find any embedding of the paper into $\mathbb{R}^3$ that is entirely strain-free.
 
-We therefore record the rest state of the shell using a \emph{rest metric}~\cite{Efrati2009} $\bar\bg(x,y,z).$\footnote{Here and throughout the paper, we use an overbar to denote quantities associated to the shell rest state.} Since our model is tailored to simulating differential in-plane swelling or shrinking across the thickness of the shell, we make the simplifying assumption that this rest metric is linear in the thickness direction:
+We therefore record the rest state of the shell using a \emph{rest metric} $\bar\bg(x,y,z)$~\cite{Efrati2009}.\footnote{Here and throughout the paper, we use an overbar to denote quantities associated to the shell rest state.} Since our model is tailored to simulating differential in-plane swelling or shrinking across the thickness of the shell, we make the simplifying assumption that this rest metric is linear in the thickness direction:
 $$\bar\bg(x,y,z) = \left[\begin{array}{cc}\bar\ba(x,y) - 2z\bar\bb(x,y) & 0\\0 & 1\end{array}\right].$$
 A shell that begins a simulation at rest will simply have $\bar\ba = \ba^0$ and $\bar\bb = \bb^0$, where $\ba^0$ and $\bb^0$ are the values of $\ba$ and $\bb$ at the start of the simulation, respectively; this setup is a special case of a shell which has a rest state specified by a ``rest surface'' $\bar\br$ that is isometrically embeddable in $\mathbb{R}^3$, in which case $\bar\ba$ and $\bar\bb$ are the first and second fundamental forms of that rest surface. Therefore $\bar\ba$ and $\bar\bb$ can be thought of as representing the ``rest metric'' and ``rest curvature'' of the shells' midsurface, respectively.\footnote{We stress, though, that these labels are to provide intuition only---$\bar\ba$ and $\bar\bb$ must not, and generally will not, satisfy usual relationships from differential geometry such as the Gauss-Codazzi-Mainardi equations.}
 
@@ -189,7 +189,7 @@ To summarize, our parameterization of thin shells involves the following kinemat
 \end{itemize}
 
 \subsection{Shell Dynamics}
-Motivated by the common observation that a sufficiently thin shell bends much more readily than it will stretch, we assume that the shell's deformation involves \emph{large rotations} but only small in-plane strain of the midsurface: $\|\bar\ba^{-1}\ba-I\|_{\infty} < h.$ We also assume that the shell's material is uniform and isotropic. The simplest constitutive law consistent with these assumptions is the St. Venant-Kirchhoff material model\footnote{The neo-Hookean material model is also popular in computer graphics and could be used instead, although there is little benefit to doing so when simulating thin shells since strains are typically small.} together with Green strain; it can be shown~(see e.g. Weischedel~\shortcite{Weischedel2012}) that these choices yield an elastic energy density~(the \emph{Koiter shell model}) that can be approximated up to $O(h^4)$ by
+Motivated by the common observation that a sufficiently thin shell bends much more readily than it will stretch, we assume that the shell's deformation involves \emph{large rotations} but only small in-plane strain of the midsurface: $\|\bar\ba^{-1}\ba- \Id\|_{\infty} < h.$ We also assume that the shell's material is uniform and isotropic. The simplest constitutive law consistent with these assumptions is the St. Venant-Kirchhoff material model\footnote{The neo-Hookean material model is also popular in computer graphics and could be used instead, although there is little benefit to doing so when simulating thin shells since strains are typically small.} together with Green strain; it can be shown~(see e.g. Weischedel~\shortcite{Weischedel2012}) that these choices yield an elastic energy density~(the \emph{Koiter shell model}) that can be approximated up to $O(h^4)$ by
 \begin{equation}
 W(x,y) = \left(\frac{h}{4} \|\bar\ba^{-1}\ba - \Id\|^2_{SV} + \frac{h^3}{12}\|\bar\ba^{-1}(\bb-\bar\bb)\|^2_{SV}\right)\sqrt{\det \bar\ba} \label{eq:koiter}
 \end{equation}
@@ -312,7 +312,7 @@ where $\Delta t$ is the time step size, $\bv^{\mathrm{prev}}$ denotes the values
 \begin{tabular}{lc}
 Thickness &  $0.1\ \mathrm{mm}$\\
 Young's Modulus $E$ & $2\times 10^9\ \mathrm{Pa}$\\
-Poisson's Ration $\nu$ & $0.3$\\
+Poisson's Ratio $\nu$ & $0.3$\\
 Density $\rho$ & $250\ \mathrm{kg/m^3}$\\
 Viscosity $\eta$ & $0.001\ \mathrm{Pa}\cdot\mathrm{s}$\\
 Swelling constant $\mu$ & $0.0025$\\
@@ -343,7 +343,7 @@ Moisture diffuses in both the thickness and in-plane directions of the shell, an
 \frac{\partial m}{\partial t}(x,y,z) = \begin{cases}D\Delta_{\bg} m, & -h/2 < z < h/2\\
 s(x,y,z), & z=\pm h/2,\end{cases} \label{eq:diffusion}
 \end{equation}
-where $\Delta_{\bg}$ is the intrinsic Laplace-Beltrami operator with respect to the volumetric metric $\bg$ and $s$ is a source term describing diffusion into (or out) of the shell from the environment.
+where $D$ is the diffusion coefficient, $\Delta_{\bg}$ is the intrinsic Laplace-Beltrami operator with respect to the volumetric metric $\bg$, and $s$ is a source term describing diffusion into (or out) of the shell from the environment.
 
 We discretize equation~\eqref{eq:diffusion} with bilinear Galerkin finite elements on the triangular prisms $F\times[-h/2,h/2]$; the solution $m$ and source term $s$ in the prism surrounding face $\bff_{ijk}$ are approximated by linear combinations of basis functions 
 \begin{align*}
@@ -357,7 +357,7 @@ Formulas for the Galerkin mass and stiffness matrices $M_G$ and $K_G$ are listed
 \begin{equation}
 (M_G+ \Delta t DK_G)\bmm^{i+1} = M_G(\bmm^i + \Delta t \bs^i) \label{eq:discdiffusion}
 \end{equation}
-where $D$ is the diffusion coefficient, and $\bs^i$ is the discretized source term. This source term $\bs_i^{\pm}$ prescribes at each vertex the rate of diffusion of moisture in or out of the shell at both the top and bottom layer of the shell; the details of this term depend on the problem being modeled.
+where $\bs^i$ is the discretized source term. This source term $\bs_i^{\pm}$ prescribes at each vertex the rate of diffusion of moisture in or out of the shell at both the top and bottom layer of the shell; the details of this term depend on the problem being modeled.
 
 When the mechanism for swelling/shrinking is heat rather than moisture, the above diffusion formulation remains unchanged, with $m$ reinterpreted as temperature rather than moisture.
 
@@ -384,7 +384,7 @@ $$HE_{\mathrm{bending}} \approx \frac{h^3\sqrt{\det \bar\ba_{ijk}}}{12}\left(\na
 We evaluate the simulation on a variety of examples, both didactic and complex.
 
 \subsection{Analytic Benchmarks}
-We first test the method on examples where the equilibrium state can be computed exactly. When an embedding $\br$ exists for which $\ba = \bar \ba$ and $\bb = \bar\bb$, that embedding is clearly a global minimizer of the elastic energy, regardless of material parameters. We ran all of the following experiments using the default values in Table~\ref{tab:params}. We ran the simulation for enough time for the simulation to reach steady state.
+We first test the method on examples where the equilibrium state can be computed exactly. When an embedding $\br$ exists for which $\ba = \bar \ba$ and $\bb = \bar\bb$, that embedding is clearly a global minimizer of the elastic energy, regardless of material parameters. We ran all of the following experiments using the default values in Table~\ref{tab:params}. We ran the simulation for enough time to reach steady state.
 
 \begin{figure}[h]
   \centering
@@ -392,7 +392,7 @@ We first test the method on examples where the equilibrium state can be computed
   \caption{Didactic \todo{Hsiao-Yu insert caption}}
   \label{fig:didactic}
 \end{figure}
-\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign a constant $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. We ran the simulation using a coarse and fine mesh (171 and 804 vertices respectively); simulated and exact solutions are compared in Figure~\ref{fig:didactic}. 
+\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. We ran the simulation using a coarse and fine mesh (171 and 804 vertices respectively); simulated and exact solutions are compared in Figure~\ref{fig:didactic}. 
 \begin{table*}
 \begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & $H$  & $K$ & Error (coarse) & Error (fine) \\
@@ -416,14 +416,14 @@ When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the
 \begin{figure*}[h]
   \centering
   \includegraphics[width=\textwidth]{ContractingSphere.png}
-  \caption{Stereographic projecion of the disk into the plane yields a conformal parameterization of one by the other (left); we set $\bar\bb=0$ and $\bar\ba$ to this conformal metric, and simulate the disk dynamics as it relaxes to equilibrium (right).}
+  \caption{Stereographic projecion of the disk into the plane yields a conformal parameterization of one by the other (left); we set $\bar\bb=0$ and $\bar\ba$ to this conformal metric, and simulate the disk dynamics as it relaxes to equilibrium by adopting a spherical shape (right).}
   \label{ContractingSphere}
 \end{figure*}
 
 \subsection{Comparisons to Experiments}
 We validate our simulated results against several real-world experiments.
 \paragraph{Curling of Paper}
-Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. We compare experiment and simulation of this behavior, for a rectangular paper strip of dimensions. We use a brush to moisten a piece of real paper, and compare the video of the curling and uncurling of the paper to a simulation of the same phenomenon. Figure~\ref{WaterPainting} shows the experiment, the simulation, and a stylized, thickened cross-section of the paper showing the difference in moisture concentration through the paper thickness as the simulation progresses.
+Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. We compare experiment and simulation of this behavior, for a rectangular paper strip of dimensions. We use a brush to moisten a piece of real paper, and compare the video of the curling and uncurling of the paper to a simulation of the same phenomenon. Figure~\ref{WaterPainting} shows the experiment, the simulation, and a stylized, thickened cross-section of the paper showing the difference in moisture concentration through the paper thickness over time.
 
 \begin{figure}[h]
   \centering
@@ -438,7 +438,7 @@ Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geomet
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{SwellingDisc.png}
-  \caption{We compare the experimental result by Sharon and Efrati~\shortcite{Sharon2010} (top) with our simulation (bottom) for two different prescribed radially-varying rest metrics on the unit disk. Blue regions correspond to higher growth rates. }
+  \caption{We compare the experimental result by Sharon and Efrati~\shortcite{Sharon2010} using polymer disks (top) with our simulation (bottom) for two different prescribed radially-varying rest metrics. Blue regions correspond to higher growth rates. }
   \label{SwellingDisc}
 \end{figure}
 
@@ -454,12 +454,12 @@ As mentioned above, when paper is manufactured, paper fibers tend to be arranged
 \begin{figure*}[h]
   \centering
   \includegraphics[width=\textwidth]{Annuli.png}
-  \caption{The left figure shows the curling behavior of moist paper annuli as they dry. The amount of curling is dependent on the thickness of the paper. From left to right, the thicknesses of the annuli are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5 mm. The right figure shows the curling behavior of moist paper annuli with a machine direction as they dry. The dynamics are markedly different from the case of no machine direction. }
+  \caption{The left figure shows the curling behavior of moist paper annuli as they dry, with time increasing from top to bottom. Varying the thickness (from left to right, the thicknesses of the annuli are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5 mm) demonstrates that the amount and type of curling is strongly dependent on the thickness of the material. The right figure shows the same annuli endowed with a principal machine direction along the $x$ axis (directed from left-to-right in the figure): the dynamics are markedly different from the case of no machine direction. }
   \label{Annuli}
 \end{figure*}
 
 \subsection{Qualitative Experiments}
-We end with several experiments that demonstrate the flexibility of the method to simulate complex geometry undergoing complex nonlinear deformations due to differential swelling.
+We end with several experiments that demonstrate the flexibility of the method to simulate complex geometries undergoing nonlinear deformations due to differential swelling.
 
 \paragraph{The Spoon}
 Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{youtube}.
@@ -483,7 +483,7 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
 \begin{figure}
 \centering
     \includegraphics[width=0.5\textwidth]{PastaCombined.png}
-\caption{We simulate one of Wang et al.'s~\shortcite{Wang2017} pasta designs, consisting of a half-annulus decorated with concentric rings which are both thicker (and thus more bending-resistant) and less porous than the surronding material. Our simulation predicts qualitatively identical curling behavior of the pasta as both the physical experiment and volumetric FEM simulation conducted by Wang et al.}
+\caption{We simulate one of Wang et al.'s~\shortcite{Wang2017} shape-changing pasta designs, consisting of a half-annulus decorated with concentric rings which are both thicker (and thus more bending-resistant) and less porous than the surronding material. Our simulation predicts qualitatively identical curling behavior of the pasta as both the physical experiment and volumetric FEM simulation conducted by Wang et al.}
 \label{fig:pasta}
 \end{figure}
 \paragraph{Shape-changing Food} Differential growth has been used to design gelatin films that fold into novel shapes, by exploiting the ability to fabricate the film into a bilayer of differing density and porosity~\cite{Wang2017}. Wang et al. validated their designs using a volumetric simulation in ABAQUS; in figure~\ref{fig:pasta} we compare their simulated and experimental results to our thin shell simulations, demonstrating that a reduced shell model can accurately predict the behavior of the bilayer without need of a volumetric simulation.
@@ -491,7 +491,7 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
 \begin{figure*}[h]
   \centering
    \includegraphics[width=\textwidth]{BunnyandArmadillo.png}
-  \caption{The figure shows the time evolution of a plastic bunny and a plastic armadillo as they shrink when exposed to heat (red beam in the figure), where redder parts have higher temperature.}
+  \caption{The figure shows the time evolution of a plastic armadillo and a plastic bunny as they shrink when exposed to localized heating (red beam in the figure), where redder parts have higher temperature.}
   \label{fig:BunnyandArmadillo}
 \end{figure*}
 
