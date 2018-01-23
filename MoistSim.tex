@@ -366,7 +366,7 @@ We recommend the usual technique of using the explicit Euler step $\tilde\bv = \
 $$\Lambda\delta \bv - \Delta t \bF\left(\tilde \bv + \Delta t\delta \bv, \bv^{i}\right) = 0 = \sigma(\delta \bv),$$
 which is well-scaled for using Newton's method to solve $\sigma(\delta \bv)=0$. The stiffness and nonlinearity of the elastic forces prohibit very large time steps, though a line search allows time integration using $\Delta t\approx 10^{-4}$ seconds.
 
-The Newton gradient $\nabla \sigma = \Lambda + \Delta t^2 \nabla \bF$ is symmetric and almost always positive-definite, and thus amenable to sparse Cholesky decomposition. We use the CHOLMOD solver of the SuiteSparse library~\cite{Chen08}\todo{Put in} for solving the Newton linear system. In the (rare) cases where $\nabla \sigma$ is detected by the solver to be indefinite, we regularize by using $\nabla \sigma = (1+\alpha)\Lambda + \Delta t^2 \nabla F$ for progressively larger multiples of $\alpha$, until the Cholesky decomposition succeeds.
+The Newton gradient $\nabla \sigma = \Lambda + \Delta t^2 \nabla \bF$ is symmetric and almost always positive-definite, and thus amenable to sparse Cholesky decomposition. We use the CHOLMOD solver of the SuiteSparse library~\cite{Chen08} for solving the Newton linear system. In the (rare) cases where $\nabla \sigma$ is detected by the solver to be indefinite, we regularize by using $\nabla \sigma = (1+\alpha)\Lambda + \Delta t^2 \nabla F$ for progressively larger multiples of $\alpha$, until the Cholesky decomposition succeeds.
 \paragraph{Inexact Hessian} The Hessian of the bending energy is expensive to compute, and almost always dominated by the Hessian of the (much stiffer) stretching term; we observed improved performance replacing the exact bending Hessian with a partial approximation. In particular, we can rewrite the bending energy on face $\bff_{ijk}$ as
 \begin{align*}
 E_{\mathrm{bending}}(\bv) &= \frac{h^3\sqrt{\det \bar\ba_{ijk}}}{24}\left(r_1(\bv)^2 + r_2(\bv)^2\right)\\
@@ -472,7 +472,7 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
     \centering
     \includegraphics[width=1\textwidth]{TorusandSphere.png}
     \caption{Deformed punctured plastic spheres with different temperature distribution with hotter region indicated as red are shown on the top panel. Plastic torus deformation due to heat source (red sphere) through time is shown in the bottom. }
-    \label{TorusandSphere}
+    \label{fig:TorusandSphere}
 \end{minipage}        
 \end{figure}  
 
@@ -486,7 +486,7 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
   \centering
    \includegraphics[width=\textwidth]{BunnyandArmadillo.png}
   \caption{The figure shows the time evolution of a plastic bunny and a plastic armadillo as they shrink when exposed to heat (red beam in the figure), where redder parts have higher temperature.}
-  \label{BunnyandArmadillo}
+  \label{fig:BunnyandArmadillo}
 \end{figure*}
 
 \paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:TorusandSphere}.
