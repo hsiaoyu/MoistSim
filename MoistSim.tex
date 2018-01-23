@@ -4,6 +4,7 @@
 %\usepackage{subfigure}
 \usepackage{subcaption}
 \usepackage{graphicx}
+\usepackage{tikz}
 %\graphicspath{{C:/Users/black/OneDrive/Documents/UT/Research/Shell/MoistInducedSim}}
 
 \newcommand{\ba}{\mathbf{a}}
@@ -125,6 +126,29 @@ Higher-order methods for simulating shells (including with e.g. NURBS or subdivi
 
 In this paper, we ignore the problem of mesh tessellation, or of adapting the mesh in response to either large deflections or large amounts of growth; such remeshing is an important component of a practical shell simulation but orthogonal to our focus on shell dynamics. ArcSim~\cite{Narain2012} incorporates a method of adaptive remeshing while avoiding significant popping artifacts, and has been used to generate impressive simulations of creasing paper. Vetter et al~\shortcite{Vetter13} study the companion problem of remeshing due to large in-plane growth, and present a solution based on adaptive Loop subdivision. \todo{check if this is actually true: do they adapt the mesh?}
 
+\begin{figure}
+\begin{tikzpicture}
+    \draw (0, 0) node[inner sep=0] {\includegraphics[width=\columnwidth]{technical.png}};
+    \draw (-3, -0.7) node {$\Omega$};
+    \draw (-0.4, -0.73) node {$h$};
+    \draw (-0.1, -0.18) node {$\br(x,y)$};
+    \draw (2, 0.8) node {$v_0$};
+    \draw (-0.4, 1.1) node {$\hn$};
+    \draw (3, 0.85) node {$v_1$};
+    \draw (2.6, 0.6) node {$\bff_{021}$};
+    \draw (3, -0.05) node {$v_2$};
+    \draw (3.5, 0.06) node {$\scriptsize{u_1}$};
+    \draw (3.8, 0.4) node {$\scriptsize{u_2}$};
+    \draw (4.2, 0.6) node {$v_4$};
+    \draw (4.2, -0.8) node {$v_3$};
+    \draw (1.8, -0.8) node {$\mathcal{T}$};
+    \draw (0.9, -1.4) node {$(0,0)$};
+    \draw (1.5, -.2) node {$(0,1)$};
+    \draw (3.5, -1.4) node {$(1,0)$};
+\end{tikzpicture}
+\caption{Left: the volumetric shell is parameterized by a slab $\Omega \times [-h/2,-h/2]$ around a region $\Omega$ in the plane. $\br$ maps $\Omega$ to the shell midsurface. Right: we parameterize all triangles of discrete shells by a single canonical triangle $\mathcal{T}$. We express all face-based quantities in the face's local barycentric coordinate system $(u_1,u_2)$, which is not consistent across faces.}
+\label{fig:technical}
+\end{figure}
 \section{Continuous Formulation} \label{sec:continuous}
 Before describing our discretization of shells, we briefly review the formulation in the continuous setting, as this formulation will guide our discretization. 
 
@@ -168,7 +192,7 @@ for volumetric density $\rho$, to which additional external energies and forces 
 \section{Discretization}
 We approximate the midsurface $\br$ with a triangle mesh $(V,E,F)$; the positions of the vertices $\bv = [\bv_1, \bv_2\,\ldots]$ take the place of the embedding function $\br$. The general strategy we will use is to assume that $\ba$ and $\bb$, as well as their rest counterparts $\bar\ba$ and $\bar\bb$, are constant over each face of the triangle mesh; it will then be straightforward to write down a discrete analogue of the Koiter elastic energy density in Equation~\eqref{eq:koiter}. 
 
-\paragraph{Discrete Shell Model} As in the continuous setting, the discrete shell does not necessarily have a rest state embeddable as a mesh in $\mathbb{R}^3$, making it impossible to parameterize the deformed configuration of the shell in terms of the rest configuration; additionally we do not want to assume (or compute) a global parameterization of the midsurface. Instead, we independently parameterize each triangle in its own barycentric coordinates (see Figure~\ref{XXX}). Let $\bff_{ijk}$ be a face in $F$ containing the vertices $\bv_i$,$\bv_j$, $\bv_k$, and denote by $\fT$ the canonical unit triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$. Then locally the face $\bff_{ijk}$ is embedded by the affine function
+\paragraph{Discrete Shell Model} As in the continuous setting, the discrete shell does not necessarily have a rest state embeddable as a mesh in $\mathbb{R}^3$, making it impossible to parameterize the deformed configuration of the shell in terms of the rest configuration; additionally we do not want to assume (or compute) a global parameterization of the midsurface. Instead, we independently parameterize each triangle in its own barycentric coordinates (see Figure~\ref{fig:technical}). Let $\bff_{ijk}$ be a face in $F$ containing the vertices $\bv_i$,$\bv_j$, $\bv_k$, and denote by $\fT$ the canonical unit triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$. Then locally the face $\bff_{ijk}$ is embedded by the affine function
 $$\br_{ijk}:\fT\to\mathbb{R}^3, \quad \br_{ijk}(u_1,u_2) = \bv_i + u_1(\bv_j-\bv_i)+u_2(\bv_k-\bv_i);$$
 under this embedding, the Euclidean metric on face $\bff_{ijk}$ pulls back to the constant first fundamental form
 $$\ba_{ijk} = \left[\begin{array}{cc} \|\bv_j-\bv_i\|^2 & (\bv_j-\bv_i)\cdot(\bv_k-\bv_i)\\
