@@ -393,7 +393,14 @@ $I$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0
 %$$\bar\ba = e^{2s}I, \qquad \bar\bb = 0$$
 %is expected to grow into $M$ (up to rigid motion), since $M$ is a global minimizer of the elastic energy. We use this fact as a basis for a test: we conformally map an outline of the United States to the unit disk using the method of Crane~\shortcite{}, assign a rest metric $\bar\ba$ per the above formula, and simulate the resulting growth of the shell. Figure~\ref{XXX} compares the initial shape to the simulation steady state.
 
-When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially when $M$ is convex and the shell thickness $h$ is small. Figure~\ref{XXX} shows the result of attempting to swell the unit disk into a sphere, using a prescribed conformal metric computed from stereographic projection, \todo{Etienne look up what you used}.
+When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially when $M$ is convex and the shell thickness $h$ is small. Figure~\ref{ContractingSphere} shows the result of attempting to swell the unit disk into a sphere, using a prescribed conformal metric computed from stereographic projection, \todo{Etienne look up what you used}.
+
+\begin{figure*}[h]
+  \centering
+  \includegraphics[width=\textwidth]{ContractingSphere.png}
+  \caption{\todo add caption}
+  \label{ContractingSphere}
+\end{figure*}
 
 \subsection{Comparisons to Experiments}
 We validate our simulated results against several real-world experiments.
@@ -421,24 +428,17 @@ Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geomet
 One advantage of our formulation of swelling thin shells is that it supports physical material parameters. In this section, we show results highlighting the importance of these parameters and their effects on the behavior of swelling and shrinking thin objects.
 
 \paragraph{Thickness}
-Since it controls the relative importance of stretching and bending, the thickness of a shell is its most important physical parameter. Changing the thickness will often dramatically change how a shell deforms. For example, when a moist paper annulus dries, it rolls up. Depending on its thickness, the annulus transitions through several intermediate shapes before rolling up completely: the outer boundary of the annulus lifts to form an $n$-sided polygon, with $n$ decreasing over time as one metastable configuration cascades into the next. \todo{Make sure this actually is visible} Figure~\ref{Annuli_noMD} shows the range of behavior for an annulus of inner radius $1$ cm and outer radius $2$ cm, and several paper thicknesses ($0.05$, $0.1$, $0.2$ and $0.5$ mm).
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{Annuli_noMD.png}
-    \caption{The figure shows the curling behavior of moist paper annuli as they dry. The amount of curling is dependent on the thickness of the paper annuli. From left to right, the thicknesses of the annuli are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. }
-  \label{Annuli_noMD}
-\end{figure}
+Since it controls the relative importance of stretching and bending, the thickness of a shell is its most important physical parameter. Changing the thickness will often dramatically change how a shell deforms. For example, when a moist paper annulus dries, it rolls up. Depending on its thickness, the annulus transitions through several intermediate shapes before rolling up completely: the outer boundary of the annulus lifts to form an $n$-sided polygon, with $n$ decreasing over time as one metastable configuration cascades into the next. \todo{Make sure this actually is visible} Figure~\ref{Annuli} shows the range of behavior for an annulus of inner radius $1$ cm and outer radius $2$ cm, and several paper thicknesses ($0.05$, $0.1$, $0.2$ and $0.5$ mm).
 
 \paragraph{Machine Direction}
-As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{XXX} we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure). Notice the dramatic change in the annulus dynamics, compared to Figure~\ref{Annuli_MD}.
+As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{XXX} we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure). Notice the dramatic change in the annulus dynamics, compared to Figure~\ref{Annuli}.
 
-\begin{figure}[h]
+\begin{figure*}[h]
   \centering
-  \includegraphics[width=\linewidth]{Annuli_MD.png}
-  \caption{The figure shows the curling behavior of moist paper annuli with a machine direction as they dry. The shape of the paper annuli are drastically different from the ones with no machine direction. Our simulation captures this commonly observed property of paper, where both thickness and machine direction affect the curling of the paper. The thicknesses of the paper annuli from left to right are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. }
-  \label{Annuli_MD}
-\end{figure}
+  \includegraphics[width=\textwidth]{Annuli.png}
+  \caption{The left figure shows the curling behavior of moist paper annuli as they dry. The amount of curling is dependent on the thickness of the paper annuli. From left to right, the thicknesses of the annuli are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. The right figure shows the curling behavior of moist paper annuli with a machine direction as they dry. The shape of the paper annuli are drastically different from the ones with no machine direction. Our simulation captures this commonly observed property of paper, where both thickness and machine direction affect the curling of the paper.}
+  \label{Annuli}
+\end{figure*}
 
 \subsection{Comparison to Jeong et al}
 As mentioned in the introduction, a classic example of differential shrinking is the drying of leaves in autumn. Jeong et al~\shortcite{Jeong2013} studied this phenomenon and proposed a method, based on a dual pair of Delaunay and Voronoi meshes, to model drying of leaves. Jeong et al. model several additional phenomena, such as the effect of the leaf vasculature on its bending resistance and water transport. Although we make no effort to reproduce these additional features, our simulations are nevertheless able to qualitatively predict the shapes of drying leaves. Figure~\ref{XXX} compares real leaves to the curling predicted by our method and by Jeong et al.
@@ -447,31 +447,35 @@ As mentioned in the introduction, a classic example of differential shrinking is
 We end with several experiments that demonstrate the flexibility of the method to simulate complex geometry undergoing complex nonlinear deformations due to differential swelling.
 
 \paragraph{The Spoon}
-Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{XXX}.\todo{reference for the video}
+Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{youtube}.
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.5\linewidth]{Spoon.png}
-  \caption{A real world experiment (top), our simulated spoon (bottom) where hotter parts are redder, and an inset of focusing on the distorted front of the spoon.}
-  \label{Spoon}
-\end{figure}
+\begin{figure}[!h]
+\begin{minipage}[t]{0.45\linewidth}
+    \centering
+    \includegraphics[width=1\textwidth]{Spoon.png}
+    \caption{A real world experiment (top), our simulated spoon (bottom) where hotter parts are redder, and an inset of focusing on the distorted front of the spoon.}
+    \label{Spoon}
+\end{minipage}
+\hspace{0.1cm}
+\begin{minipage}[t]{0.45\linewidth} 
+    \centering
+    \includegraphics[width=1\textwidth]{TorusandSphere.png}
+    \caption{Deformed punctured plastic spheres with different temperature distribution with hotter region indicated as red are shown on the top panel. Plastic torus deformation due to heat source (red sphere) through time is shown in the bottom.}
+    \label{TorusandSphere}
+\end{minipage}        
+\end{figure}  
 
-%\begin{wrapfigure}{r}{0.25\textwidth} %this figure will be at the right
-%    \centering
-%    \includegraphics[width=0.25\textwidth]{Spoon.png}
-%    \label{Spoon}
-%\end{wrapfigure}
 
 \paragraph{Shape-changing Food} Differential growth has been used to design gelatin films that fold into novel shapes, by exploiting the ability to fabricate the film into a bilayer of differing density and porosity~\cite{Wang2017}. Wang et al. validated their designs using a volumetric simulation in ABAQUS; in figure~\ref{XXX} we compare their simulated and experimental results to our thin shell simulations, demonstrating that a reduced shell model can accurately predict the behavior of the bilayer without need of a volumetric simulation.
 
 \begin{figure*}[h]
   \centering
-   \includegraphics[width=6.0in]{BunnyandArmadillo.png}
+   \includegraphics[width=\textwidth]{BunnyandArmadillo.png}
   \caption{The figure shows the time evolution of a plastic bunny and a plastic armadillo as they shrink when exposed to heat (red beam in the figure), where redder parts have higher temperature.}
   \label{BunnyandArmadillo}
 \end{figure*}
 
-\paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:XXX}.
+\paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:TorusandSphere}.
 
 
 
