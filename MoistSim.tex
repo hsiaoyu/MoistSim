@@ -131,6 +131,7 @@ Thin shells first caught the interest of the graphics community in the context o
 \begin{center}
 \includegraphics[width=1.6in]{cyls.png}
 \end{center}
+\label{fig:cyls}
 \end{wrapfigure}
 
 Grinspun et al~\shortcite{Grinspun2003} introduced to graphics the simulation of shells with non-zero rest curvature. Their formulation is based on \emph{differences of squared mean curvature}, leading to a simple and easy-to-discretize bending energy. This model is physically suspect, however: consider a half-cylinder at rest when curled around the $x$-axis. Unbend the shell and re-bend it around the $y$-axis; the deformed configuration's strain cannot be captured by looking at mean curvature alone, as it is pointwise identical to the mean curvature of the rest configuration (see inset). Complete support for rest curvature therefore requires a bending energy that incorporates full information about the extrinsic deformation of the shell~\cite{Grinspun2006}. One such discrete energy is described in Weischedel's work on discrete Cosserat shells~\shortcite{Weischedel2012}; our exposition is modeled closely on hers, though we make different modeling choices (we use an intrinsic rather than Cosserat shell model, and require more flexible handling of the shell rest geometry).
@@ -353,7 +354,9 @@ s(u_1,u_2,z) &= \sum_{v\in \{i,j,k\}} \left(s_v^+ \psi_v^+ + s_v^- \psi_v^-\righ
 parameterized over the prism $\mathcal{T}\times [-h/2,h/2]$ surrounding the canonical unit triangle. In other words
 $$\psi_i^\pm = \frac{(1-u_1-u_2)}{h}\left(\frac{h}{2}\pm z\right); \psi_j^{\pm} = \frac{u_1}{h}\left(\frac{h}{2}\pm z\right); \psi_k^{\pm} = \frac{u_2}{h}\left(\frac{h}{2}\pm z\right).$$
 %wim: changed phi to psi since phi is used for embedding
-Formulas for the Galerkin mass and stiffness matrices $M_G$ and $K_G$ are listed in Appendix~\ref{XXX}\todo{Copy in formulas}; from these the moisture is updated each time step using implicit time integration,
+% Formulas for the Galerkin mass and stiffness matrices $M_G$ and $K_G$ are listed in Appendix~\ref{XXX}\todo{Copy in formulas}; 
+
+From the above equations, the moisture is updated each time step using implicit time integration,
 \begin{equation}
 (M_G+ \Delta t DK_G)\bmm^{i+1} = M_G(\bmm^i + \Delta t \bs^i) \label{eq:discdiffusion}
 \end{equation}
