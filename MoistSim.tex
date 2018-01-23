@@ -315,7 +315,7 @@ Swelling constant $\mu^{\perp}$ & $0.001$
 \item The configuration $\bv$ and configurational velocity $\dot\bv$. These vertex positions completely encode the kinematics of the discrete shell. 
 \item Two matrices $\bar \ba$ and $\bar \bb$ per face in $F$, both symmetric, and with $\bar \ba$ positive-definite. These matrices store information about the rest state of the discrete shell, and may change over the course of the simulation. In most of our simulations, the mechanism for changes in the shell rest state is either change in temperature or absorption/evaporation of moisture; in this case we store two scalars $m^+$ and $m^-$ per vertex, indicating temperature/moisture concentration on the top and bottom boundary of the shell, and $\bar\ba$ and $\bar\bb$ are computed from these scalars, as described above.
 \end{itemize}
-In addition, we track a machine direction $\bd$ per face, which doesn't change over the course of the simulation; finally Table~\ref{tab:params} lists the physical parameters and constants on which the simulation depends, as well as reasonable values of these parameters for the special case of ordinary paper. We use these default values in all experiments described below, unless specified otherwise.
+In addition, we track a machine direction $\bd$ per face, which stays constant over the course of the simulation; finally Table~\ref{tab:params} lists the physical parameters and constants on which the simulation depends, as well as reasonable values of these parameters for the special case of ordinary paper. We use these default values in all experiments described below, unless specified otherwise.
 
 \paragraph{Time Integration} We integrate the equations of motion using implicit Euler time integration:
 \begin{align}
@@ -403,7 +403,7 @@ Ordinary paper, when moistened on one side (by painting water on the top side, o
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{WaterPainting.png}
-  \caption{A comparison between the experiment (left), simulation (middle), and the thickened cross-section (right) as time progresses for a water-painted paper strip. The moisture is indicated as yellow, and the simulation of the cross-section shows the diffusion of moisture inside the paper strip.}
+  \caption{A comparison between the experiment (left), simulation (middle), and the thickened cross-section (right) as time progresses for a water-painted paper strip. Yellow indicates higher moisture content. The simulation shows the diffusion of moisture through the cross-section of the paper strip.}
   \label{WaterPainting}
 \end{figure}
 
@@ -413,7 +413,7 @@ Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geomet
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{SwellingDisc.png}
-  \caption{We compare the experimental result by Sharon and Efrati (top) with our simulation (bottom). Bluer indicates higher growth rate. }
+  \caption{We compare the experimental result by Sharon and Efrati (top) with our simulation (bottom). Blue regions correspond with higher growth rates. }
   \label{SwellingDisc}
 \end{figure}
 
@@ -426,7 +426,7 @@ Since it controls the relative importance of stretching and bending, the thickne
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{Annuli_noMD.png}
-  \caption{The figure shows the curling behavior of moisten paper annuli as they dry. The amount of curling is dependent on the thickness of the paper annuli, and the thicknesses from left to right are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. }
+    \caption{The figure shows the curling behavior of moist paper annuli as they dry. The amount of curling is dependent on the thickness of the paper annuli. From left to right, the thicknesses of the annuli are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. }
   \label{Annuli_noMD}
 \end{figure}
 
@@ -436,14 +436,12 @@ As mentioned above, when paper is manufactured, paper fibers tend to be arranged
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{Annuli_MD.png}
-  \caption{The figure shows the curling behavior of moisten paper annuli with a machine direction as they dry. The shape of the paper annuli are drastically different from the ones with no machine direction. Our simulation captures this commonly observed property of paper, where both thickness and machine direction affect the curling of the paper. The thicknesses of the paper annuli from left to right are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. }
+  \caption{The figure shows the curling behavior of moist paper annuli with a machine direction as they dry. The shape of the paper annuli are drastically different from the ones with no machine direction. Our simulation captures this commonly observed property of paper, where both thickness and machine direction affect the curling of the paper. The thicknesses of the paper annuli from left to right are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. }
   \label{Annuli_MD}
 \end{figure}
 
 \subsection{Comparison to Jeong et al}
 As mentioned in the introduction, a classic example of differential shrinking is the drying of leaves in autumn. Jeong et al~\shortcite{Jeong2013} studied this phenomenon and proposed a method, based on a dual pair of Delaunay and Voronoi meshes, to model drying of leaves. Jeong et al. model several additional phenomena, such as the effect of the leaf vasculature on its bending resistance and water transport. Although we make no effort to reproduce these additional features, our simulations are nevertheless able to qualitatively predict the shapes of drying leaves. Figure~\ref{XXX} compares real leaves to the curling predicted by our method and by Jeong et al.
-
-
 
 \subsection{Qualitative Experiments}
 We end with several experiments that demonstrate the flexibility of the method to simulate complex geometry undergoing complex nonlinear deformations due to differential swelling.
