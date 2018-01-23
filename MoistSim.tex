@@ -374,14 +374,14 @@ We evaluate the simulation on a variety of examples, both didactic and complex.
 \subsection{Analytic Benchmarks}
 We first test the method on examples where the equilibrium state can be computed exactly. When an embedding $\br$ exists for which $\ba = \bar \ba$ and $\bb = \bar\bb$, that embedding is clearly a global minimizer of the elastic energy, regardless of material parameters. We ran all of the following experiments using the default values in Table~\ref{tab:params}. We ran the simulation for enough time for the simulation to reach steady state.
 
-\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\mathrm{id}$, and assign a constant $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. We ran the simulation using a coarse and fine mesh (\todo{XXX} and \todo{ZZZ} vertices respectively); simulated and exact solutions are compared in Figure~\ref{XXX}. 
+\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\mathrm{id}$, and assign a constant $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. We ran the simulation using a coarse and fine mesh (171 and 804 vertices respectively); simulated and exact solutions are compared in Figure~\ref{XXX}. 
 \begin{table*}
 \begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & $H$  & $K$ & Error (coarse) & Error (fine) \\
-$4I$ & $0$ & Enlarged Square & $0$ & $0$ & \todo{XXX} & XXX \\
-$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & 0.018 & XXX \\
+$4I$ & $0$ & Enlarged Square & $0$ & $0$ & 1e-5 & 2e-6 \\
+$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & 0.018 & \todo{XXX} \\
 $\begin{pmatrix}1+x^2 & -xy \\ -xy & 1+y^2\end{pmatrix}$ & $\frac{1}{\sqrt{1+x^2+y^2}}\begin{pmatrix}-1 & 0\\0 & 1\end{pmatrix}$ & Hyperboloid Cap & varies & $<-1$ & 0.025 & 0.0049 \\
-$\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & 0.0001 & XXX \\
+$\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & 0.0001 & 3e-5 \\
 $I$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0$ & 0.02 & 0.015
 \end{tabular}
 \caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed over the square, and in each case we compare the simulated steady state to the expected analytic solution.}
@@ -428,7 +428,7 @@ Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geomet
 One advantage of our formulation of swelling thin shells is that it supports physical material parameters. In this section, we show results highlighting the importance of these parameters and their effects on the behavior of swelling and shrinking thin objects.
 
 \paragraph{Thickness}
-Since it controls the relative importance of stretching and bending, the thickness of a shell is its most important physical parameter. Changing the thickness will often dramatically change how a shell deforms. For example, when a moist paper annulus dries, it rolls up. Depending on its thickness, the annulus transitions through several intermediate shapes before rolling up completely: the outer boundary of the annulus lifts to form an $n$-sided polygon, with $n$ decreasing over time as one metastable configuration cascades into the next. \todo{Make sure this actually is visible} Figure~\ref{Annuli} shows the range of behavior for an annulus of inner radius $1$ cm and outer radius $2$ cm, and several paper thicknesses ($0.05$, $0.1$, $0.2$ and $0.5$ mm).
+Since it controls the relative importance of stretching and bending, the thickness of a shell is its most important physical parameter. Changing the thickness will often dramatically change how a shell deforms. For example, when a moist paper annulus dries, it rolls up. Depending on its thickness, the annulus transitions through several intermediate shapes before rolling up completely: the outer boundary of the annulus lifts to form an $n$-sided polygon, with $n$ decreasing over time as one metastable configuration cascades into the next. Figure~\ref{Annuli} shows the range of behavior for an annulus of inner radius $1$ cm and outer radius $2$ cm, and several paper thicknesses ($0.05$, $0.1$, $0.2$ and $0.5$ mm).
 
 \paragraph{Machine Direction}
 As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{XXX} we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure). Notice the dramatic change in the annulus dynamics, compared to Figure~\ref{Annuli}.
