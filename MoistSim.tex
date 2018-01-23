@@ -182,6 +182,13 @@ We therefore record the rest state of the shell using a \emph{rest metric} $\bar
 $$\bar\bg(x,y,z) = \left[\begin{array}{cc}\bar\ba(x,y) - 2z\bar\bb(x,y) & 0\\0 & 1\end{array}\right].$$
 A shell that begins a simulation at rest will simply have $\bar\ba = \ba^0$ and $\bar\bb = \bb^0$, where $\ba^0$ and $\bb^0$ are the values of $\ba$ and $\bb$ at the start of the simulation, respectively; this setup is a special case of a shell which has a rest state specified by a ``rest surface'' $\bar\br$ that is isometrically embeddable in $\mathbb{R}^3$, in which case $\bar\ba$ and $\bar\bb$ are the first and second fundamental forms of that rest surface. Therefore $\bar\ba$ and $\bar\bb$ can be thought of as representing the ``rest metric'' and ``rest curvature'' of the shell's midsurface, respectively.\footnote{We stress, though, that these labels are to provide intuition only---$\bar\ba$ and $\bar\bb$ must not, and generally will not, satisfy usual relationships from differential geometry such as the Gauss-Codazzi-Mainardi equations.}
 
+\begin{figure*}[h]
+  \centering
+  \includegraphics[width=\textwidth]{ContractingSphere.png}
+  \caption{Stereographic projecion of the disk into the plane yields a conformal parameterization of one by the other (left); we set $\bar\bb=0$ and $\bar\ba$ to this conformal metric, and simulate the disk dynamics as it relaxes to equilibrium by adopting a spherical shape (right).}
+  \label{ContractingSphere}
+\end{figure*}
+
 To summarize, our parameterization of thin shells involves the following kinematic elements:
 \begin{itemize}
 \item a thickness $h$ and parameterization domain $\Omega\subset\mathbb{R}^2$, both of which are fixed over the course of the simulation;
@@ -240,6 +247,13 @@ leading to the formula
 $$\bb_{ijk} = \frac{1}{2}\left[\begin{array}{cc}(\hn_i-\hn_j)\cdot(\bv_i-\bv_j) & (\hn_i-\hn_j)\cdot(\bv_i-\bv_k) \\ (\hn_i-\hn_k)\cdot(\bv_i-\bv_j) & (\hn_i-\hn_k)\cdot(\bv_i-\bv_k)\end{array}\right].$$
 (Alternatively, this formula can be derived by discretizing the relation $\bb = -d\br^Td\hn$ using divided differences). Although it may not appear so at first, the matrix $\bb_{ijk}$ is always symmetric (since each mid-edge normal is orthogonal to that edge); it is not in general positive-definite.\footnote{As observed by Grinspun et al~\shortcite{Grinspun2006}, the \emph{shape operator} $d\hn$ in the continuous setting always maps tangent vectors to tangent vectors, whereas in the discrete setting the finite difference of mid-edge normals is not always parallel to the mesh triangle. This discrepancy is a consequence of the failure of edge-offset meshes to also be face-offsets. Corrections to the shape operator have been proposed to remedy this quirk, though we found them unnecessary (and in any case, any components of $d\hn$ that lie orthogonal to the face are annihilated when forming the second fundamental form $-d\br^Td\hn$).} We represent the rest second fundamental form $\bar\bb_{ijk}$ by an arbitrary symmetric $2\times 2$ matrix assigned to each face.
 
+\begin{figure}
+\centering
+    \includegraphics[width=0.5\textwidth]{PastaCombined.png}
+\caption{We simulate one of Wang et al.'s~\shortcite{Wang2017} shape-changing pasta designs, consisting of a half-annulus decorated with concentric rings which are both thicker (and thus more bending-resistant) and less porous than the surronding material. Our simulation predicts qualitatively identical curling behavior of the pasta as both the physical experiment and volumetric FEM simulation conducted by Wang et al.}
+\label{fig:pasta}
+\end{figure}
+
 \paragraph{Choosing Rest Fundamental Forms}
 Depending on the mechanism for growth being simulated, there are several choices for how to set and update $\bar\ba$ and $\bar\bb$:
 \begin{itemize}
@@ -291,6 +305,12 @@ anisotropically stretches in the machine direction. As in the previous cases, th
 $$\bar\ba = \frac{\bar\bg^++\bar\bg^-}{2}, \qquad \bar\bb = \frac{\bar\bg^- - \bar\bg^+}{2h}.$$
 \end{itemize}
 
+\begin{figure*}[h]
+  \centering
+   \includegraphics[width=\textwidth]{BunnyandArmadillo.png}
+  \caption{The figure shows the time evolution of a plastic armadillo and a plastic bunny as they shrink when exposed to localized heating (red beam in the figure), where redder parts have higher temperature.}
+  \label{fig:BunnyandArmadillo}
+\end{figure*}
 
 \paragraph{Elastic Energy} We can now write down the full elastic energy of the shell, in exact analogy to the Koiter energy:
 \begin{align*}
@@ -345,6 +365,13 @@ Moisture diffuses in both the thickness and in-plane directions of the shell, an
 s(x,y,z), & z=\pm h/2,\end{cases} \label{eq:diffusion}
 \end{equation}
 where $D$ is the diffusion coefficient, $\Delta_{\bg}$ is the intrinsic Laplace-Beltrami operator with respect to the volumetric metric $\bg$, and $s$ is a source term describing diffusion into (or out) of the shell from the environment.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{WaterPainting.png}
+  \caption{A comparison between the experiment (left), simulation (middle), and the thickened cross-section (right) as time progresses for a water-painted paper strip. Orange and green indicate high and low moisture content, respectively.}
+  \label{WaterPainting}
+\end{figure}
 
 We discretize equation~\eqref{eq:diffusion} with bilinear Galerkin finite elements on the triangular prisms $F\times[-h/2,h/2]$; the solution $m$ and source term $s$ in the prism surrounding face $\bff_{ijk}$ are approximated by linear combinations of basis functions 
 \begin{align*}
@@ -416,24 +443,10 @@ $\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & 
 
 When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially when $M$ is convex and the shell thickness $h$ is small. Figure~\ref{ContractingSphere} shows the result of swelling the unit disk into a sphere: we stereographically project the sphere of radius $1/4$ units to the plane, and take the region bounded by the unit disk. Stereographic projection is conformal, so we set $\bar\ba$ on the unit disk per the conformal factor, and simulate the damped dynamics of the disk returning to its equilibrium state. Notice that the disk transitions through highly deformed intermediate states before ``popping'' back into a spherical shape. The rest state is not perfectly spherical at the boundary: the shell flares outward, as expected since the perfectly spherical configuration minimizes stretching energy while neglecting bending. A theoretical argument for this behavior at the boundary is given in \cite{Efrati2009_2}.
 
-\begin{figure*}[h]
-  \centering
-  \includegraphics[width=\textwidth]{ContractingSphere.png}
-  \caption{Stereographic projecion of the disk into the plane yields a conformal parameterization of one by the other (left); we set $\bar\bb=0$ and $\bar\ba$ to this conformal metric, and simulate the disk dynamics as it relaxes to equilibrium by adopting a spherical shape (right).}
-  \label{ContractingSphere}
-\end{figure*}
-
 \subsection{Comparisons to Experiments}
 We validate our simulated results against several real-world experiments.
 \paragraph{Curling of Paper}
 Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. We compare experiment and simulation of this behavior, for a rectangular paper strip of dimensions. We use a brush to moisten a piece of real paper, and compare the video of the curling and uncurling of the paper to a simulation of the same phenomenon. Figure~\ref{WaterPainting} shows the experiment, the simulation, and a stylized, thickened cross-section of the paper showing the difference in moisture concentration through the paper thickness over time.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{WaterPainting.png}
-  \caption{A comparison between the experiment (left), simulation (middle), and the thickened cross-section (right) as time progresses for a water-painted paper strip. Orange and green indicate high and low moisture content, respectively.}
-  \label{WaterPainting}
-\end{figure}
 
 \paragraph{Radial Swelling of Disk}
 Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geometry of non-Euclidean plates, induced non-uniform growth in a punctured disk of NIPA polymer by varying the cross-linking ratio as a function of the radius away from the disk's center. Our simulations are able to reproduce the geometries they observed experimentally. Figure~\ref{SwellingDisc} compares experiment and simulations.
@@ -454,19 +467,6 @@ Since it controls the relative importance of stretching and bending, the thickne
 \paragraph{Machine Direction}
 As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{Annuli} (right) we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure). Notice the dramatic change in the annulus dynamics, compared to Figure~\ref{Annuli} (left).
 
-\begin{figure*}[h]
-  \centering
-  \includegraphics[width=\textwidth]{Annuli.png}
-  \caption{The left figure shows the curling behavior of moist paper annuli as they dry, with time increasing from top to bottom. Varying the thickness (from left to right, the thicknesses of the annuli are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5 mm) demonstrates that the amount and type of curling is strongly dependent on the thickness of the material. The right figure shows the same annuli endowed with a principal machine direction along the $x$ axis (directed from left-to-right in the figure): the dynamics are markedly different from the case of no machine direction. }
-  \label{Annuli}
-\end{figure*}
-
-\subsection{Qualitative Experiments}
-We end with several experiments that demonstrate the flexibility of the method to simulate complex geometries undergoing nonlinear deformations due to differential swelling.
-
-\paragraph{The Spoon}
-Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{youtube}.
-
 \begin{figure}[!h]
 \begin{minipage}[t]{0.45\linewidth}
     \centering
@@ -481,22 +481,22 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
     \caption{Deformed punctured plastic spheres with different temperature distribution with hotter region indicated as red are shown on the top panel. Plastic torus deformation due to heat source (red sphere) through time is shown in the bottom. }
     \label{fig:TorusandSphere}
 \end{minipage}        
-\end{figure}  
-
-\begin{figure}
-\centering
-    \includegraphics[width=0.5\textwidth]{PastaCombined.png}
-\caption{We simulate one of Wang et al.'s~\shortcite{Wang2017} shape-changing pasta designs, consisting of a half-annulus decorated with concentric rings which are both thicker (and thus more bending-resistant) and less porous than the surronding material. Our simulation predicts qualitatively identical curling behavior of the pasta as both the physical experiment and volumetric FEM simulation conducted by Wang et al.}
-\label{fig:pasta}
 \end{figure}
-\paragraph{Shape-changing Food} Differential growth has been used to design gelatin films that fold into novel shapes, by exploiting the ability to fabricate the film into a bilayer of differing density and porosity~\cite{Wang2017}. Wang et al. validated their designs using a volumetric simulation in ABAQUS; in figure~\ref{fig:pasta} we compare their simulated and experimental results to our thin shell simulations, demonstrating that a reduced shell model can accurately predict the behavior of the bilayer without need of a volumetric simulation.
 
 \begin{figure*}[h]
   \centering
-   \includegraphics[width=\textwidth]{BunnyandArmadillo.png}
-  \caption{The figure shows the time evolution of a plastic armadillo and a plastic bunny as they shrink when exposed to localized heating (red beam in the figure), where redder parts have higher temperature.}
-  \label{fig:BunnyandArmadillo}
+  \includegraphics[width=\textwidth]{Annuli.png}
+  \caption{The left figure shows the curling behavior of moist paper annuli as they dry, with time increasing from top to bottom. Varying the thickness (from left to right, the thicknesses of the annuli are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5 mm) demonstrates that the amount and type of curling is strongly dependent on the thickness of the material. The right figure shows the same annuli endowed with a principal machine direction along the $x$ axis (directed from left-to-right in the figure): the dynamics are markedly different from the case of no machine direction. }
+  \label{Annuli}
 \end{figure*}
+
+\subsection{Qualitative Experiments}
+We end with several experiments that demonstrate the flexibility of the method to simulate complex geometries undergoing nonlinear deformations due to differential swelling.
+
+\paragraph{The Spoon}
+Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{youtube}.
+
+\paragraph{Shape-changing Food} Differential growth has been used to design gelatin films that fold into novel shapes, by exploiting the ability to fabricate the film into a bilayer of differing density and porosity~\cite{Wang2017}. Wang et al. validated their designs using a volumetric simulation in ABAQUS; in figure~\ref{fig:pasta} we compare their simulated and experimental results to our thin shell simulations, demonstrating that a reduced shell model can accurately predict the behavior of the bilayer without need of a volumetric simulation.
 
 \paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:TorusandSphere}.
 
