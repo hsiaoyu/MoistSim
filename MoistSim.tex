@@ -116,7 +116,7 @@ Simulating these common types of deformations requires simulating how the object
 
 Steps towards a more principled elastic model include the use of a mass-spring network to represent the shell, with update rules for how spring rest lengths should change due to physical processes in the shell. Such rules are simplest to formulate in the case where growth or shrinkage is uniform through the shell thickness, and the shell can be represented using a single spring layer; Larboulette et al~\shortcite{Larboulette2013} present such a rule, which includes handling of the \emph{machine direction} of paper: a bias in the orientation of the fibers composing the paper which causes the paper to swell anisotropically. We adopt this parameter in our material model. 
 
-Most similar to our work is the method of Jeong et al~\shortcite{Jeong2011,Jeong2013}, which uses a \emph{bilayer} of springs (a triangle mesh and its circumcentric dual, offset a distance from the primal mesh) to represent the shell. The bilayer allows the method to capture \emph{differential} growth due to gradients in moisture concentration across the thickness of leaves, leading to visually impressive simulations of leaves curling as they dry. Our work is based on the same fundamental idea (representing the shell using a rest geometry that varies linearly through the thickness \todo{wim: linear variation of geometry does not make sense}) but couched in the machinery of differential geometry; our formulation allows us to easily incorporate non-zero rest curvature, machine direction, and a physical material model. 
+Most similar to our work is the method of Jeong et al~\shortcite{Jeong2011,Jeong2013}, which uses a \emph{bilayer} of springs (a triangle mesh and its circumcentric dual, offset a distance from the primal mesh) to represent the shell. The bilayer allows the method to capture \emph{differential} growth due to gradients in moisture concentration across the thickness of leaves, leading to visually impressive simulations of leaves curling as they dry. Our work is based on the same fundamental idea (representing the shell using a rest strain that varies linearly through the thickness) but couched in the machinery of differential geometry; our formulation allows us to easily incorporate non-zero rest curvature, machine direction, and a physical material model.
 % wim : swapped last two : makes more sense to go from no physical model, to spring-based monolayer, to spring-based bilayer [and most similar to this work]
 
 \paragraph{Mechanics of Shells}
@@ -126,11 +126,13 @@ For the sake of being self-contained, we briefly review the geometric foundation
 
 \paragraph{Computational Modeling of Thin Shells} 
 Thin shells first caught the interest of the graphics community in the context of simulating cloth~\cite{Baraff1998,Bridson2002}. These early methods tended to focus on thin \emph{plates}, i.e. shells that have a flat rest configuration, and formulate shell dynamics in terms of either hinge-based bending energies~\cite{Sullivan2008,Tamstorf2013} or the insight that the bending energy can be written in terms of the intrinsic Laplace-Beltrami operator applied to the shell's embedding function~\cite{Bobenko2005,Bergou2006,Wardetzky2007}. 
+
 \begin{wrapfigure}{r}{1.6in}
 \begin{center}
 \includegraphics[width=1.6in]{cyls.png}
 \end{center}
 \end{wrapfigure}
+
 Grinspun et al~\shortcite{Grinspun2003} introduced to graphics the simulation of shells with non-zero rest curvature. Their formulation is based on \emph{differences of squared mean curvature}, leading to a simple and easy-to-discretize bending energy. This model is physically suspect, however: consider a half-cylinder at rest when curled around the $x$-axis. Unbend the shell and re-bend it around the $y$-axis; the deformed configuration's strain cannot be captured by looking at mean curvature alone, as it is pointwise identical to the mean curvature of the rest configuration (see inset). Complete support for rest curvature therefore requires a bending energy that incorporates full information about the extrinsic deformation of the shell~\cite{Grinspun2006}. One such discrete energy is described in Weischedel's work on discrete Cosserat shells~\shortcite{Weischedel2012}; our exposition is modeled closely on hers, though we make different modeling choices (we use an intrinsic rather than Cosserat shell model, and require more flexible handling of the shell rest geometry).
 
 Higher-order methods for simulating shells (including with NURBS or subdivision elements) are common in computational mechanics and isogeometric analysis~\cite{Batoz1980,Bathe1983,Cirak2000,Kiendl2009,Benson2010,Bandara2018} and have also been proposed for computer graphics~\cite{Wawrzinek2011} and growing shells \shortcite{Vetter13}. High-order methods have some obvious advantages (better convergence behavior in the thin limit, continuous surface normals) at the cost of additional computation and complexity, especially when handling contact.
@@ -316,7 +318,7 @@ Viscosity $\eta$ & $0.001\ \mathrm{Pa}\cdot\mathrm{s}$\\
 Swelling constant $\mu$ & $0.0025$\\
 Swelling constant $\mu^{\perp}$ & $0.001$
 \end{tabular}
-\caption{Table of reasonable physical parameters for ordinary paper. \todo{wim: citation?}}
+\caption{Table of reasonable physical parameters for ordinary paper.}
 \label{tab:params}
 \end{table}
 \paragraph{Summary} In the discrete simulation, we track the following variables:
@@ -355,7 +357,7 @@ Formulas for the Galerkin mass and stiffness matrices $M_G$ and $K_G$ are listed
 \begin{equation}
 (M_G+ \Delta t DK_G)\bmm^{i+1} = M_G(\bmm^i + \Delta t \bs^i) \label{eq:discdiffusion}
 \end{equation}
-where $D$ is the diffusion coefficient, and $\bs^i$ is the discretized source term. This source term $\bs_i^{\pm}$ prescribes at each vertex the rate of diffusion of moisture in or out of the shell at both the top and bottom layer of the shell; the details of this term depend on the problem being modeled. \todo{wim: bit of a mess here with bold, scalar, subscripts and superscripts. superscripts is mixed for time and $\pm$, also maybe use index $n$ for time and $i$ for space throughout to distinguish better?}.
+where $D$ is the diffusion coefficient, and $\bs^i$ is the discretized source term. This source term $\bs_i^{\pm}$ prescribes at each vertex the rate of diffusion of moisture in or out of the shell at both the top and bottom layer of the shell; the details of this term depend on the problem being modeled.
 
 When the mechanism for swelling/shrinking is heat rather than moisture, the above diffusion formulation remains unchanged, with $m$ reinterpreted as temperature rather than moisture.
 
@@ -393,7 +395,7 @@ We first test the method on examples where the equilibrium state can be computed
 \begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & $H$  & $K$ & Error (coarse) & Error (fine) \\
 $4\Id$ & $0$ & Enlarged Square & $0$ & $0$ & 1e-5 & 2e-6 \\
-$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & 0.018 & \todo{XXX} \\
+$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & 0.025 & 0.018 \\
 $\begin{pmatrix}1+x^2 & -xy \\ -xy & 1+y^2\end{pmatrix}$ & $\frac{1}{\sqrt{1+x^2+y^2}}\begin{pmatrix}-1 & 0\\0 & 1\end{pmatrix}$ & Hyperboloid Cap & varies & $<-1$ & 0.025 & 0.0049 \\
 $\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & 0.0001 & 3e-5 \\
 $\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0$ & 0.02 & 0.015
@@ -419,7 +421,7 @@ When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the
 \subsection{Comparisons to Experiments}
 We validate our simulated results against several real-world experiments.
 \paragraph{Curling of Paper}
-Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. We compare experiment and simulation of this behavior, for a rectangular paper strip of dimensions \todo{Hsiao-Yu look up}. We use a brush to moisten a piece of real paper, and compare the video of the curling and uncurling of the paper to a simulation of the same phenomenon. Figure~\ref{WaterPainting} shows the experiment, the simulation, and a stylized, thickened cross-section of the paper showing the difference in moisture concentration through the paper thickness as the simulation progresses.
+Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. We compare experiment and simulation of this behavior, for a rectangular paper strip of dimensions. We use a brush to moisten a piece of real paper, and compare the video of the curling and uncurling of the paper to a simulation of the same phenomenon. Figure~\ref{WaterPainting} shows the experiment, the simulation, and a stylized, thickened cross-section of the paper showing the difference in moisture concentration through the paper thickness as the simulation progresses.
 
 \begin{figure}[h]
   \centering
@@ -490,7 +492,6 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
 \end{figure*}
 
 \paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:TorusandSphere}.
-
 
 
 \bibliographystyle{ACM-Reference-Format}
