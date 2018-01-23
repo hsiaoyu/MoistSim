@@ -5,6 +5,7 @@
 \usepackage{subcaption}
 \usepackage{graphicx}
 %\graphicspath{{C:/Users/black/OneDrive/Documents/UT/Research/Shell/MoistInducedSim}}
+\usepackage{wrapfig}
 
 \newcommand{\ba}{\mathbf{a}}
 \newcommand{\bb}{\mathbf{b}}
@@ -50,7 +51,7 @@
 
 % Title. 
 % If your title is long, consider \title[short title]{full title} - "short title" will be used for running heads.
-\title{Physical Simulation of Moisture Induced Thin Shell Deformation}
+\title{Physical Simulation of Environmentally Induced Thin Shell Deformation}
 
 % Authors.
 \author{Hsiao-yu Chen}
@@ -102,14 +103,14 @@
 \maketitle
 
 \section{Introduction}
-Consider the wrinkling and curling of a drying life. The change in shape is due to differential evaporation of the moisture in the leaf: water escapes the side exposed to the sun, and the boundaries of the leaf, faster than the underside of the leaf~\cite{Jeong2013}. \todo{check this is actually what they say} The cells making up the leaf shrink as they lose water, so that as moisture evaporates nonuniformly over the leaf, the leaf's geometry changes nonuniformly, causing the leaf to curl up. Related phenomena are the swelling and wrinkling of paper when exposed to water, such as when coffee is spilled on a notebook page, or the wrinkling and shrinking of plastic when heated. Although the physical mechanisms in these examples are different (shrinking of cells vs swelling of fibers vs contraction of polymers) the \emph{effect} on the objects is the same: the intrinsic geometry of the thin objects is changing over time in response to dynamic changes in the environment. 
+Consider the wrinkling and curling of a drying leaf. As the leaf dries out, water evaporates from the tissue, which in turn contracts in volume. Differential shrinking, due to having one side exposed to the sun, or having boundaries farther away from the veins than interior, then leads to non-uniform curvature and curling of the leaf ~\cite{Xiao2011, Jeong2013}. Related phenomena are the swelling and wrinkling of paper when exposed to water, such as when coffee is spilled on a notebook page, or the wrinkling and shrinking of plastic when heated. Although the physical mechanisms in these examples are different (shrinking of cells vs swelling of fibers vs contraction of polymers) the \emph{effect} on the objects is the same: the intrinsic geometry of the thin objects is changing over time in response to dynamic changes in the environment. 
 
-Simulating these common types of deformations in thin objects requires the ability to correctly model how the geometry changes in response to environmental stimuli. Of course, one could model the leaf as a volume, and simulate the change in moisture of every cell over time. However, such a volumetric model is computationally expensive, and unnecessary: although it is important to capture the non-uniformity of moisture across the surface of the leaf, as well as through the thickness of the leaf, because the leaf is so thin relative to its surface diameter, it is sufficient to assume that the moisture varies linearly through the thickness. This observation motivates the use of a reduced shell model, augmented to track and account for changes in moisture in both the in-plane and thickness direction over time, for simulating the leaf.
+Simulating these common types of deformations requires simulating how the object shape changes in response to changes in its intrinsic geometry, and how the intrinsic geometry changes in response to environmental stimuli. Of course, one could model the leaf as a volume, and simulate the change in moisture and elastic response of every cell over time. However, such a volumetric model is computationally expensive, and unnecessary: because the structures we consider here are so thin relative to their surface diameter, it is sufficient to assume that all strains vary linearly through the thickness. This observation motivates the use of a reduced elastic shell model, augmented to track and account for changes in the environmental stimulus in both the in-plane and thickness direction over time, for simulating environmentally-induced thin shell deformations.
 
 \paragraph{Contribution} We present a low-order discrete shell model tailored to simulating non-uniform, anisotropic, differential swelling and shrinking of thin shells. This model is needed for simulating real-world thin materials whose geometry changes in response to stimuli such as heat, moisture, and growth. In contrast to previous methods for simulating such phenomena, our formulation builds on discrete geometric shell theory and supports arbitrary rest curvature and strain, and physical settings such as thickness and Lam\'{e} parameters. We couple our shell model to a simple formulation of moisture and temperature diffusion in both the lateral and thickness directions, which takes into account anisotropy of the material grain. In a series of experiments, we show that our model successfully predicts the qualitative behavior of thin shells undergoing complex, dynamic deformations due to material expansion or contraction, such as occurs when paper is moistened, leaves dry in the sun, or thin plastic melts.
 
 \subsection{Related Work}
-\paragraph{Simulating Burning/Melting/Swelling} Several papers look at related problems, such as evolving the boundary of a burning or melting solid, without incorporating curling/wrinkling and other elastic deformations of the solid. Melek and Keyser~\shortcite{Melek2003,Melek2005} simulate pyrolysis and heat diffusion of burning objects, but do not consider elastic deformation of the burning objects. Losasso et al~\shortcite{Losasso2006} proposed tracking of the burning boundary of thin shells using an adaptive level set on the shell. Some of the deformation can be qualitatively approximated by mapping physical quantities like heat and moisture to cells of a coarse grid around the object, deforming the cage, and mapping the deformation back onto the shell (as in Free Form Deformation); this approach was proposed by Melek and Keyser~\shortcite{Melek2007} and adopted by Liu et al~\shortcite{Liu2009}. Most similar to our work is the method of Jeong et al~\shortcite{Jeong2011,Jeong2013}, which uses a \emph{bilayer} of springs (a triangle mesh and its circumcentric dual, offset a distance from the primal mesh) to represent the shell. \todo{Check this is actually true} The bilayer allows the method to capture \emph{differential} growth due to gradients in moisture concentration across the thickness of leaves, leading to visually impressive simulations of leaves curling as they dry. Our work is based on the same fundamental idea (representing the shell using rest geometry that varies linearly through the thickness) but couched in the machinery of differential geometry; our formulation allows us to easily incorporate non-zero rest curvature, machine direction, and a physical material model.
+\paragraph{Simulating Burning/Melting/Swelling} Several papers look at related problems, such as evolving the boundary of a burning or melting solid, without incorporating curling/wrinkling and other elastic deformations of the solid. Melek and Keyser~\shortcite{Melek2003,Melek2005} simulate pyrolysis and heat diffusion of burning objects, but do not consider elastic deformation of the burning objects. Losasso et al~\shortcite{Losasso2006} proposed tracking of the burning boundary of thin shells using an adaptive level set on the shell. Some of the deformation can be qualitatively approximated by mapping physical quantities like heat and moisture to cells of a coarse grid around the object, deforming the cage, and mapping the deformation back onto the shell (as in Free Form Deformation); this approach was proposed by Melek and Keyser~\shortcite{Melek2007} and adopted by Liu et al~\shortcite{Liu2009}. Most similar to our work is the method of Jeong et al~\shortcite{Jeong2011,Jeong2013}, which uses a \emph{bilayer} of springs (a triangle mesh and its circumcentric dual, offset a distance from the primal mesh) to represent the shell. The bilayer allows the method to capture \emph{differential} growth due to gradients in moisture concentration across the thickness of leaves, leading to visually impressive simulations of leaves curling as they dry. Our work is based on the same fundamental idea (representing the shell using rest geometry that varies linearly through the thickness) but couched in the machinery of differential geometry; our formulation allows us to easily incorporate non-zero rest curvature, machine direction, and a physical material model.
 
 Steps towards a principled physical model include the use of a mass-spring network to represent the shell, with update rules for how spring rest lengths should change due to physical processes in the shell. Such rules are simplest to formulate in the case where growth or shrinkage is uniform through the shell thickness, and the shell can be represented using a single spring layer; Larboulette et al~\shortcite{Larboulette2013} present such a rule, which includes handling of the \emph{machine direction} of paper: a bias in the orientation of the fibers composing the paper which causes the paper to swell anisotropically. We adopt this parameter in our material model. 
 
@@ -160,7 +161,6 @@ where $\|\|_{SV}$ is the ``St. Venant-Kirchhoff norm''\cite{Weischedel2012}
 $$\|M\|_{SV} = \frac{\alpha}{2}\tr^2 M + \beta \tr\left(M^2\right),$$
 for Lam\'e material parameters $\alpha, \beta$. In terms of the Young's modulus $E$ and Poisson's ratio $\nu$,
 $$\alpha = \frac{E\nu}{(1+\nu)(1-2\nu)}, \quad \beta = \frac{E}{2(1+\nu)}.$$
-\todo{Check formulas}
 We thus have a formulation of kinetic energy and potential energy
 $$T[\dot\br] = \int_{\Omega} h\rho\|\dot\br\|^2 \sqrt{\det\bar\ba}\,dxdy, \quad V[\br] = \int_{\Omega} W(x,y)\,dxdy,$$
 for volumetric density $\rho$, to which additional external energies and forces (gravity, constraint forces, etc) can be added to yield equations of motion via the usual principle of least action.
@@ -241,7 +241,7 @@ where $\mu^+$ and $\mu^-$ encode the differing moisture-length relationship in t
 \bar\ba &= \frac{(1+m^+\mu^+)^2 + (1+m^-\mu^-)^2}{2}\ba^0 + h\frac{(1+m^-\mu^-)^2 - (1+m^+\mu^+)^2}{3}\bb^0\\
 \bar\bb &= 3\frac{(1+m^-\mu^-)^2 - (1+m^+\mu^+)^2}{4h}\ba^0 + \frac{(1+m^+\mu^+)^2 + (1+m^-\mu^-)^2}{2}\bb^0.
 \end{align*}
-\item\textbf{Linear Differential Swelling with Machine Direction} In paper, leaves, and other materials composed of microscopic fibers, swelling induced by moisture is \emph{anisotropic}, since fibers swell more in their circumferential than axial direction. \todo{Check this is true} We can model this behavior by storing a \emph{machine direction} $\bd_{ijk}$ per triangle face; this direction, a vector in the barycentric coordinates of the triangle, is the direction in which the fibers are aligned. Given this direction, we can compute the intrinsically orthogonal direction $\bd_{ijk}^{\perp}$ (with $\bd_{ijk}^T \ba_{ijk}^0 \bd_{ijk}^{\perp} =0$), and impose different moisture-length constants $\mu$ and $\mu_{\perp}$ in the $\bd$ and $\bd^{\perp}$ directions, respectively. Then the desired rest metrics at the top and bottom of the shell are 
+\item\textbf{Linear Differential Swelling with Machine Direction} In paper, leaves, and other materials composed of microscopic fibers, swelling induced by moisture is \emph{anisotropic}, since fibers swell more in their circumferential than axial direction. We can model this behavior by storing a \emph{machine direction} $\bd_{ijk}$ per triangle face; this direction, a vector in the barycentric coordinates of the triangle, is the direction in which the fibers are aligned. Given this direction, we can compute the intrinsically orthogonal direction $\bd_{ijk}^{\perp}$ (with $\bd_{ijk}^T \ba_{ijk}^0 \bd_{ijk}^{\perp} =0$), and impose different moisture-length constants $\mu$ and $\mu_{\perp}$ in the $\bd$ and $\bd^{\perp}$ directions, respectively. Then the desired rest metrics at the top and bottom of the shell are 
 \begin{align*}
 \bar\bg^+ &= T^T M^+ T^{-T} (\ba^0 - h \bb^0) T^{-1}M^+T,\\
 \bar\bg^- &= T^T M^- T^{-T} (\ba^0 + h \bb^0) T^{-1}M^-T.
@@ -279,8 +279,8 @@ Thickness &  $0.1\ \mathrm{mm}$\\
 Young's Modulus $E$ & $2\times 10^9\ \mathrm{Pa}$\\
 Poisson's Ration $\nu$ & $0.3$\\
 Density $\rho$ & $250\ \mathrm{kg/m^3}$\\
-Viscosity $\eta$ & \todo{look up}\\
-Swelling constant $\mu$ & $0.005$\\
+Viscosity $\eta$ & $0.001\ \mathrm{Pa}\cdot\mathrm{s}$\\
+Swelling constant $\mu$ & $0.0025$\\
 Swelling constant $\mu^{\perp}$ & $0.001$
 \end{tabular}
 \caption{Table of reasonable physical parameters for ordinary paper.}
@@ -355,10 +355,10 @@ We first test the method on examples where the equilibrium state can be computed
 \begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & $H$  & $K$ & Error (coarse) & Error (fine) \\
 $4I$ & $0$ & Enlarged Square & $0$ & $0$ & \todo{XXX} & XXX \\
-$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & XXX & XXX \\
-$\begin{pmatrix}1+x^2 & -xy \\ -xy & 1+y^2\end{pmatrix}$ & $\frac{1}{\sqrt{1+x^2+y^2}}\begin{pmatrix}-1 & 0\\0 & 1\end{pmatrix}$ & Hyperboloid Cap & varies & $<-1$ & XXX & XXX \\
-$\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & XXX & XXX \\
-$I$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0$ & XXX & XXX
+$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & 0.018 & XXX \\
+$\begin{pmatrix}1+x^2 & -xy \\ -xy & 1+y^2\end{pmatrix}$ & $\frac{1}{\sqrt{1+x^2+y^2}}\begin{pmatrix}-1 & 0\\0 & 1\end{pmatrix}$ & Hyperboloid Cap & varies & $<-1$ & 0.025 & 0.0049 \\
+$\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & 0.0001 & XXX \\
+$I$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0$ & 0.02 & 0.015
 \end{tabular}
 \caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed over the square, and in each case we compare the simulated steady state to the expected analytic solution.}
 \label{tab:analytic}
@@ -374,32 +374,84 @@ When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the
 \subsection{Comparisons to Experiments}
 We validate our simulated results against several real-world experiments.
 \paragraph{Curling of Paper}
-Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. We compare experiment and simulation of this behavior, for a rectangular paper strip. We use a brush to moisten a piece of real paper, and compare the video of the curling and uncurling of the paper to a simulation of the same phenomenon. Figure~\ref{XXX} shows the experiment, the simulation, and a stylized, thickened cross-section of the paper showing the difference in moisture concentration through the paper thickness as the simulation progresses.
+Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. We compare experiment and simulation of this behavior, for a rectangular paper strip. We use a brush to moisten a piece of real paper, and compare the video of the curling and uncurling of the paper to a simulation of the same phenomenon. Figure~\ref{WaterPainting} shows the experiment, the simulation, and a stylized, thickened cross-section of the paper showing the difference in moisture concentration through the paper thickness as the simulation progresses.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{WaterPainting.png}
+  \caption{A comparison between the experiment (left), simulation (middle), and the thickened cross-section (right) as time progresses for a water-painted paper strip. The moisture is indicated as yellow, and the simulation of the cross-section shows the diffusion of moisture inside the paper strip.}
+  \label{WaterPainting}
+\end{figure}
 
 \paragraph{Radial Swelling of Disk}
-Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geometry of non-Euclidean plates, induced non-uniform growth in a punctured disk of NIPA polymer by varying the cross-linking ratio as a function of the radius away from the disk's center. Our simulations are able to reproduce the geometries they observed experimentally. Figure~\ref{XXX} compares experiment and simulations, and lists the rest metrics used for each experiment.
+Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geometry of non-Euclidean plates, induced non-uniform growth in a punctured disk of NIPA polymer by varying the cross-linking ratio as a function of the radius away from the disk's center. Our simulations are able to reproduce the geometries they observed experimentally. Figure~\ref{SwellingDisc} compares experiment and simulations.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{SwellingDisc.png}
+  \caption{We compare the experimental result by Sharon and Efrati (top) with our simulation (bottom). Bluer indicates higher growth rate. }
+  \label{SwellingDisc}
+\end{figure}
 
 \subsection{Effects of Parameters}
 One advantage of our formulation of swelling thin shells is that it supports physical material parameters. In this section, we show results highlighting the importance of these parameters and their effects on the behavior of swelling and shrinking thin objects.
 
 \paragraph{Thickness}
-Since it controls the relative importance of stretching and bending, the thickness of a shell is its most important physical parameter. Changing the thickness will often dramatically change how a shell deforms. For example, when a moist paper annulus dries, it rolls up. Depending on its thickness, the annulus transitions through several intermediate shapes before rolling up completely: the outer boundary of the annulus lifts to form an $n$-sided polygon, with $n$ decreasing over time as one metastable configuration cascades into the next. \todo{Make sure this actually is visible} Figure~\ref{XXX} shows the range of behavior for an annulus of inner radius $1$ cm and outer radius $2$ cm, and several paper thicknesses ($0.05$, $0.1$, $0.2$ and $0.5$ mm).
+Since it controls the relative importance of stretching and bending, the thickness of a shell is its most important physical parameter. Changing the thickness will often dramatically change how a shell deforms. For example, when a moist paper annulus dries, it rolls up. Depending on its thickness, the annulus transitions through several intermediate shapes before rolling up completely: the outer boundary of the annulus lifts to form an $n$-sided polygon, with $n$ decreasing over time as one metastable configuration cascades into the next. \todo{Make sure this actually is visible} Figure~\ref{Annuli_noMD} shows the range of behavior for an annulus of inner radius $1$ cm and outer radius $2$ cm, and several paper thicknesses ($0.05$, $0.1$, $0.2$ and $0.5$ mm).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{Annuli_noMD.png}
+  \caption{The figure shows the curling behavior of moisten paper annuli as they dry. The amount of curling is dependent on the thickness of the paper annuli, and the thicknesses from left to right are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. }
+  \label{Annuli_noMD}
+\end{figure}
 
 \paragraph{Machine Direction}
-As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{XXX} we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure)\todo{check}. Notice the dramatic change in the annulus dynamics, compared to Figure~\ref{XXX}.
+As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{XXX} we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure). Notice the dramatic change in the annulus dynamics, compared to Figure~\ref{Annuli_MD}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{Annuli_MD.png}
+  \caption{The figure shows the curling behavior of moisten paper annuli with a machine direction as they dry. The shape of the paper annuli are drastically different from the ones with no machine direction. Our simulation captures this commonly observed property of paper, where both thickness and machine direction affect the curling of the paper. The thicknesses of the paper annuli from left to right are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5mm. }
+  \label{Annuli_MD}
+\end{figure}
 
 \subsection{Comparison to Jeong et al}
 As mentioned in the introduction, a classic example of differential shrinking is the drying of leaves in autumn. Jeong et al~\shortcite{Jeong2013} studied this phenomenon and proposed a method, based on a dual pair of Delaunay and Voronoi meshes, to model drying of leaves. Jeong et al. model several additional phenomena, such as the effect of the leaf vasculature on its bending resistance and water transport. Although we make no effort to reproduce these additional features, our simulations are nevertheless able to qualitatively predict the shapes of drying leaves. Figure~\ref{XXX} compares real leaves to the curling predicted by our method and by Jeong et al.
+
+
 
 \subsection{Qualitative Experiments}
 We end with several experiments that demonstrate the flexibility of the method to simulate complex geometry undergoing complex nonlinear deformations due to differential swelling.
 
 \paragraph{The Spoon}
-Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{XXX} compares a simulation of this process to video of a real-world experiment.
+Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{XXX}.\todo{reference for the video}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.5\linewidth]{Spoon.png}
+  \caption{A real world experiment (top), our simulated spoon (bottom) where hotter parts are redder, and an inset of focusing on the distorted front of the spoon.}
+  \label{Spoon}
+\end{figure}
+
+%\begin{wrapfigure}{r}{0.25\textwidth} %this figure will be at the right
+%    \centering
+%    \includegraphics[width=0.25\textwidth]{Spoon.png}
+%    \label{Spoon}
+%\end{wrapfigure}
 
 \paragraph{Shape-changing Food} Differential growth has been used to design gelatin films that fold into novel shapes, by exploiting the ability to fabricate the film into a bilayer of differing density and porosity~\cite{Wang2017}. Wang et al. validated their designs using a volumetric simulation in ABAQUS; in figure~\ref{XXX} we compare their simulated and experimental results to our thin shell simulations, demonstrating that a reduced shell model can accurately predict the behavior of the bilayer without need of a volumetric simulation.
 
-\paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:XXX}.
+\begin{figure*}[h]
+  \centering
+   \includegraphics[width=6.0in]{BunnyandArmadillo.png}
+  \caption{The figure shows the time evolution of a plastic bunny and a plastic armadillo as they shrink when exposed to heat (red beam in the figure), where redder parts have higher temperature.}
+  \label{BunnyandArmadillo}
+\end{figure*}
+
+\paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:XXX}.
+
+
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{MoistSim}
