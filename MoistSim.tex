@@ -299,12 +299,12 @@ E_{\mathrm{elastic}}(\bv) &= \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ij
 It is worth making a few observations about this energy. First, the matrices $\ba$, $\bar\ba$, etc. are \emph{coordinate-dependent}: replacing the parameterization domain $\fT$, or even cyclically permuting the order of vertices around a face, would alter the values in the matrix. However, the generalized eigenvalues of $\ba-\bar\ba$ and $\bb-\bar\bb$ with respect to the inner product $\bar\ba$ are coordinate-\emph{independent}, as is the total energy. Perhaps the easiest way to see this fact is to note that these spectra measure the geometrically exact strain induced by an affine embedding of $\fT$, and so \emph{must} be independent of the coordinates chosen. Second, the terms of the form $\|\bar\ba^{-1}M\|^2_{SV}$ are sometimes instead written as $\|\bar\ba^{-1/2}M\bar\ba^{-1/2}\|^2_{SV}$, where $\bar\ba^{-1/2}$ is the unique positive-definite square root of $\bar\ba$. The two expressions are equivalent, since the spectrum of a product of matrices is invariant under cyclic permutation, but the form used above is slightly more convenient for computation. Finally, as a sanity check, observe that when $\bar\bb=0$ and the Poisson ratio $\nu=0$, the bending energy reduces to the square of mean curvature, as expected for thin plates.
 
 \paragraph{Mass Matrix} Whether swelling or shrinking of the surface affects the mass of the surface depends on the mechanism: changes due to growth or moisture absorption/evaporation do change the mass, while plastic polymers contracting when exposed to heat do not. In cases where modeling the mass change is desired, the mass $\lambda_i$ of each vertex can be recomputed at a given instant in time by
-$$\lambda_i = \sum_{\bff\sim \bv_i} \frac{\rho}{3}\sqrt{\det \bar\ba_{\bff}}/2;$$
+$$\lambda_i = \sum_{\bff\sim \bv_i} \frac{\rho h}{3}\sqrt{\det \bar\ba_{\bff}}/2;$$
 here the sum is over all faces $\bff$ incident to $\bv_i$ and yields the usual ``lumped'' or barycentric mass matrix $\Lambda$.\footnote{For absorption/evaporation, one might also want to model the fact that water has a different density than the shell material; we do not do so in our examples.}
 
 \paragraph{Viscous Damping} Since the growth and swelling phenomena we want to simulate all take place at relatively long time scales, and paper and plastic are viscoelastic, a damping model is needed to dissipate the elastic waves in the material. We implement a simple Kelvin-Voigt damping model by including a damping potential
 \begin{align*}
-E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) &= \eta\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\Bigg(\frac{h}{4} \left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\\
+E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) &= \frac{\eta}{E}\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\Bigg(\frac{h}{4} \left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\\
 &\qquad + \frac{h^3}{12}\left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\bb_{ijk}-\bb_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\Bigg)
 \end{align*}
 where $\Delta t$ is the time step size, $\bv^{\mathrm{prev}}$ denotes the values of $\bv$ in the previous time step (and likewise for $\ba^{\mathrm{prev}}$, etc), and $\eta$ is a viscosity parameter.
@@ -314,7 +314,7 @@ Thickness &  $0.1\ \mathrm{mm}$\\
 Young's Modulus $E$ & $2\times 10^9\ \mathrm{Pa}$\\
 Poisson's Ratio $\nu$ & $0.3$\\
 Density $\rho$ & $250\ \mathrm{kg/m^3}$\\
-Viscosity $\eta$ & $0.001\ \mathrm{Pa}\cdot\mathrm{s}$\\
+Viscosity $\eta$ & $5\times 10^{-13}\ \mathrm{Pa}\cdot\mathrm{s}$\\
 Swelling constant $\mu$ & $0.0025$\\
 Swelling constant $\mu^{\perp}$ & $0.001$
 \end{tabular}
@@ -389,7 +389,7 @@ We first test the method on examples where the equilibrium state can be computed
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.5\textwidth]{didactic.png}
-  \caption{Didactic \todo{Hsiao-Yu insert caption}}
+  \caption{Didactic {The exact solutions (white) and simulated surfaces (colored) from the didactic examples. From left to right are the enlarged square, rhombus, spherical cap, hyperboloid, and cylindrical patch experiments.}}
   \label{fig:didactic}
 \end{figure}
 \paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. We ran the simulation using a coarse and fine mesh (171 and 804 vertices respectively); simulated and exact solutions are compared in Figure~\ref{fig:didactic}. 
@@ -428,7 +428,7 @@ Ordinary paper, when moistened on one side (by painting water on the top side, o
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{WaterPainting.png}
-  \caption{A comparison between the experiment (left), simulation (middle), and the thickened cross-section (right) as time progresses for a water-painted paper strip. Yellow indicates higher moisture content. The simulation shows the diffusion of moisture through the cross-section of the paper strip.}
+  \caption{A comparison between the experiment (left), simulation (middle), and the thickened cross-section (right) as time progresses for a water-painted paper strip. Orange and green indicate high and low moisture content, respectively.}
   \label{WaterPainting}
 \end{figure}
 
