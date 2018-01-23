@@ -3,7 +3,6 @@
 
 # Latex temp files
 *.swp
-*.bst
 *.aux
 *.bbl
 *.blg
@@ -12,5 +11,4 @@
 *.fls
 *.out
 *.xcp
-*.cls
 *.pdf
