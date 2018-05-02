@@ -533,7 +533,7 @@ Globe & \ref{fig:SwellingDisc} & 5k & 10k & & \\
 Annuli  & \todo{???} & \todo{???}
 \end{tabular}
 \caption{Timing numbers for the simulations shown in the paper. All simulations were run on an XXX desktop using one thread.}
-\label{tab:energy}
+\label{tab:timing}
 \end{table}
 
 \paragraph{The Spoon}
@@ -544,12 +544,12 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
 \paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:TorusandSphere}.
 
 \section{Validations}
-To validate our method, we compare our energy with the energy proposed by Gingold ~\shortcite{Gingold04} which is later adopted in Arcsim ~\cite{Narain:2013:FCA} and the energy of the St. Vernant-Kirchoff model of a thin slab of material. Since the method by Gingold does not support growth intrinsically, we compute the rest curvature based on our method and derived the rest angle for the geometry.  
+To validate our method, we compare our energy with the energy proposed by Gingold ~\shortcite{Gingold04} which is later adopted in Arcsim ~\cite{Narain:2013:FCA} and the energy of the St. Venant-Kirchoff model of a thin slab of material. Since the method by Gingold does not support growth intrinsically, we compute the rest curvature based on our method and derived the rest angle for the geometry.  
 
 \paragraph{Energy Convergence}
 We prescribe a differential growth of a thin slab of rectangular material with rest metric
 $$\bar\bg =  (\frac{(1 + G)z}{h} + (1 - \frac{z}{h}))^2 \bar\bg_0$$
-and show the energy comparison in Table~\ref{tab:energy}. Our energy follows closely to the St. Vernant-Kirhoff energy compared to the method by ~\cite{Gingold04} and converges faster than FEM.
+and show the energy comparison in Table~\ref{tab:energy}. Our energy follows closely to the St. Venant-Kirhoff energy compared to the method by ~\cite{Gingold04} and converges faster than FEM.
 
 \begin{table*}
 \begin{tabular}{lccccccc}
@@ -559,7 +559,7 @@ St.VK Energy & $1.6x10^{-6}$ & $5.64x10^{-5}$ & $1.55x10^{-4}$ & $3.87x10^{-4}$ 
 Our Energy & $1.6x10^{-6}$ & $5.77x10^{-5}$ & $1.6x10^{-4}$ & $4.1x10^{-4}$ & $6.4x10^{-4}$ & $5.67x10^{-3}$ & $1.54x10^{-2}$ \\
 Gingold Energy & $2.2x10^{-6}$ & $8.01x10^{-5}$ & $2.29x10^{-4}$ & $6.11x10^{-4}$ & $9.83x10^{-4}$ & $1.23x10^{-2}$ & $5.01x10^{-2}$ 
 \end{tabular}
-\caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed over the square, and in each case we compare the simulated steady state to the expected analytic solution.}
+\caption{Shell energy computed with St. Venant-Kirchoff model on a thin stab, our discretized energy, and the energy simulated using Gingold's method on high resolution shell.}
 \label{tab:energy}
 \end{table*}
 
