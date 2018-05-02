@@ -1,4 +1,4 @@
-\documentclass[anonymous,timestamp,review,acmtog]{acmart}
+\documentclass[timestamp,acmtog]{acmart}
 
 \usepackage{booktabs} % For formal tables
 %\usepackage{subfigure}
@@ -59,6 +59,14 @@
 \author{Hsiao-yu Chen}
 \affiliation{%
   \institution{University of Texas at Austin}}
+  
+  \author{Arnav Sastry}
+\affiliation{%
+  \institution{University of Texas at Austin}}
+  
+  \author{Wim van Rees}
+\affiliation{%
+  \institution{Massachusetts Institute of Technology}}  
 
 \author{Etienne Vouga}
 \affiliation{%
@@ -69,7 +77,7 @@
 
 % abstract
 \begin{abstract}
-We present a physically accurate low-order elastic shell model that incorporates active material response to dynamically changing stimuli such as heat, moisture, and growth. Our continuous formulation of the geometrically non-linear elastic energy derives from the principles of differential geometry, and as such naturally incorporates shell thickness, non-zero rest curvature, and physical material properties. By modeling the environmental stimulus as local, dynamic changes in the rest metric of the material, we are able to solve for the corresponding shape changes by integrating the equations of motions given this non-Euclidean rest state. We present models for differential growth and shrinking due to moisture and temperature gradients along and across the surface, and incorporate anisotropic growth by defining an intrinsic machine direction within the material. Comparisons with experiments show that our simulations achieve excellent qualitative agreement. By using the reduced-order shell theory in combination with appropriate physical models, our approach accurately captures all the physical phenomena while avoiding expensive volumetric discretization of the shell volume. 
+We present a physically accurate low-order elastic shell model that incorporates active material response to dynamically changing stimuli such as heat, moisture, and growth. Our continuous formulation of the geometrically non-linear elastic energy derives from the principles of differential geometry, and as such naturally incorporates shell thickness, non-zero rest curvature, and physical material properties. By modeling the environmental stimulus as local, dynamic changes in the rest metric of the material, we are able to solve for the corresponding shape changes by integrating the equations of motions given this non-Euclidean rest state. We present models for differential growth and shrinking due to moisture and temperature gradients along and across the surface, and incorporate anisotropic growth by defining an intrinsic machine direction within the material. Comparisons with experiments and volumetric finite elements show that our simulations achieve excellent qualitative agreement. By using the reduced-order shell theory in combination with appropriate physical models, our approach accurately captures all the physical phenomena while avoiding expensive volumetric discretization of the shell volume. 
 \end{abstract}
 
 %CCS
@@ -105,22 +113,23 @@ We present a physically accurate low-order elastic shell model that incorporates
 \maketitle
 
 \section{Introduction}
-Consider the wrinkling and curling of a drying leaf. The drying process corresponds to water evaporating from the internal cells, so that the tissue contracts in volume. This process typically happens differentially, due to having one side exposed to the sun, or having boundaries farther away from the veins than interior, leading to non-uniform curvature and curling of the leaf ~\cite{Xiao2011, Jeong2013}. Related phenomena are the swelling and wrinkling of paper when exposed to water, such as when coffee is spilled on a notebook page, or the wrinkling and shrinking of plastic when heated. Although the physical mechanisms in these examples are different (shrinking of cells vs swelling of fibers vs contraction of polymers) the \emph{effect} on the objects is the same: the intrinsic geometry of the thin objects is changing over time in response to dynamic changes in the environment. 
+Consider the wrinkling and curling of a drying leaf. The drying process corresponds to water evaporating from the internal cells, so that the tissue contracts in volume. This process typically happens differentially, due to having one side exposed to the sun, or having boundaries farther away from the veins than interior, leading to non-uniform curvature and curling of the leaf ~\cite{Xiao2011, Jeong2013}. Related phenomena are the swelling and wrinkling of paper when exposed to water, such as when coffee is spilled on a notebook page, or the wrinkling and shrinking of plastic when heated. Although the physical mechanisms in these examples are different (shrinking of cells vs swelling of fibers vs contraction of polymers) the \emph{effect} on the objects is the same: the intrinsic geometry of the thin objects is changing over time in response to dynamic changes in the environment. Simulating these common types of deformations requires simulating how the object shape changes in response to changes in its intrinsic geometry, and how the intrinsic geometry changes in response to environmental stimuli. 
 
-Simulating these common types of deformations requires simulating how the object shape changes in response to changes in its intrinsic geometry, and how the intrinsic geometry changes in response to environmental stimuli. Of course, one could model the leaf as a volume, and simulate the change in moisture and elastic response of every cell over time. However, such a volumetric model is computationally expensive, and unnecessary: because the structures we consider here are so thin relative to their surface diameter, it is sufficient to assume that the elastic strains have at most linear variations through the thickness. This observation motivates the use of a reduced elastic shell model, augmented to track and account for dynamic changes in the environmental stimulus throughout the shell volume, for simulating environmentally-induced thin shell deformations.
+In addition to growth, wrinkling, and swelling, other phenomena involving the same physics include burning of more thin objects, especially those made of curved or composite materials; wilting of flowers and dynamic response of plants to like light/moisture/etc; changes and wrinkling in skin due to aging, moisture, creams; shrinking and subsequent wrinkling of clothes; warping of wood due to one-sided heating; etc. There is also increasing excitement about manufacturing processes based on differential or inhomogeneous growth, that require precise control over the material's rest geometry. Exploiting these technologies requires solving challenging inverse problems, with reliable methods for solving \emph{forward} problems an essential first step. Examples include water printers that induces paper bending~\cite{Guberan2012}, two-layer structures consisting of plastic printed on canvas under tension~\cite{Perez2017}, the various works of Nervous Systems~\cite{NervousSystems}, fabrication using networks of filaments that stretch anisotropically when moistened, etc.
 
-\paragraph{Contribution} We present a low-order discrete shell model tailored to simulating non-uniform, anisotropic, differential growing and shrinking of thin shells. This model is needed for simulating real-world thin materials whose geometry changes in response to stimuli such as heat, moisture, and growth. In contrast to previous methods for simulating such phenomena, our formulation builds on discrete geometric shell theory and supports arbitrary rest curvature and strain, and physical settings such as thickness and Lam\'{e} parameters. We couple our shell model to a simple formulation of moisture and temperature diffusion in both the lateral and thickness directions, which takes into account anisotropy of the material grain. In a series of experiments, we show that our model successfully predicts the qualitative behavior of thin shells undergoing complex, dynamic deformations due to material expansion or contraction, such as occurs when paper is moistened, leaves dry in the sun, or thin plastic melts.
+Of course, one could capture all of these phenomena by modeling elastic volumes explicitly using tetrahedral or hexahedral elements, and tracking the change in moisture, heat, etc within each element. However, such a volumetric model is computationally expensive, and unnecessary: structures that are thin relative to their surface diameter ought to be able to benefit form a reduced elastic shell model, augmented to track and account for dynamic changes in the environmental stimulus throughout the shell volume. Yet previous methods studying phenomena such as burning of paper~\cite{Liu2009}, drying of leaves~\cite{Jeong2013}, cooking pasta~\cite{Wang2017}, etc, have used either one-off application-specific shell models, or volumetric finite elements, to account for intrinsic geometric changes. Our goal is to fill the gap, and provide a straight-forward low-order numerical implementation for the simulation of thin shells with large deformations, arbitrary rest curvature, realistic material properties, and that supports both isotropic and anisotropic changes in the rest geometry, allowing researchers studying growth and related phenomena to plug in any realistic model and parameter set, and reap a working simulation.
+
+\paragraph{Contribution} We present a unified low-order discrete shell model tailored to simulating non-uniform, anisotropic, differential growing and shrinking of thin shells. This model is needed for simulating real-world thin materials whose geometry changes in response to stimuli such as heat, moisture, and growth. In contrast to previous methods for simulating such phenomena, our formulation builds on discrete geometric shell theory and supports arbitrary rest curvature and strain, and physical settings such as thickness and Lam\'{e} parameters. We couple our shell model to a simple formulation of moisture and temperature diffusion in both the lateral and thickness directions, which takes into account anisotropy of the material grain. In a series of experiments, we show that our model successfully predicts the qualitative behavior of thin shells undergoing complex, dynamic deformations due to material expansion or contraction, such as occurs when paper is moistened or thin plastic melts.
 
 \subsection{Related Work}
 \paragraph{Simulating Burning/Melting/Swelling} Several papers look at related problems, such as evolving the boundary of a burning or melting solid, without incorporating curling/wrinkling and other elastic deformations of the solid. Melek and Keyser~\shortcite{Melek2003,Melek2005} simulate pyrolysis and heat diffusion of burning objects, but do not consider their elastic deformation. Losasso et al~\shortcite{Losasso2006} proposed tracking of the burning boundary of thin shells using an adaptive level set on the shell. Some of the deformation can be qualitatively approximated by mapping physical quantities like heat and moisture to cells of a coarse grid around the object, deforming the cage, and mapping the deformation back onto the shell (as in Free Form Deformation); this approach was proposed by Melek and Keyser~\shortcite{Melek2007} and adopted by Liu et al~\shortcite{Liu2009}.
 
 Steps towards a more principled elastic model include the use of a mass-spring network to represent the shell, with update rules for how spring rest lengths should change due to physical processes in the shell. Such rules are simplest to formulate in the case where growth or shrinkage is uniform through the shell thickness, and the shell can be represented using a single spring layer; Larboulette et al~\shortcite{Larboulette2013} present such a rule, which includes handling of the \emph{machine direction} of paper: a bias in the orientation of the fibers composing the paper which causes the paper to swell anisotropically. We adopt this parameter in our material model. 
 
-Most similar to our work is the method of Jeong et al~\shortcite{Jeong2011,Jeong2013}, which uses a \emph{bilayer} of springs (a triangle mesh and its circumcentric dual, offset a distance from the primal mesh) to represent the shell. The bilayer allows the method to capture \emph{differential} growth due to gradients in moisture concentration across the thickness of leaves, leading to visually impressive simulations of leaves curling as they dry. Our work is based on the same fundamental idea (representing the shell using a rest strain that varies linearly through the thickness) but couched in the machinery of differential geometry; our formulation allows us to easily incorporate non-zero rest curvature, machine direction, and a physical material model.
-% wim : swapped last two : makes more sense to go from no physical model, to spring-based monolayer, to spring-based bilayer [and most similar to this work]
+Most similar to our work is the method of Jeong et al~\shortcite{Jeong2011,Jeong2013}, which uses a \emph{bilayer} of springs (a triangle mesh and its circumcentric dual, offset a distance from the primal mesh) to represent the shell. The bilayer allows the method to capture \emph{differential} growth due to gradients in moisture concentration across the thickness of leaves, leading to visually impressive simulations of leaves curling as they dry. Our work is based on the same fundamental idea (representing the shell using a rest strain that varies linearly through the thickness) but couched in the machinery of differential geometry; our formulation allows us to easily incorporate non-zero rest curvature, machine direction, and a physical material model. Also somewhat related are the \emph{CurveUps} of Guseinov et al~\shortcite{Guseinov2017}, which induce rest curvature in shells by embedding rigid pieces within a pre-stressed substrate.
 
 \paragraph{Mechanics of Shells}
-The mathematics and geometry underpinning the physics of thin shells is a venerable topic: Ciarlet's book~\shortcite{Ciarlet2000} on elasticity as applied to shells offers a thorough overview. Our work is based on the common \emph{Kirchhoff-Love} assumption that the shell does not undergo any transverse shear; i.e., that the shell volume is foliated by normal offsets of the shell's \emph{midsurface}. The problem of studying deformation of the 3D shell volume then reduces to that of deformation of a 2D surface, and tools from Riemannian geometry can be applied~\cite{Simo1989}.\footnote{We adopt the so-called ``intrinsic'' view~\cite{Neff2004} that shells can be understood in terms of Kirchhoff-Love and geometric principles, as this view allows us to easily discretize shell physics by leveraging discrete differential geometry, but we note in passing that the validity of the Kirchhoff-Love assumption, and of reduced shell models in general, remains unsettled, and the literature documents numerous alternative shell theories.} One key property of the shells we want to simulate is that they are \emph{non-Euclidean}: they do not have a rest (strain-free) state that is realizable in three-dimensional space. Non-Euclidean shells have received substantial attention recently in the physics community~\cite{Klein2007,Kim2012}, thanks to their potential applications in fabrication and robotics, and their connection to biological growth; physicists such as Sharon, Efrati, and Ben Amar~\cite{Goriely2005, Dervaux2008,Efrati2009,Sharon2010} pioneered the study of shell mechanics in this setting.
+The mathematics underpinning the physics of thin shells is a venerable topic: Ciarlet's book~\shortcite{Ciarlet2000} on elasticity as applied to shells offers a thorough overview. Our work is based on the common \emph{Kirchhoff-Love} assumption that the shell does not undergo any transverse shear; i.e., that the shell volume is foliated by normal offsets of the shell's \emph{midsurface}. The problem of studying deformation of the 3D shell volume then reduces to that of deformation of a 2D surface, and tools from Riemannian geometry can be applied~\cite{Simo1989}.\footnote{We adopt the so-called ``intrinsic'' view~\cite{Neff2004} that shells can be understood in terms of Kirchhoff-Love and geometric principles, as this view allows us to easily discretize shell physics by leveraging discrete differential geometry, but we note in passing that the validity of the Kirchhoff-Love assumption, and of reduced shell models in general, remains unsettled, and the literature documents numerous alternative shell theories.} One key property of the shells we want to simulate is that they are \emph{non-Euclidean}: they do not have a rest (strain-free) state that is realizable in three-dimensional space. Non-Euclidean shells have received substantial attention recently in the physics community~\cite{Klein2007,Kim2012}, thanks to their potential applications in fabrication and robotics, and their connection to biological growth; physicists such as Sharon, Efrati, and Ben Amar~\cite{Goriely2005, Dervaux2008,Efrati2009,Sharon2010} pioneered the study of shell mechanics in this setting.
 
 For the sake of being self-contained, we briefly review the geometric foundations of shell mechanics in Section \ref{sec:continuous}.
 
@@ -128,17 +137,17 @@ For the sake of being self-contained, we briefly review the geometric foundation
 Thin shells first caught the interest of the graphics community in the context of simulating cloth~\cite{Baraff1998,Bridson2002}. These early methods tended to focus on thin \emph{plates}, i.e. shells that have a flat rest configuration, and formulate shell dynamics in terms of either hinge-based bending energies~\cite{Sullivan2008,Tamstorf2013} or the insight that the bending energy can be written in terms of the intrinsic Laplace-Beltrami operator applied to the shell's embedding function~\cite{Bobenko2005,Bergou2006,Wardetzky2007}. 
 
 \begin{wrapfigure}{r}{1.6in}
-\begin{center}
+\centering
 \includegraphics[width=1.6in]{cyls.png}
-\end{center}
 \label{fig:cyls}
 \end{wrapfigure}
-
 Grinspun et al~\shortcite{Grinspun2003} introduced to graphics the simulation of shells with non-zero rest curvature. Their formulation is based on \emph{differences of squared mean curvature}, leading to a simple and easy-to-discretize bending energy. This model is physically suspect, however: consider a half-cylinder at rest when curled around the $x$-axis. Unbend the shell and re-bend it around the $y$-axis; the deformed configuration's strain cannot be captured by looking at mean curvature alone, as it is pointwise identical to the mean curvature of the rest configuration (see inset). Complete support for rest curvature therefore requires a bending energy that incorporates full information about the extrinsic deformation of the shell~\cite{Grinspun2006}. One such discrete energy is described in Weischedel's work on discrete Cosserat shells~\shortcite{Weischedel2012}; our exposition is modeled closely on hers, though we make different modeling choices (we use an intrinsic rather than Cosserat shell model, and require more flexible handling of the shell rest geometry).
+
+A popular alternative to Grinspun et al.'s bending formulation based on the mid-edge shape operator is to use a triangle-averaged shape operator proposed by Gingold et al.~\shortcite{Gingold2004}, which expresses bending energy of a triangle in terms of the hinge angles of each of its three edges. Gingold et al. demonstrate how plasticity can be implemented by maintaining and dynamically updating ``rest'' values of the hinge angles, and also propose a simple method for simulating thin shell fracture. Although Grinspun et al. raised concerns about the consistency of this averaged shape operator, it is simple to implement and has been adopted in thin shell simulation frameworks like ArcSim~\cite{Narain2013}. We briefly discuss how Gingold et al.'s operator might be adapted for non-Euclidean rest geometry in Section~\ref{sec:gingold}.
 
 Higher-order methods for simulating shells (including with NURBS or subdivision elements) are common in computational mechanics and isogeometric analysis~\cite{Batoz1980,Bathe1983,Cirak2000,Kiendl2009,Benson2010,Bandara2018} and have also been proposed for computer graphics~\cite{Wawrzinek2011} and growing shells~\cite{Vetter13}. High-order methods have some obvious advantages (better convergence behavior in the thin limit, continuous surface normals) at the cost of additional computation and complexity, especially when handling contact.
 
-In this paper, we ignore the problem of mesh tessellation, or of adapting the mesh in response to either large deflections or large amounts of growth; such remeshing is an important component of a practical shell simulation but orthogonal to our focus on shell dynamics. An existing tool such as ArcSim~\cite{Narain2012}, which incorporates a method of adaptive remeshing while avoiding significant popping artifacts, could easily be adopted in our framework if desired.%and has been used to generate impressive simulations of creasing paper. 
+In this paper, we ignore the problem of mesh tessellation, or of adapting the mesh in response to either large deflections or large amounts of growth; such remeshing is an important component of a practical shell simulation but orthogonal to our focus on shell dynamics. An existing tool such as ArcSim~\cite{Narain2012}, which incorporates a method of adaptive remeshing while avoiding significant popping artifacts, could easily be adopted in our framework if desired.
 
 \begin{figure}
 \begin{tikzpicture}
@@ -201,7 +210,7 @@ Motivated by the common observation that a sufficiently thin shell bends much mo
 \begin{equation}
 W(x,y) = \left(\frac{h}{4} \|\bar\ba^{-1}\ba - \Id\|^2_{SV} + \frac{h^3}{12}\|\bar\ba^{-1}(\bb-\bar\bb)\|^2_{SV}\right)\sqrt{\det \bar\ba} \label{eq:koiter}
 \end{equation}
-where $\|\|_{SV}$ is the ``St. Venant-Kirchhoff norm''\cite{Weischedel2012}
+where $\|\|_{SV}$ is the ``St. Venant-Kirchhoff norm''~\cite{Weischedel2012}
 $$\|M\|_{SV} = \frac{\alpha}{2}\tr^2 M + \beta \tr\left(M^2\right),$$
 for material parameters $\alpha, \beta$. In terms of the Young's modulus $E$ and Poisson's ratio $\nu$,
 $$\alpha = \frac{E\nu}{1-\nu^2}, \quad \beta = \frac{E}{2(1+\nu)}.$$ % wim: check Ciarlet, An Introduction to Shell Theory - last equation of section 2.5 (p39): in 2D theory, the prefactor for the first term is actually ~ lambda mu / (lambda + 2 mu), where lambda and mu are the 3D Lame constants (what you had for alpha, beta originally). Working this out gives the correct definition for alpha, beta - though it is not correct to call them Lame parameters (sometimes they're called 2D Lame parameters).  Also see our PNAS paper on growing surfaces, SI : with these definitions, we correctly reproduce the Foppl-von Karman equations after simplifying for small deformations. Also see Efrati's paper deriving non-Euclidean elasticity, equation 3.6 --> definition of A^{alpha,beta,gamma,delta} is consistent with all this. So I still think Weischedel is wrong here to use the 3D Lame constants directly.
@@ -220,10 +229,9 @@ $$\ba_{ijk} = \left[\begin{array}{cc} \|\bv_j-\bv_i\|^2 & (\bv_j-\bv_i)\cdot(\bv
 on $\fT$. If we are given an explicit rest configuration $\bar\bv_i$ of the shell, we can compute the rest first fundamental form $\bar\ba_{ijk}$ analogously; or alternatively we can set $\bar\ba_{ijk}$ to any desired symmetric positive-definite $2\times 2$ matrix. Notice that any such matrix corresponds to some choice of ``rest lengths'' for the edges of face $\bff_{ijk}$ that obey the triangle inequality, but that two faces sharing a common edge do not necessarily agree about that length. 
 
 These discrete fundamental forms are enough to discretize the stretching term in Equation~\eqref{eq:koiter}: each face contributes a term 
-\begin{align*}
-&\int_{\fT} \frac{h}{4} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - \Id\|^2_{SV}\sqrt{\det{\bar\ba_{ijk}}}\\
-&\quad = \frac{h}{8} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - \Id\|^2_{SV}\sqrt{\det{\bar\ba_{ijk}}},
-\end{align*}
+{\scriptsize
+$$\int_{\fT} \frac{h}{4} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - \Id\|^2_{SV}\sqrt{\det{\bar\ba_{ijk}}} = \frac{h}{8} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - \Id\|^2_{SV}\sqrt{\det{\bar\ba_{ijk}}},$$
+}%
 where the division by two is due to the canonical triangle $\mathcal{T}$ having area $\frac{1}{2}$. This energy is quartic in the positions of the mesh vertices, and is exactly the energy of constant-strain triangle stretching elements commonly used in cloth simulation. 
 
 For the bending term, we also need a discretization of the second fundamental form. Here there is a significant departure between the smooth theory and the discrete approximation: we would like to apply the Kirchhoff-Love principle to extrude the mid-surface into a shell volume, but unfortunately normal offsets of triangle meshes are no longer guaranteed to be triangle meshes (or even piecewise-affine). One can instead look at weaker notions of mesh parallellity~\cite{Bobenko2010}:
@@ -250,7 +258,7 @@ $$\bb_{ijk} = \frac{1}{2}\left[\begin{array}{cc}(\hn_i-\hn_j)\cdot(\bv_i-\bv_j) 
 \begin{figure}
 \centering
     \includegraphics[width=0.5\textwidth]{PastaCombined.png}
-\caption{We simulate one of Wang et al.'s~\shortcite{Wang2017} shape-changing pasta designs, consisting of a half-annulus decorated with concentric rings which are both thicker (and thus more bending-resistant) and less porous than the surronding material. Our simulation predicts qualitatively identical curling behavior of the pasta as both the physical experiment and volumetric FEM simulation conducted by Wang et al.}
+\caption{We simulate one of Wang et al.'s~\shortcite{Wang2017} shape-changing pasta designs, consisting of a half-annulus decorated with concentric rings which are both thicker (and thus more bending-resistant) and less porous than the surronding material. Our simulation predicts qualitatively identical curling behavior of the pasta as both the physical experiment and volumetric FEM simulation conducted by Wang et al. Top-left: the initial geometry, showing the thickened concentric ribs. Bottom-left: our simulated result. Right: photographs of Wang et al's experimental results, at different stages of swelling. Photographs reproduced with permission.}
 \label{fig:pasta}
 \end{figure}
 
@@ -273,24 +281,35 @@ for a per-face conformal factor $s$ encoding the amount of growth (or shrinking,
 We model this swelling mechanism by assuming that the amount of moisture varies linearly in the thickness direction of the shell, and represent the percentage of additional moisture present in the material at the top and bottom of the shell by two scalars $m^+_{i}, m^-_{i}\in \mathbb{R}$ at each vertex $\bv_i$. We average these values to compute a moisture content $m^{\pm}_{ijk}$ per face $\bff_{ijk}$. The additional water content induces swelling, which changes the rest geometry; assuming a linear relationship between rest length and moisture concentration~\cite{iggesund1993paperboard}, we can write the rest metric of the volumetric shell as
 $$\bar\bg = \left[\begin{array}{cc} \bar\bg^-\left(\frac{1}{2}-\frac{z}{h}\right) + \bar\bg^+\left(\frac{1}{2}+\frac{z}{h}\right) & 0\\0 & 1\end{array}\right].$$
 Here $\bar\bg^+$ and $\bar\bg^-$ are the metric on the top and bottom of the shell,
-$$\bar\bg^+ = (1 + m^+\mu)^2(\ba^0 - h \bb^0), \qquad \bar\bg^- = (1+m^-\mu)^2(\ba^0 + h \bb^0)$$
+\begin{align*}
+\bar\bg^+ &= (1 + m^+\mu)^2(\ba^0 - h \bb^0)\\
+\bar\bg^- &= (1+m^-\mu)^2(\ba^0 + h \bb^0),
+\end{align*}
 for moisture expansion coefficient $\mu$. Then
+{\scriptsize
 \begin{align*}
 \bar\ba &= \frac{(1+m^+\mu)^2 + (1+m^-\mu)^2}{2}\ba^0 + h\frac{(1+m^-\mu)^2 - (1+m^+\mu)^2}{2}\bb^0\\
 \bar\bb &= \frac{(1+m^-\mu)^2 - (1+m^+\mu)^2}{2h}\ba^0 + \frac{(1+m^+\mu)^2 + (1+m^-\mu)^2}{2}\bb^0.
 \end{align*}
+}%
 
 \item\textbf{Piecewise Constant Differential Swelling} Instead of a linear moisture gradient through the thickness, in some cases it is more appropriate to model a piecewise constant moisture profile, such as when modeling bilayers with different material properties. For example, Wang et al~\shortcite{Wang2017} fabricate exotic pasta geometries by cooking pasta composed of two layers of different porosity. van Rees et al~\shortcite{vanRees17} showed that a bilayer of thickness $h$ with piecewise-constant rest metric
 $$\bar\bg(z) = \left[\begin{array}{cc}\begin{cases}\bar\bg^+, z>0\\ \bar\bg^-, z<0\end{cases} & 0\\ 0 & 1\end{array}\right]$$
 is \emph{energetically equivalent} to a shell with linearly-varying metric
 $$\bar\ba = \frac{\bg^+ +\bg^-}{2}, \qquad \bar\bb = \frac{3}{4h}(\bg^--\bg^+);$$
 thus the desired piecewise-constant metric taking into account moisture-induced swelling is
-$$\bar\bg^+ = (1 + m^+\mu^+)^2\left(\ba^0 - \frac{2}{3}h \bb^0\right), \quad \bar\bg^- = (1+m^-\mu^-)^2\left(\ba^0 + \frac{2}{3}h \bb^0\right),$$
+\begin{align*}
+\bar\bg^+ &= (1 + m^+\mu^+)^2\left(\ba^0 - \frac{2}{3}h \bb^0\right)\\
+ \bar\bg^- &= (1+m^-\mu^-)^2\left(\ba^0 + \frac{2}{3}h \bb^0\right),
+ \end{align*}
 where $\mu^+$ and $\mu^-$ encode the differing moisture-length relationship in the two layers. Converting this piecewise-constant metric back into the equivalent linear metric gives
+{\scriptsize
 \begin{align*}
 \bar\ba &= \frac{(1+m^+\mu^+)^2 + (1+m^-\mu^-)^2}{2}\ba^0 + h\frac{(1+m^-\mu^-)^2 - (1+m^+\mu^+)^2}{3}\bb^0\\
 \bar\bb &= 3\frac{(1+m^-\mu^-)^2 - (1+m^+\mu^+)^2}{4h}\ba^0 + \frac{(1+m^+\mu^+)^2 + (1+m^-\mu^-)^2}{2}\bb^0.
 \end{align*}
+}%
+
 \item\textbf{Linear Differential Swelling with Machine Direction} In paper, leaves, and other materials composed of microscopic fibers, swelling induced by moisture is \emph{anisotropic}, since fibers swell more in their circumferential than axial direction. We can model this behavior by storing a \emph{machine direction} $\bd_{ijk}$ per triangle face; this direction, a vector in the barycentric coordinates of the triangle, is the direction in which the fibers are aligned. Given this direction, we can compute the intrinsically orthogonal direction $\bd_{ijk}^{\perp}$ (with $\bd_{ijk}^T \ba_{ijk}^0 \bd_{ijk}^{\perp} =0$), and impose different moisture-length constants $\mu$ and $\mu_{\perp}$ in the $\bd$ and $\bd^{\perp}$ directions, respectively. Then the desired rest metrics at the top and bottom of the shell are 
 \begin{align*}
 \bar\bg^+ &= T^T M^+ T^{-T} (\ba^0 - h \bb^0) T^{-1}M^+T,\\
@@ -313,10 +332,9 @@ $$\bar\ba = \frac{\bar\bg^++\bar\bg^-}{2}, \qquad \bar\bb = \frac{\bar\bg^- - \b
 \end{figure*}
 
 \paragraph{Elastic Energy} We can now write down the full elastic energy of the shell, in exact analogy to the Koiter energy:
-\begin{align*}
-E_{\mathrm{elastic}}(\bv) &= \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\Bigg(\frac{h}{4} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - \Id\|^2_{SV}\\
-&\qquad + \frac{h^3}{12}\|\bar\ba_{ijk}^{-1}(\bb_{ijk}-\bar\bb_{ijk})\|^2_{SV}\Bigg)
-\end{align*}
+{\scriptsize
+$$E_{\mathrm{elastic}}(\bv) = \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\Bigg(\frac{h}{4} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - \Id\|^2_{SV} + \frac{h^3}{12}\|\bar\ba_{ijk}^{-1}(\bb_{ijk}-\bar\bb_{ijk})\|^2_{SV}\Bigg).$$
+}%
 It is worth making a few observations about this energy. First, the matrices $\ba$, $\bar\ba$, etc. are \emph{coordinate-dependent}: replacing the parameterization domain $\fT$, or even cyclically permuting the order of vertices around a face, would alter the values in the matrix. However, the generalized eigenvalues of $\ba-\bar\ba$ and $\bb-\bar\bb$ with respect to the inner product $\bar\ba$ are coordinate-\emph{independent}, as is the total energy. Perhaps the easiest way to see this fact is to note that these spectra measure the geometrically exact strain induced by an affine embedding of $\fT$, and so \emph{must} be independent of the coordinates chosen. Second, the terms of the form $\|\bar\ba^{-1}M\|^2_{SV}$ are sometimes instead written as $\|\bar\ba^{-1/2}M\bar\ba^{-1/2}\|^2_{SV}$, where $\bar\ba^{-1/2}$ is the unique positive-definite square root of $\bar\ba$. The two expressions are equivalent, since the spectrum of a product of matrices is invariant under cyclic permutation, but the form used above is slightly more convenient for computation. Finally, as a sanity check, observe that when $\bar\bb=0$ and the Poisson ratio $\nu=0$, the bending energy reduces to the square of mean curvature, as expected for thin plates.
 
 \paragraph{Mass Matrix} Whether swelling or shrinking of the surface affects the mass of the surface depends on the mechanism: changes due to growth or moisture absorption/evaporation do change the mass, while plastic polymers contracting when exposed to heat do not. In cases where modeling the mass change is desired, the mass $\lambda_i$ of each vertex can be recomputed at a given instant in time by
@@ -325,8 +343,9 @@ here the sum is over all faces $\bff$ incident to $\bv_i$ and yields the usual `
 
 \paragraph{Viscous Damping} Since the growth and swelling phenomena we want to simulate all take place at relatively long time scales, and paper and plastic are viscoelastic, a damping model is needed to dissipate the elastic waves in the material. We implement a simple Kelvin-Voigt damping model by including a damping potential
 \begin{align*}
-E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) &= \frac{\eta}{E}\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\Bigg(\frac{h}{4} \left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\\
-&\qquad + \frac{h^3}{12}\left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\bb_{ijk}-\bb_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\Bigg)
+E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) &= \frac{\eta}{E}\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\left(W_{\mathrm{s}} + W_{\mathrm{b}}\right)\\
+W_{\mathrm{s}} &= \frac{h}{4} \left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\\
+W_{\mathrm{b}} &= \frac{h^3}{12}\left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\bb_{ijk}-\bb_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}.
 \end{align*}
 where $\Delta t$ is the time step size, $\bv^{\mathrm{prev}}$ denotes the values of $\bv$ in the previous time step (and likewise for $\ba^{\mathrm{prev}}$, etc), and $\eta$ is a viscosity parameter.
 \begin{table}[htb]
@@ -398,7 +417,7 @@ We recommend the usual technique of using the explicit Euler step $\tilde\bv = \
 $$\Lambda\delta \bv - \Delta t \bF\left(\tilde \bv + \Delta t\delta \bv, \bv^{i}\right) = 0 = \sigma(\delta \bv),$$
 which is well-scaled for using Newton's method to solve $\sigma(\delta \bv)=0$. The stiffness and nonlinearity of the elastic forces prohibit very large time steps, though a line search allows time integration using $\Delta t\approx 10^{-4}$ seconds.
 
-The Newton gradient $\nabla \sigma = \Lambda + \Delta t^2 \nabla \bF$ is symmetric and almost always positive-definite, and thus amenable to sparse Cholesky decomposition. We use the CHOLMOD solver of the SuiteSparse library~\cite{Chen08} for solving the Newton linear system. In the (rare) cases where $\nabla \sigma$ is detected by the solver to be indefinite, we regularize by using $\nabla \sigma = (1+\alpha)\Lambda + \Delta t^2 \nabla F$ for progressively larger multiples of $\alpha$, until the Cholesky decomposition succeeds.
+The Newton gradient $\nabla \sigma = \Lambda + \Delta t^2 \nabla \bF$ is symmetric and almost always positive-definite, and thus amenable to sparse Cholesky decomposition for small-to-medium sized meshes. We use the CHOLMOD solver of the SuiteSparse library~\cite{Chen08} for solving the Newton linear system. In the (rare) cases where $\nabla \sigma$ is detected by the solver to be indefinite, we regularize by using $\nabla \sigma = (1+\alpha)\Lambda + \Delta t^2 \nabla F$ for progressively larger multiples of $\alpha$, until the Cholesky decomposition succeeds. For larger meshes, where the Cholesky factors do not fit in main memory, we solve the equations using Alglib's implementation of LBFGS~\cite{Alglib}. Iterative methods (conjugate gradients) could also be used.
 \paragraph{Inexact Hessian} The Hessian of the bending energy is expensive to compute, and almost always dominated by the Hessian of the (much stiffer) stretching term; we observed improved performance replacing the exact bending Hessian with a partial approximation. In particular, we can rewrite the bending energy on face $\bff_{ijk}$ as
 \begin{align*}
 E_{\mathrm{bending}}(\bv) &= \frac{h^3\sqrt{\det \bar\ba_{ijk}}}{24}\left(r_1(\bv)^2 + r_2(\bv)^2\right)\\
@@ -505,151 +524,3 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
 \bibliography{MoistSim}
 \end{document}
 
-
-\section{Old Text}
-
-\subsubsection{Radially Wet Disc}
-\begin{figure}[h]
-
-\begin{subfigure}{0.5\textwidth}
-\centering
-\includegraphics[width=\linewidth]{WetRimSim1.png} 
-\caption{Caption1}
-\label{fig:subim1}
-\end{subfigure}%
-\hfill
-\begin{subfigure}{0.5\textwidth}
-\centering
-\includegraphics[width=\linewidth]{WetCenterSim2.png}
-\caption{Caption 2}
-\label{fig:WetDisc}
-\end{subfigure}%
-
-\end{figure}
-
-\subsubsection{Machine Direction Experiment}
-\begin{figure}[h]
-
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=\linewidth]{RechSim1.png} 
-\caption{Caption1}
-\label{fig:subim1}
-\end{subfigure}%
-\hfill
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=\linewidth]{RecvSim1.png}
-\caption{Caption 2}
-\label{fig:Rec}
-\end{subfigure}%
-
-\end{figure}
-
-\subsubsection{Dried Leaves}
-\begin{figure}[h]
- 
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{actualLeafH2.jpg} 
-\caption{Caption1}
-\label{fig:subim1}
-\end{subfigure}%
-\hfill
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{actualLeafV.jpg}
-\caption{Caption 2}
-\label{fig:DriedLeaf}
-\end{subfigure}%
-
-\bigskip
-
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{LeafhSim1.png} 
-\caption{Caption1}
-\label{fig:subim3}
-\end{subfigure}%
-\hfill
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{LeafvSim1.png}
-\caption{Caption 2}
-\label{fig:subim4}
-\end{subfigure}%
- 
-\caption{Simulation for Dried Leaves}
-\label{fig:image2}
-\end{figure}
-\subsubsection{Wetting Paper Annulus}
-\begin{figure}[h]
- 
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{AnnulusSim1.png} 
-\caption{Caption1}
-\label{fig:subim1}
-\end{subfigure}%
-\hfill
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{AnnulusSim2.png}
-\caption{Caption 2}
-\label{fig:DriedLeaf}
-\end{subfigure}%
-
-\bigskip
-
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{AnnulusSim3.png} 
-\caption{Caption1}
-\label{fig:subim3}
-\end{subfigure}%
- 
-\caption{Simulation for Wet Annulus}
-\label{fig:image2}
-\end{figure}
-
-\subsubsection{Wetting Straw Wrapping Paper}
-\subsubsection{Melting Spoon}
-\subsubsection{Melting Torus}
-\begin{figure}[h]
- 
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{TorusSim1.png} 
-\caption{Caption1}
-\label{fig:Torus1}
-\end{subfigure}%
-\hfill
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{TorusSim2.png}
-\caption{Caption 2}
-\label{fig:Torus2}
-\end{subfigure}%
-
-\bigskip
-
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=0.45\linewidth]{TorusSim3.png} 
-\caption{Caption1}
-\label{fig:Torus3}
-\end{subfigure}%
- 
-\caption{Simulation for Dried Torus}
-\label{fig:Torus}
-\end{figure}
-
-\section{Conclusions and Future Work}
-
-%Nullam vulputate enim ut tortor mollis pharetra. Cras pellentesque sem a accumsan malesuada. Donec at massa nisl. Sed malesuada felis id nisl maximus efficitur. In pretium metus non faucibus pulvinar. Sed pulvinar elit ultrices mauris vehicula, id ultricies purus finibus. Fusce tempus elit molestie, consequat ipsum eget, iaculis nibh. Cras tincidunt, orci in lacinia tempus, mauris leo finibus orci, vitae dignissim dui risus et odio. Sed commodo ultricies nulla, et varius velit aliquam quis. Sed efficitur, ex non facilisis dignissim, lacus orci accumsan massa, dictum facilisis arcu lacus ac leo. Sed quis tellus dictum massa egestas dapibus vel et justo. Nulla euismod lectus ut purus hendrerit porttitor. Suspendisse quis dui ligula. Proin non porta libero. Maecenas vel feugiat urna.
-%
-%\begin{acks}
-%The authors would like to thank Dr. Yuhua Li for providing the MATLAB code of the \textit{BEPS} method.
-%The authors would also like to thank the anonymous referees for their valuable comments and helpful suggestions. The work is supported by the \grantsponsor{GS501100001809}{National Natural Science Foundation of China}{https://doi.org/10.13039/501100001809} under Grant No.: ~\grantnum{GS501100001809}{61273304}
-%21 and ~\grantnum[http://www.nnsf.cn/youngscientists]{GS501100001809}{Young Scientists' Support Program}.
-%\end{acks}
