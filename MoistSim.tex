@@ -7,7 +7,7 @@
 \usepackage{tikz}
 %\graphicspath{{C:/Users/black/OneDrive/Documents/UT/Research/Shell/MoistInducedSim}}
 \usepackage{wrapfig}
-
+\usepackage{bm}
 \newcommand{\ba}{\mathbf{a}}
 \newcommand{\bb}{\mathbf{b}}
 \newcommand{\bc}{\mathbf{c}}
@@ -21,6 +21,7 @@
 \newcommand{\Id}{\mathbf{I}}
 \newcommand{\bJ}{\mathbf{J}}
 \newcommand{\bx}{\mathbf{x}}
+\newcommand{\bw}{\mathbf{w}}
 \DeclareMathOperator{\tr}{tr}
 \newcommand{\hn}{\hat{\mathbf{n}}}
 \newcommand{\fT}{\mathcal{T}}
@@ -105,7 +106,7 @@ We present a physically accurate low-order elastic shell model that incorporates
 % A "teaser" figure, centered below the title and authors and above the body of the work.
 \begin{teaserfigure}
   \centering
-  \includegraphics[width=\textwidth]{teaser.png}
+  \includegraphics[width=\textwidth]{teasernew.png}
   \caption{The geometry of thin materials often changes dramatically in response to heat and moisture. A plastic bunny and armadillo shrink in response to being heated (left). Colors on the surfaces indicate temperature (redder is hotter). Moist paper annuli curl up as they dry, and the amount and shape of curling is based on the paper's thickness and whether or not the paper's fibers are randomly or consistently oriented (right).}
 \end{teaserfigure}
 
@@ -326,8 +327,8 @@ $$\bar\ba = \frac{\bar\bg^++\bar\bg^-}{2}, \qquad \bar\bb = \frac{\bar\bg^- - \b
 
 \begin{figure*}[h]
   \centering
-   \includegraphics[width=\textwidth]{BunnyandArmadillo.png}
-  \caption{The figure shows the time evolution of a plastic armadillo and a plastic bunny as they shrink when exposed to localized heating (red beam in the figure), where redder parts have higher temperature.}
+   \includegraphics[width=\textwidth]{BunnyandArmadilloNew.png}
+  \caption{Time evolution of a plastic armadillo and a plastic bunny as they shrink when exposed to localized heating (red beam in the figure), where redder parts have higher temperature.}
   \label{fig:BunnyandArmadillo}
 \end{figure*}
 
@@ -429,6 +430,15 @@ $$HE_{\mathrm{bending}} \approx \frac{h^3\sqrt{\det \bar\ba_{ijk}}}{12}\left(\na
 \paragraph{Inverted Triangles} We observed a somewhat subtle failure case when running simulations containing neighboring triangles with very different prescribed metrics $\bar\ba$: if the two triangles are exactly coplanar, and one triangle collapses completely and inverts, then the mid-edge normal on the common edge is undefined (as its direction is now the mean of two anti-parallel vectors). This failure case can be prevented by either maintaining a minimum vertex/edge/face distance using continuous-time collision detection, by adaptively remeshing triangles undergoing excessive deformation~\cite{Narain2012}, or by adjusting the initial mesh. The usual advice of using an intrinsic Delaunay triangulation, and avoiding adjacent triangles of very disparate size, applies.
 \paragraph{Symmetry-Breaking} By symmetry, any rest flat ($\bar\bb=0$) shell has an extrinsically flat equilibrium configuration, regardless of $\bar\ba$. In most cases this equilibrium state is unstable and is not observed in the real world, due to small imperfections in the shell material breaking the symmetry of the initial and/or rest state. We apply a small random perturbation to the rest and initial configurations of all of our initially-flat examples with $\bar\bb=0$, to force symmetry-breaking.
 
+\section{Hinge-Based Shape Operator} \label{sec:gingold}
+Gingold et al.~\shortcite{Gingold2004} use a hinge-based shape operator instead, motivated from the observation that on the edges, the shape operator has rank one, and that averaging this per-edge shape operator over an area should yield an approximation to the smooth shape operator. The formulas as originally presented rely fundamentally on the existence of an embedded, Euclidean undeformed mesh, and so it is not obvious how to extend the formulation to the non-Euclidean setting where arbitrary $\bar\ba$ and $\bar\bb$ are prescribed. One possible extension of Gingold et al.'s formula is
+$$S_{\mathrm{gingold}}(\bm{\theta}) = \sum_{i=1}^3 \frac{\sqrt{\bw_i^T \bar\ba\bw_i} \tan\left(\theta_i/2\right)}{\|\bw_i\|^2\sqrt{\det\bar\ba}} \bw_i \bw_i^T$$
+which takes into account length and area distortions of the triangle's rest pose due to the metric $\bar\ba$. Here $i$ sums over the three edges of the canonical barycentric triangle $\mathcal{T}$; $\bw_i$ is the vector normal to edge $i$ and with magnitude equal to that of edge $i$, and $\theta_i$ is the hinge angle associated to edge $i$. Given rest hinge angles $\bar\theta_i$, the difference $S_{\mathrm{gingold}}(\bm{\theta}) - S_{\mathrm{gingold}}(\bar{\bm{\theta}})$ can be substituted in for $\bar\ba^{-1}(\bb-\bar\bb)$ in the Koiter energy. We compare this formulation, to the one above based on the mid-edge shape operator, in section~\ref{comparisons} below.
+
+\paragraph{Solving for Hinge Angles} Given a desired $\bar\bb$, rest angles $\bar\theta_i$ can be recovered by evaluating the shape operator in test directions $\bw_i$: we desire
+$$\frac{\bw_i^T \bar\bb \bw_i}{\bw_i \bar\ba \bw_i} = \bw_i^T S_{\mathrm{gingold}}(\bar{\bm{\theta}}) \bw_i, \quad i\in\{1,2,3\},$$
+a system of three linear equations in $\tan(\bar\theta_i/2)$. Note that two neighboring faces might disagree on the value of the rest hinge angle of their common edge; to support non-Euclidean rest geometry, both values must be stored and used when computing the energy density of their respective triangles.
+
 \section{Results}
 We evaluate the simulation on a variety of examples, both didactic and complex.
 
@@ -510,7 +520,21 @@ As mentioned above, when paper is manufactured, paper fibers tend to be arranged
 \end{figure*}
 
 \subsection{Qualitative Experiments}
-We end with several experiments that demonstrate the flexibility of the method to simulate complex geometries undergoing nonlinear deformations due to differential swelling.
+We end with several experiments that demonstrate the flexibility of the method to simulate complex geometries undergoing nonlinear deformations due to differential swelling along with the timing required to generate a frame in table ~\ref{tab:timing}.
+
+\begin{table}[htb]
+\begin{tabular}{lc|cc|cc}
+Example & Fig & verts & tris & time step (s) & time/step (s) \\
+\hline
+Bunny & \ref{fig:BunnyandArmadillo} & 51k & 102k & $10^{-5}$ & 5.25  \\
+Armadillo & \ref{fig:BunnyandArmadillo} & 42k & 86k &  $10^{-5}$ & 33.88 \\
+Pasta & \ref{fig:pasta} & 9k & 19k & $10^{-4}$ &  23.6 \\
+Globe & \ref{fig:SwellingDisc} & 5k & 10k & & \\
+Annuli  & \todo{???} & \todo{???}
+\end{tabular}
+\caption{Timing numbers for the simulations shown in the paper. All simulations were run on an XXX desktop using one thread.}
+\label{tab:energy}
+\end{table}
 
 \paragraph{The Spoon}
 Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{youtube}.
@@ -519,7 +543,36 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
 
 \paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:TorusandSphere}.
 
+\section{Validations}
+To validate our method, we compare our energy with the energy proposed by Gingold ~\shortcite{Gingold04} which is later adopted in Arcsim ~\cite{Narain:2013:FCA} and the energy of the St. Vernant-Kirchoff model of a thin slab of material. Since the method by Gingold does not support growth intrinsically, we compute the rest curvature based on our method and derived the rest angle for the geometry.  
 
+\paragraph{Energy Convergence}
+We prescribe a differential growth of a thin slab of rectangular material with rest metric
+$$\bar\bg =  (\frac{(1 + G)z}{h} + (1 - \frac{z}{h}))^2 \bar\bg_0$$
+and show the energy comparison in Table~\ref{tab:energy}. Our energy follows closely to the St. Vernant-Kirhoff energy compared to the method by ~\cite{Gingold04} and converges faster than FEM.
+
+\begin{table*}
+\begin{tabular}{lccccccc}
+$G$ & $0.005$ & $0.03$ & $0.05$ & $0.08$ & $0.1$ & $0.3$ & $0.5$  \\
+\hline
+St.VK Energy & $1.6x10^{-6}$ & $5.64x10^{-5}$ & $1.55x10^{-4}$ & $3.87x10^{-4}$ & $5.974x10^{-4}$ & $4.77x10^{-3}$ & $1.2x10^{-2}$ \\
+Our Energy & $1.6x10^{-6}$ & $5.77x10^{-5}$ & $1.6x10^{-4}$ & $4.1x10^{-4}$ & $6.4x10^{-4}$ & $5.67x10^{-3}$ & $1.54x10^{-2}$ \\
+Gingold Energy & $2.2x10^{-6}$ & $8.01x10^{-5}$ & $2.29x10^{-4}$ & $6.11x10^{-4}$ & $9.83x10^{-4}$ & $1.23x10^{-2}$ & $5.01x10^{-2}$ 
+\end{tabular}
+\caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed over the square, and in each case we compare the simulated steady state to the expected analytic solution.}
+\label{tab:energy}
+\end{table*}
+
+\paragraph{Equilibrium Shape}
+Comparisons of the equilibrium shape of the midsurface of the slab with G = 0.03 simulated using FEM, Gingold's method, and our method is given in figure ~\ref{fig:RecGrowth}. As the resolution in the thickness direction increases, FEM gets better approximation for the growth and produces more curved surfaces, whose predicted shape at fine resolution is close to our equilibrium shape. On the other hand, the simulation using Gingold's method generates surface that are more curved than our equilibrium shape.
+
+\begin{figure*}[h]
+  \centering
+  \includegraphics[width=\textwidth]{Growthtemp.jpg}
+  \caption{The top figure shows the gradually curved midsuface of FEM simulation as we increase the resolution. The bottom figure shows the equilibrium shape of three simulations: FEM(top), our(middle), Gingold(bottom).}
+  \label{fig:RecGrowth}
+\end{figure*} 
+\clearpage
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{MoistSim}
 \end{document}
