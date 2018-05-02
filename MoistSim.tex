@@ -219,7 +219,7 @@ We thus have a formulation of kinetic energy and potential energy
 $$T[\dot\br] = \int_{\Omega} h\rho\|\dot\br\|^2 \sqrt{\det\bar\ba}\,dxdy, \quad V[\br] = \int_{\Omega} W(x,y)\,dxdy,$$
 for volumetric density $\rho$, to which additional external energies and forces (gravity, constraint forces, etc) can be added to yield equations of motion via the usual principle of least action.
 
-\section{Discretization}
+\section{Discretization} \label{sec:discretization}
 We approximate the midsurface $\br$ with a triangle mesh $(V,E,F)$; the positions of the vertices $\bv = [\bv_1, \bv_2\,\ldots]$ take the place of the embedding function $\br$. The general strategy we will use is to assume that $\ba$ and $\bb$, as well as their rest counterparts $\bar\ba$ and $\bar\bb$, are constant over each face of the triangle mesh; it will then be straightforward to write down a discrete analogue of the Koiter elastic energy density in Equation~\eqref{eq:koiter}. 
 
 \paragraph{Discrete Shell Model} As in the continuous setting, the discrete shell does not necessarily have a rest state embeddable as a mesh in $\mathbb{R}^3$, making it impossible to parameterize the deformed configuration of the shell in terms of the rest configuration; additionally we do not want to assume (or compute) a global parameterization of the midsurface. Instead, we independently parameterize each triangle in its own barycentric coordinates (see Figure~\ref{fig:technical}). Let $\bff_{ijk}$ be a face in $F$ containing the vertices $\bv_i$, $\bv_j$, $\bv_k$, and denote by $\fT$ the canonical unit triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$. Then locally the face $\bff_{ijk}$ is embedded by the affine function
@@ -466,11 +466,28 @@ $\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & 
 \end{table*}
 
 \paragraph{Isotropic Growth} The Riemann mapping theorem guarantees that every surface $M$ with disk topology can be parameterized by the unit disk, with metric conformally equivalent to the Euclidean metric. This insight was exploited by Kim et al~\shortcite{Kim2012} to grow an approximate sphere from a square. 
-%In the case that $M$ is flat, and this conformal metric is $\ba = e^{2s}I$ for conformal factor $s$, then a disk with prescribed fundamental forms
-%$$\bar\ba = e^{2s}I, \qquad \bar\bb = 0$$
-%is expected to grow into $M$ (up to rigid motion), since $M$ is a global minimizer of the elastic energy. We use this fact as a basis for a test: we conformally map an outline of the United States to the unit disk using the method of Crane~\shortcite{}, assign a rest metric $\bar\ba$ per the above formula, and simulate the resulting growth of the shell. Figure~\ref{XXX} compares the initial shape to the simulation steady state.
 
 When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially when $M$ is convex and the shell thickness $h$ is small. Figure~\ref{ContractingSphere} shows the result of swelling the unit disk into a sphere: we stereographically project the sphere of radius $1/4$ units to the plane, and take the region bounded by the unit disk. Stereographic projection is conformal, so we set $\bar\ba$ on the unit disk per the conformal factor, and simulate the damped dynamics of the disk returning to its equilibrium state. Notice that the disk transitions through highly deformed intermediate states before ``popping'' back into a spherical shape. The rest state is not perfectly spherical at the boundary: the shell flares outward, as expected since the perfectly spherical configuration minimizes stretching energy while neglecting bending. A theoretical argument for this behavior at the boundary is given in \cite{Efrati2009_2}.
+
+\paragraph{Comparison to Finite Elements}
+We compare our method to finite elements to validate both the discretized elastic energy, and the equilibrium configuration, of a slab undergoing differential non-Euclidean growth. More specifically, for different growth magnitudes $G$ we prescribe the rest metric
+$$\bar\bg = \left (\frac{(1 + G)z}{h} + (1 - \frac{z}{h})\right)^2$$
+throughout the volume of an XXX by XXX mm slab of thickness $h=XXX$ mm, and evaluate its elastic energy using three methods: (i) tetrahedral finite elements using a St. Venant-Kirchhoff material model, where each tetrahedron is assigned a piecewise constant rest metric by evaluating $\bar\bg$ at its centroid; (ii) our method, as described in section~\ref{sec:discretization}; (iii) our method, using Gingold et al.'s hinge-based shape operator, as discussed in section~\ref{sec:gingold}. We also compute two ground truth energy values: the true elastic energy of a St. Venant-Kirchhoff material integrated over the shell volume, and the energy of the midsurface-based thin limit approximation in equation~\ref{eq:koiter}. 
+Figure~\ref{fig:XXX} shows convergence plots of the elastic energy of the finite element and shell methods as a function of mesh resolution; Table~\ref{tab:energy} compares the limit energy values of the discrete methods to the ground truths, for different values of $G$ (the meshes used for this experiment contain XXX tetrahedra/YYY triangles). All finite element energies and simulations were computed using the Vega library~\cite{Vega}.
+\begin{table*}
+\begin{tabular}{l|ccccccc}
+method & $G=0.005$ & $0.03$ & $0.05$ & $0.08$ & $0.1$ & $0.3$ & $0.5$  \\
+\hline
+St.V-K Energy & $1.6x10^{-6}$ & $5.64x10^{-5}$ & $1.55x10^{-4}$ & $3.87x10^{-4}$ & $5.974x10^{-4}$ & $4.77x10^{-3}$ & $1.2x10^{-2}$ \\
+Our Energy & $1.6x10^{-6}$ & $5.77x10^{-5}$ & $1.6x10^{-4}$ & $4.1x10^{-4}$ & $6.4x10^{-4}$ & $5.67x10^{-3}$ & $1.54x10^{-2}$ \\
+Gingold Energy & $2.2x10^{-6}$ & $8.01x10^{-5}$ & $2.29x10^{-4}$ & $6.11x10^{-4}$ & $9.83x10^{-4}$ & $1.23x10^{-2}$ & $5.01x10^{-2}$ 
+\end{tabular}
+\caption{Shell energy computed with St. Venant-Kirchoff model on a thin stab, our discretized energy, and the energy simulated using Gingold's method on high resolution shell.}
+\label{tab:energy}
+\end{table*}
+
+Our energy follows closely to the St. Venant-Kirhoff energy compared to the method by ~\cite{Gingold04} and converges faster than FEM.
+
 
 \subsection{Comparisons to Experiments}
 We validate our simulated results against several real-world experiments.
@@ -497,13 +514,13 @@ Since it controls the relative importance of stretching and bending, the thickne
 As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{Annuli} (right) we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure). Notice the dramatic change in the annulus dynamics, compared to Figure~\ref{Annuli} (left).
 
 \begin{figure}[!h]
-\begin{minipage}[t]{0.45\linewidth}
-    \centering
-    \includegraphics[width=1\textwidth]{Spoon.png}
-    \caption{When a spoon is heated, its head buckles and crumped. This figure shows a real world experiment (top), our simulated spoon (bottom) where hotter parts are redder, and an inset of focusing on the distorted front of the spoon.}
-    \label{Spoon}
-\end{minipage}
-\hspace{0.1cm}
+%\begin{minipage}[t]{0.45\linewidth}
+%    \centering
+ %   \includegraphics[width=1\textwidth]{Spoon.png}
+ %   \caption{When a spoon is heated, its head buckles and crumped. This figure shows a real world experiment (top), our simulated spoon (bottom) where hotter parts are redder, and an inset of focusing on the distorted front of the spoon.}
+%    \label{Spoon}
+%\end{minipage}
+%\hspace{0.1cm}
 \begin{minipage}[t]{0.45\linewidth} 
     \centering
     \includegraphics[width=1\textwidth]{TorusandSphere.png}
@@ -536,8 +553,8 @@ Annuli  & \todo{???} & \todo{???}
 \label{tab:timing}
 \end{table}
 
-\paragraph{The Spoon}
-Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{youtube}.
+%\paragraph{The Spoon}
+%Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{youtube}.
 
 \paragraph{Shape-changing Food} Differential growth has been used to design gelatin films that fold into novel shapes, by exploiting the ability to fabricate the film into a bilayer of differing density and porosity~\cite{Wang2017}. Wang et al. validated their designs using a volumetric simulation in ABAQUS; in figure~\ref{fig:pasta} we compare their simulated and experimental results to our thin shell simulations, demonstrating that a reduced shell model can accurately predict the behavior of the bilayer without need of a volumetric simulation.
 
@@ -547,21 +564,6 @@ Common plastic spoons are made of polypropylene, a thermoplastic which shrinks w
 To validate our method, we compare our energy with the energy proposed by Gingold ~\shortcite{Gingold04} which is later adopted in Arcsim ~\cite{Narain:2013:FCA} and the energy of the St. Venant-Kirchoff model of a thin slab of material. Since the method by Gingold does not support growth intrinsically, we compute the rest curvature based on our method and derived the rest angle for the geometry.  
 
 \paragraph{Energy Convergence}
-We prescribe a differential growth of a thin slab of rectangular material with rest metric
-$$\bar\bg =  (\frac{(1 + G)z}{h} + (1 - \frac{z}{h}))^2 \bar\bg_0$$
-and show the energy comparison in Table~\ref{tab:energy}. Our energy follows closely to the St. Venant-Kirhoff energy compared to the method by ~\cite{Gingold04} and converges faster than FEM.
-
-\begin{table*}
-\begin{tabular}{lccccccc}
-$G$ & $0.005$ & $0.03$ & $0.05$ & $0.08$ & $0.1$ & $0.3$ & $0.5$  \\
-\hline
-St.VK Energy & $1.6x10^{-6}$ & $5.64x10^{-5}$ & $1.55x10^{-4}$ & $3.87x10^{-4}$ & $5.974x10^{-4}$ & $4.77x10^{-3}$ & $1.2x10^{-2}$ \\
-Our Energy & $1.6x10^{-6}$ & $5.77x10^{-5}$ & $1.6x10^{-4}$ & $4.1x10^{-4}$ & $6.4x10^{-4}$ & $5.67x10^{-3}$ & $1.54x10^{-2}$ \\
-Gingold Energy & $2.2x10^{-6}$ & $8.01x10^{-5}$ & $2.29x10^{-4}$ & $6.11x10^{-4}$ & $9.83x10^{-4}$ & $1.23x10^{-2}$ & $5.01x10^{-2}$ 
-\end{tabular}
-\caption{Shell energy computed with St. Venant-Kirchoff model on a thin stab, our discretized energy, and the energy simulated using Gingold's method on high resolution shell.}
-\label{tab:energy}
-\end{table*}
 
 \paragraph{Equilibrium Shape}
 Comparisons of the equilibrium shape of the midsurface of the slab with G = 0.03 simulated using FEM, Gingold's method, and our method is given in figure ~\ref{fig:RecGrowth}. As the resolution in the thickness direction increases, FEM gets better approximation for the growth and produces more curved surfaces, whose predicted shape at fine resolution is close to our equilibrium shape. On the other hand, the simulation using Gingold's method generates surface that are more curved than our equilibrium shape.
