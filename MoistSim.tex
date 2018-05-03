@@ -470,19 +470,19 @@ When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the
 We compare our method to finite elements to validate both the discretized elastic energy, and the equilibrium configuration, of a slab undergoing differential non-Euclidean growth. More specifically, for different growth magnitudes $G$ we prescribe the rest metric
 $$\bar\bg = \left [\frac{(1 + G)z}{h} + \left(1 - \frac{z}{h}\right)\right]^2$$
 throughout the volume of a 20 by 10 mm slab of thickness $h=0.1$ mm, and evaluate its elastic energy using three methods: (i) tetrahedral finite elements using a St. Venant-Kirchhoff material model, where each tetrahedron is assigned a piecewise constant rest metric by evaluating $\bar\bg$ at its centroid; (ii) our method, as described in section~\ref{sec:discretization}; (iii) our method, using Gingold et al.'s hinge-based shape operator, as discussed in section~\ref{sec:gingold}. All finite element energies and simulations were computed using the Vega library~\cite{Vega}. We also compute two ground truth energy values: the true elastic energy of a St. Venant-Kirchhoff material integrated over the shell volume, and the energy of the midsurface-based thin limit approximation in equation~\ref{eq:koiter}. 
-Figure~\ref{fig:Convergence} shows convergence plots of the elastic energy of the finite element and shell methods as a function of mesh resolution. For a fixed value $G=0.03$, we compute the energy of a non-equilibrium embedding of the slab $\br(x,y) = XXX$. Both shell-based methods converge quadratically (albeit to different limit energies) with the mid-edge operator formulation more accurate in the limit. Figure~\ref{fig:validation} plots the error of both shell methods relative to the FEM solution, for different levels of refinement; on a coarse mesh our method slightly underestimates the curvature of the FEM solution; the formulation using Gingold et al.'s operator overestimates it.
+Figure~\ref{fig:Convergence} shows convergence plots of the elastic energy of the finite element and shell methods as a function of mesh resolution. For a fixed value $G=0.03$, we compute the energy of a non-equilibrium embedding of the slab $\br(x,y) = \left(\sin[100x], 100y, \cos[100x]\right)$. Both shell-based methods converge quadratically (albeit to different limit energies) with the mid-edge operator formulation more accurate in the limit. Figure~\ref{fig:validation} plots the error of both shell methods relative to the FEM solution, for different levels of refinement; on a coarse mesh our method slightly underestimates the curvature of the FEM solution; the formulation using Gingold et al.'s operator overestimates it.
 
 Table~\ref{tab:energy} compares the limit energy values of the discrete methods to the ground truths, for different values of $G$ (the meshes used for this experiment contain 22881 tetrahedra/ 5538 triangles).  Our method shows good agreement with the Koiter energy. Notice that for high values of $G$, even the exact Koiter energy does not agree with the true volumetric elastic energy; this is because as $G$ grows large, the modeling assumption that strain is small relative to the thickness of the shell no longer holds. 
 \begin{table*}
 \begin{tabular}{l|ccccccc}
-method & $G=0.005$ & $0.03$ & $0.05$ & $0.08$ & $0.1$ & $0.3$ & $0.5$  \\
+Method & $G=0.005$ & $0.03$ & $0.05$ & $0.08$ & $0.1$ & $0.3$ & $0.5$  \\
 \hline
-True Volumetric Energy & $1.6x10^{-6}$ & $5.64x10^{-5}$ & $1.55x10^{-4}$ & $3.87x10^{-4}$ & $5.974x10^{-4}$ & $4.77x10^{-3}$ & $1.2x10^{-2}$ \\
-Thin Limit Approximation & XXX &\\
+True Volumetric Energy & $1.6\cdot 10^{-6}$ & $5.64 \cdot 10^{-5}$ & $1.55 \cdot 10^{-4}$ & $3.87 \cdot 10^{-4}$ & $5.974 \cdot 10^{-4}$ & $4.77 \cdot 10^{-3}$ & $1.2 \cdot 10^{-2}$ \\
+Thin Limit Approximation & $1.6\cdot 10^{-6}$ & $5.77\cdot 10^{-5}$  &  $1.60\cdot10^{-4}$ & $4.10\cdot 10^{-4}$ & $6.40 \cdot 10^{-4}$ & $5.67 \cdot 10^{-3}$ & $1.54\cdot 10^{-2}$\\
 \hline
-Our Energy & $1.6x10^{-6}$ & $5.77x10^{-5}$ & $1.6x10^{-4}$ & $4.1x10^{-4}$ & $6.4x10^{-4}$ & $5.67x10^{-3}$ & $1.54x10^{-2}$ \\
-Hinge-based Formulation & $2.2x10^{-6}$ & $8.01x10^{-5}$ & $2.29x10^{-4}$ & $6.11x10^{-4}$ & $9.83x10^{-4}$ & $1.23x10^{-2}$ & $5.01x10^{-2}$ \\
-Volumetric Finite Elements & XXX
+Our Energy & $1.6 \cdot 10^{-6}$ & $5.77 \cdot 10^{-5}$ & $1.6 \cdot 10^{-4}$ & $4.1 \cdot 10^{-4}$ & $6.4 \cdot 10^{-4}$ & $5.67 \cdot 10^{-3}$ & $1.54 \cdot 10^{-2}$ \\
+Hinge-based Formulation & $2.2 \cdot 10^{-6}$ & $8.01 \cdot 10^{-5}$ & $2.29 \cdot 10^{-4}$ & $6.11 \cdot 10^{-4}$ & $9.83 \cdot 10^{-4}$ & $1.23 \cdot 10^{-2}$ & $5.01 \cdot 10^{-2}$ \\
+Volumetric Finite Elements & $1.6 \cdot 10^{-6}$ & $5.6 \cdot 10^{-5}$ & $1.53 \cdot 10^{-4}$ & $3.85 \cdot 10^{-4}$ & $5.93 \cdot 10^{-4}$ & $4.74 \cdot 10^{-3}$ & $1.19 \cdot 10^{-2}$
 \end{tabular}
 \caption{Comparison of the elastic energy of a thin slab, simulated using tetrahedral finite elements, our method using the mid-edge shape operator, and using Gingold's hinge-based shape operator. Higher $G$ induces more differential growth.}
 \label{tab:energy}
@@ -555,7 +555,7 @@ Pasta & \ref{fig:pasta} & 9k & 19k & $10^{-4}$ &  23.6 \\
 Globe & \ref{SwellingDisc} & 5k & 10k & & \\
 Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8 
 \end{tabular}
-\caption{Timing numbers for the simulations shown in the paper. All simulations were run on an XXX desktop using one thread.}
+\caption{Timing numbers for the simulations shown in the paper. All simulations were run on an Intel Xeon E3-1270 desktop with 16GB RAM using one thread.}
 \label{tab:timing}
 \end{table}
 
