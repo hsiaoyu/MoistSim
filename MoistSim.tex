@@ -448,15 +448,15 @@ We first test the method on examples where the equilibrium state can be computed
   \caption{The exact solutions (white) and simulated surfaces (colored) from the didactic examples. From left to right are the enlarged square, rhombus, spherical cap, hyperboloid, and cylindrical patch experiments.}
   \label{fig:didactic}
 \end{figure}
-\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. In cases where $\bar\bb=0$ and $\bar\ba$ is homogeneous over the surface, our method must (and does) reproduce the exact solution. Examples with rest curvature are affected by discretization error; we ran the simulation using three mesh resolutions (XXX/YYY/ZZZ vertices) and for each, plot the distance of each point from the corresponding point on the exact solution in Figure~\ref{fig:didactic}.
+\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. In cases where $\bar\bb=0$ and $\bar\ba$ is homogeneous over the surface, our method must (and does) reproduce the exact solution. Examples with rest curvature are affected by discretization error; we ran the simulation using three mesh resolutions (820/2686/39210 vertices) and for each, plot the distance of each point from the corresponding point on the exact solution in Figure~\ref{fig:didactic}.
 \begin{table*}
 \begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & Mean Curv.  & Gauss Curv. & Error (one-sided Hausdorff) \\
-$4\Id$ & $0$ & Enlarged Square & $0$ & $0$ & XXX \\
-{\scriptsize $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$} & {\scriptsize $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ } & Spherical Cap & $1$ & $1$  & XXX \\
-{\scriptsize $\begin{pmatrix}1+x^2 & -xy \\ -xy & 1+y^2\end{pmatrix}$ } & {\scriptsize $\frac{1}{\sqrt{1+x^2+y^2}}\begin{pmatrix}-1 & 0\\0 & 1\end{pmatrix}$ } & Hyperboloid Cap & varies & $<-1$ & XXX/XXX/XXX \\
-$\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & XXX/XXX/XXX \\
-$\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$  & Cylindrical Patch & $1$ & $0$ & XXX/XXX/XXX
+$4\Id$ & $0$ & Enlarged Square & $0$ & $0$ & $1.38\cdot 10^{-5}$ \\
+{\scriptsize $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$} & {\scriptsize $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ } & Spherical Cap & $1$ & $1$  & $5.32\cdot 10^{-2}$\,//\,$3.47\cdot 10^{-2}$\,//\,$2.2\cdot 10^{-2}$ \\
+{\scriptsize $\begin{pmatrix}1+x^2 & -xy \\ -xy & 1+y^2\end{pmatrix}$ } & {\scriptsize $\frac{1}{\sqrt{1+x^2+y^2}}\begin{pmatrix}-1 & 0\\0 & 1\end{pmatrix}$ } & Hyperboloid Cap & varies & $<-1$ & $1.69\cdot 10^{-2}$ \\
+$\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & $4.82\cdot 10^{-11}$ \\
+$\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$  & Cylindrical Patch & $1$ & $0$ & $2.23\cdot 10^{-2}$\,//\,$1.078 \cdot 10^{-2}$\,//\,$1.61\cdot 10^{-2}$
 \end{tabular}
 \caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed over the square, and in each case we compare the simulated steady state to the expected analytic solution.}
 \label{tab:analytic}
@@ -549,7 +549,7 @@ Example & Fig & verts & tris & time step (s) & time/step (s) \\
 Bunny & \ref{fig:BunnyandArmadillo} & 51k & 102k & $10^{-5}$ & 5.25  \\
 Armadillo & \ref{fig:BunnyandArmadillo} & 42k & 86k &  $10^{-5}$ & 33.88 \\
 Pasta & \ref{fig:pasta} & 9k & 19k & $10^{-4}$ &  23.6 \\
-Globe & \ref{SwellingDisc} & 5k & 10k & & \\
+Globe & \ref{SwellingDisc} & 5k & 10k & $10^{-4}$ & 0.5 \\
 Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8 
 \end{tabular}
 \caption{Timing numbers for the simulations shown in the paper. All simulations were run on an Intel Xeon E3-1270 desktop with 16GB RAM using one thread.}
