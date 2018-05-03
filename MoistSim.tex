@@ -5,7 +5,6 @@
 \usepackage{subcaption}
 \usepackage{graphicx}
 \usepackage{tikz}
-%\graphicspath{{C:/Users/black/OneDrive/Documents/UT/Research/Shell/MoistInducedSim}}
 \usepackage{wrapfig}
 \usepackage{bm}
 \newcommand{\ba}{\mathbf{a}}
@@ -33,12 +32,10 @@
 
 % The next six lines come directly from the completed rights form.
 % You MUST replace them with the lines specific to your accepted work.
-\copyrightyear{2018}
-\acmYear{2018}
-\setcopyright{rightsretained}
-\acmConference{Conference Name}{Conference Date and Year}{Conference Location}
-\acmDOI{10.1145/8888888.7777777}
-\acmISBN{978-1-4503-1234-5/17/07}
+\setcopyright{acmlicensed}
+\acmJournal{TOG}
+\acmYear{2018}\acmVolume{37}\acmNumber{4}\acmArticle{1}\acmMonth{8} \acmDOI{10.1145/3197517.3201395}
+
 
 % Use the "authoryear" citation style, and make sure citations are in [square brackets].
 \citestyle{acmauthoryear}
@@ -456,10 +453,10 @@ We first test the method on examples where the equilibrium state can be computed
 \begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & $H$  & $K$ & Error (coarse) & Error (fine) \\
 $4\Id$ & $0$ & Enlarged Square & $0$ & $0$ & 1e-5 & 2e-6 \\
-$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & 0.025 & 0.018 \\
+$\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & $\frac{1}{1-x^2-y^2}\begin{pmatrix}1-y^2 & xy\\ xy & 1-x^2\end{pmatrix}$ & Spherical Cap & $1$ & $1$  & 0.025 & 0.0017 \\
 $\begin{pmatrix}1+x^2 & -xy \\ -xy & 1+y^2\end{pmatrix}$ & $\frac{1}{\sqrt{1+x^2+y^2}}\begin{pmatrix}-1 & 0\\0 & 1\end{pmatrix}$ & Hyperboloid Cap & varies & $<-1$ & 0.025 & 0.0049 \\
 $\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & 0.0001 & 3e-5 \\
-$\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0$ & 0.02 & 0.015
+$\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$ & Cylindrical Patch & $1$ & $0$ & 0.02 & 0.0054
 \end{tabular}
 \caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed over the square, and in each case we compare the simulated steady state to the expected analytic solution.}
 \label{tab:analytic}
@@ -472,8 +469,8 @@ When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the
 \paragraph{Comparison to Finite Elements}
 We compare our method to finite elements to validate both the discretized elastic energy, and the equilibrium configuration, of a slab undergoing differential non-Euclidean growth. More specifically, for different growth magnitudes $G$ we prescribe the rest metric
 $$\bar\bg = \left (\frac{(1 + G)z}{h} + (1 - \frac{z}{h})\right)^2$$
-throughout the volume of an XXX by XXX mm slab of thickness $h=XXX$ mm, and evaluate its elastic energy using three methods: (i) tetrahedral finite elements using a St. Venant-Kirchhoff material model, where each tetrahedron is assigned a piecewise constant rest metric by evaluating $\bar\bg$ at its centroid; (ii) our method, as described in section~\ref{sec:discretization}; (iii) our method, using Gingold et al.'s hinge-based shape operator, as discussed in section~\ref{sec:gingold}. We also compute two ground truth energy values: the true elastic energy of a St. Venant-Kirchhoff material integrated over the shell volume, and the energy of the midsurface-based thin limit approximation in equation~\ref{eq:koiter}. 
-Figure~\ref{fig:XXX} shows convergence plots of the elastic energy of the finite element and shell methods as a function of mesh resolution; Table~\ref{tab:energy} compares the limit energy values of the discrete methods to the ground truths, for different values of $G$ (the meshes used for this experiment contain XXX tetrahedra/YYY triangles). All finite element energies and simulations were computed using the Vega library~\cite{Vega}.
+throughout the volume of an 20 by 10 mm slab of thickness $h=0.1$ mm, and evaluate its elastic energy using three methods: (i) tetrahedral finite elements using a St. Venant-Kirchhoff material model, where each tetrahedron is assigned a piecewise constant rest metric by evaluating $\bar\bg$ at its centroid; (ii) our method, as described in section~\ref{sec:discretization}; (iii) our method, using Gingold et al.'s hinge-based shape operator, as discussed in section~\ref{sec:gingold}. We also compute two ground truth energy values: the true elastic energy of a St. Venant-Kirchhoff material integrated over the shell volume, and the energy of the midsurface-based thin limit approximation in equation~\ref{eq:koiter}. 
+Figure~\ref{fig:Convergence} shows convergence plots of the elastic energy of the finite element and shell methods as a function of mesh resolution; Table~\ref{tab:energy} compares the limit energy values of the discrete methods to the ground truths, for different values of $G$ (the meshes used for this experiment contain 22881 tetrahedra/ 5538 triangles). All finite element energies and simulations were computed using the Vega library~\cite{Vega}.
 \begin{table*}
 \begin{tabular}{l|ccccccc}
 method & $G=0.005$ & $0.03$ & $0.05$ & $0.08$ & $0.1$ & $0.3$ & $0.5$  \\
@@ -488,6 +485,12 @@ Gingold Energy & $2.2x10^{-6}$ & $8.01x10^{-5}$ & $2.29x10^{-4}$ & $6.11x10^{-4}
 
 Our energy follows closely to the St. Venant-Kirhoff energy compared to the method by ~\cite{Gingold04} and converges faster than FEM.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{Convergence.png}
+  \caption{ Comparision of energy convergence rate as a function of resolution of our method, hinge-based method, and FEM}
+  \label{Convergence}
+\end{figure}
 
 \subsection{Comparisons to Experiments}
 We validate our simulated results against several real-world experiments.
@@ -546,8 +549,8 @@ Example & Fig & verts & tris & time step (s) & time/step (s) \\
 Bunny & \ref{fig:BunnyandArmadillo} & 51k & 102k & $10^{-5}$ & 5.25  \\
 Armadillo & \ref{fig:BunnyandArmadillo} & 42k & 86k &  $10^{-5}$ & 33.88 \\
 Pasta & \ref{fig:pasta} & 9k & 19k & $10^{-4}$ &  23.6 \\
-Globe & \ref{fig:SwellingDisc} & 5k & 10k & & \\
-Annuli  & \todo{???} & \todo{???}
+Globe & \ref{SwellingDisc} & 5k & 10k & & \\
+Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8 
 \end{tabular}
 \caption{Timing numbers for the simulations shown in the paper. All simulations were run on an XXX desktop using one thread.}
 \label{tab:timing}
@@ -561,7 +564,7 @@ Annuli  & \todo{???} & \todo{???}
 \paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:TorusandSphere}.
 
 \section{Validations}
-To validate our method, we compare our energy with the energy proposed by Gingold ~\shortcite{Gingold04} which is later adopted in Arcsim ~\cite{Narain:2013:FCA} and the energy of the St. Venant-Kirchoff model of a thin slab of material. Since the method by Gingold does not support growth intrinsically, we compute the rest curvature based on our method and derived the rest angle for the geometry.  
+To validate our method, we compare our energy with the energy proposed by Gingold ~\shortcite{Gingold04} which is later adopted in Arcsim ~\cite{Narain:2013:FCA} and the energy of the St. Venant-Kirchoff model of a thin slab of material. Since the method by Gingold does not support growth intrinsically, we compute the rest curvature based on our method and derived the rest angle for the geometry. 
 
 \paragraph{Energy Convergence}
 
