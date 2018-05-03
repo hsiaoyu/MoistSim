@@ -192,7 +192,7 @@ A shell that begins a simulation at rest will simply have $\bar\ba = \ba^0$ and 
 \begin{figure*}[h]
   \centering
   \includegraphics[width=\textwidth]{ContractingSphere.png}
-  \caption{Stereographic projecion of the disk into the plane yields a conformal parameterization of one by the other (left); we set $\bar\bb=0$ and $\bar\ba$ to this conformal metric, and simulate the disk dynamics as it relaxes to equilibrium by adopting a spherical shape (right).}
+  \caption{Stereographic projection of the disk into the plane yields a conformal parameterization of one by the other (left); we set $\bar\bb=0$ and $\bar\ba$ to this conformal metric, and simulate the disk dynamics as it relaxes to equilibrium by adopting a spherical shape (right).}
   \label{ContractingSphere}
 \end{figure*}
 
@@ -409,7 +409,7 @@ where $\bs^i$ is the discretized source term. This source term $\bs_i^{\pm}$ pre
 When the mechanism for swelling/shrinking is heat rather than moisture, the above diffusion formulation remains unchanged, with $m$ reinterpreted as temperature rather than moisture.
 
 \section{Numerical Issues}
-Integrating the physics~\eqref{eq:implicit} requires some care, as the scale-separation between the stretching and bending forces, along with the very high stiffnesses involved, pose numerical challenges. (The diffusion equation in Equation~\eqref{eq:discdiffusion} poses no numerical difficulties.)
+Integrating the physics~\eqref{eq:implicit} requires some care, as the scale-separation between the stretching and bending forces, along with high values of stiffness, pose numerical challenges. (The diffusion equation in Equation~\eqref{eq:discdiffusion} poses no numerical difficulties.)
 \paragraph{Newton's Method} 
 We recommend the usual technique of using the explicit Euler step $\tilde\bv = \bv^{i} + \Delta t\dot\bv^i$ as the initial guess in Newton's method each iteration; writing $\bv^{i+1} = \tilde \bv + \Delta t\delta \bv$, we have from Equation~\ref{eq:implicit}
 $$\Lambda\delta \bv - \Delta t \bF\left(\tilde \bv + \Delta t\delta \bv, \bv^{i}\right) = 0 = \sigma(\delta \bv),$$
@@ -448,7 +448,7 @@ We first test the method on examples where the equilibrium state can be computed
   \caption{The exact solutions (white) and simulated surfaces (colored) from the didactic examples. From left to right are the enlarged square, rhombus, spherical cap, hyperboloid, and cylindrical patch experiments.}
   \label{fig:didactic}
 \end{figure}
-\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. In cases where $\bar\bb=0$ and $\bar\ba$ is homogenous over the surface, our method must (and does) reproduce the exact solution. Examples with rest curvature are affected by discretization error; we ran the simulation using three mesh resolutions (XXX/YYY/ZZZ vertices) and for each, plot the distance of each point from the corresponding point on the exact solution in Figure~\ref{fig:didactic}.
+\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. In cases where $\bar\bb=0$ and $\bar\ba$ is homogeneous over the surface, our method must (and does) reproduce the exact solution. Examples with rest curvature are affected by discretization error; we ran the simulation using three mesh resolutions (XXX/YYY/ZZZ vertices) and for each, plot the distance of each point from the corresponding point on the exact solution in Figure~\ref{fig:didactic}.
 \begin{table*}
 \begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & Mean Curv.  & Gauss Curv. & Error (one-sided Hausdorff) \\
@@ -489,7 +489,7 @@ Volumetric Finite Elements & XXX
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{Convergence.png}
-  \caption{ Comparision of energy convergence rate as a function of resolution of our method, hinge-based method, and FEM}
+  \caption{ Comparison of energy convergence rate as a function of resolution of our method, hinge-based method, and FEM}
   \label{fig:Convergence}
 \end{figure}
 
@@ -568,4 +568,3 @@ Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{MoistSim}
 \end{document}
-
