@@ -444,8 +444,8 @@ We first test the method on examples where the equilibrium state can be computed
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.5\textwidth]{didactic.png}
-  \caption{The exact solutions (white) and simulated surfaces (colored) from the didactic examples. From left to right are the enlarged square, rhombus, spherical cap, hyperboloid, and cylindrical patch experiments.}
+  \includegraphics[width=0.5\textwidth]{didactic-new.png}
+  \caption{Distance between our simulated solutions and analytic solutions for the test cases in table~\ref{tab:analytic}.}
   \label{fig:didactic}
 \end{figure}
 \paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. In cases where $\bar\bb=0$ and $\bar\ba$ is homogeneous over the surface, our method must (and does) reproduce the exact solution. Examples with rest curvature are affected by discretization error; we ran the simulation using three mesh resolutions (820/2686/39210 vertices) and for each, plot the distance of each point from the corresponding point on the exact solution in Figure~\ref{fig:didactic}.
@@ -527,7 +527,7 @@ As mentioned above, when paper is manufactured, paper fibers tend to be arranged
 \begin{minipage}[t]{0.45\linewidth} 
     \centering
     \includegraphics[width=1\textwidth]{validations.png}
-    \caption{One-sided Hausdorff distance between thin shell simulations using our method (left), and our method with hinge-based shape operator (right), for meshes with 1277, 3594, and 5538 vertices.}
+    \caption{Distance between solutions using thin shell simulations using our method (left), and our method with hinge-based shape operator (right), compared to FEM for meshes with 1277, 3594, and 5538 vertices.}
     \label{fig:validation}
 \end{minipage}
 \hspace{0.1cm}
@@ -570,6 +570,9 @@ Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8
 
 \paragraph{Melting Plastic} We simulate the behavior of several thin-shell plastic objects (sphere, torus bunny, and armadillo) shrinking when exposed to heat. Notice the complex buckling patterns visible in these examples, due to metric incompatibility introduced into the object geometry during heating. See figure~\ref{fig:BunnyandArmadillo} and figure~\ref{fig:TorusandSphere}.
 
+\section{Acknowledgements}
+We thank Yotam Gingold and Eitan Grinpspun for advice on adapting the hinge-based shape operator for non-Euclidean geometry, and Josh Vekhter for help creating figures.
+WMvR acknowledges support from the American Bureau of Shipping (ABS) through its career development chair. We also thank the National Science Foundation (DMS 1304211), Adobe Systems, Inc., and SideFX for their support.
 \clearpage
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{MoistSim}
