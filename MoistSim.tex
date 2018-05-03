@@ -115,7 +115,7 @@ Consider the wrinkling and curling of a drying leaf. The drying process correspo
 
 In addition to growth, wrinkling, and swelling, other phenomena involving the same physics include burning of thin objects, especially those made of curved or composite materials; wilting of flowers and dynamic response of plants to like light/moisture/etc; changes and wrinkling in skin due to aging, moisture, creams; shrinking and subsequent wrinkling of clothes; warping of wood due to one-sided heating; etc. There is also increasing excitement about manufacturing processes based on differential or inhomogeneous growth, that require precise control over the material's rest geometry. Examples include water printers that induces paper bending~\cite{Guberan2012}, two-layer structures consisting of plastic printed on canvas under tension~\cite{Perez2017}, the various works of Nervous Systems~\cite{NervousSystems}, fabrication using networks of filaments that stretch anisotropically when moistened, etc. Exploiting these technologies requires solving challenging inverse problems, with reliable methods for solving \emph{forward} problems an essential first step. 
 
-Of course, one could capture all of these phenomena by modeling elastic volumes explicitly using tetrahedral or hexahedral elements, and tracking the change in moisture, heat, etc within each element. However, such a volumetric model is computationally expensive, and unnecessary: structures that are thin relative to their surface diameter ought to be able to benefit form a reduced elastic shell model, augmented to track and account for dynamic changes in the environmental stimulus throughout the shell volume. Yet previous methods studying phenomena such as burning of paper~\cite{Liu2009}, drying of leaves~\cite{Jeong2013}, cooking pasta~\cite{Wang2017}, etc, have used either ad-hoc application-specific shell models, or volumetric finite elements, to account for intrinsic geometric changes. Our goal instead is to provide a principled low-order simulation methodology for such systems. This goal can be broken into two connected challenges: to simulate the object's elastic response to changes in its intrinsic geometry, and to model its intrinsic geometry changes in response to environmental stimuli. In this work we addressed both, generating a numerical method that allows researchers studying growth and related phenomena to plug in any realistic model and parameter set, and reap a working simulation.
+Of course, one could capture all of these phenomena by modeling elastic volumes explicitly using tetrahedral or hexahedral elements, and tracking the change in moisture, heat, etc within each element. However, such a volumetric model is computationally expensive, and unnecessary: structures that are thin relative to their surface diameter ought to be able to benefit from a reduced elastic shell model, augmented to track and account for dynamic changes in the environmental stimulus throughout the shell volume. Yet previous methods studying phenomena such as burning of paper~\cite{Liu2009}, drying of leaves~\cite{Jeong2013}, cooking pasta~\cite{Wang2017}, etc, have used either ad-hoc application-specific shell models, or volumetric finite elements, to account for intrinsic geometric changes. Our goal instead is to provide a principled low-order simulation methodology for such systems. This goal can be broken into two connected challenges: to simulate the object's elastic response to changes in its intrinsic geometry, and to model its intrinsic geometry changes in response to environmental stimuli. In this work we address both, resulting in a numerical method that allows researchers studying growth and related phenomena to plug in any realistic model and parameter set, and reap a working simulation.
 
 \paragraph{Contribution} We present a unified low-order discrete shell model tailored to simulating non-uniform, anisotropic, differential growing and shrinking of thin shells. This model is needed for simulating real-world thin materials whose geometry changes in response to stimuli such as heat, moisture, and growth. In contrast to previous methods for simulating such phenomena, our formulation builds on discrete geometric shell theory and supports arbitrary rest curvature and strain, and physical settings such as thickness and Lam\'{e} parameters. We couple our shell model to a simple formulation of moisture and temperature diffusion in both the lateral and thickness directions, which takes into account anisotropy of the material grain. In a series of experiments, we show that our model successfully predicts the qualitative behavior of thin shells undergoing complex, dynamic deformations due to material expansion or contraction, such as occurs when paper is moistened or thin plastic melts.
 
@@ -192,7 +192,7 @@ A shell that begins a simulation at rest will simply have $\bar\ba = \ba^0$ and 
 \begin{figure*}[h]
   \centering
   \includegraphics[width=\textwidth]{ContractingSphere.png}
-  \caption{Stereographic projecion of the disk into the plane yields a conformal parameterization of one by the other (left); we set $\bar\bb=0$ and $\bar\ba$ to this conformal metric, and simulate the disk dynamics as it relaxes to equilibrium by adopting a spherical shape (right).}
+  \caption{Stereographic projection of the disk into the plane yields a conformal parameterization of one by the other (left); we set $\bar\bb=0$ and $\bar\ba$ to this conformal metric, and simulate the disk dynamics as it relaxes to equilibrium by adopting a spherical shape (right).}
   \label{ContractingSphere}
 \end{figure*}
 
@@ -227,7 +227,7 @@ $$\ba_{ijk} = \left[\begin{array}{cc} \|\bv_j-\bv_i\|^2 & (\bv_j-\bv_i)\cdot(\bv
 on $\fT$. If we are given an explicit rest configuration $\bar\bv_i$ of the shell, we can compute the rest first fundamental form $\bar\ba_{ijk}$ analogously; or alternatively we can set $\bar\ba_{ijk}$ to any desired symmetric positive-definite $2\times 2$ matrix. Notice that any such matrix corresponds to some choice of ``rest lengths'' for the edges of face $\bff_{ijk}$ that obey the triangle inequality, but that two faces sharing a common edge do not necessarily agree about that length. 
 
 These discrete fundamental forms are enough to discretize the stretching term in Equation~\eqref{eq:koiter}: each face contributes a term 
-{\scriptsize
+{\small
 $$\int_{\fT} \frac{h}{4} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - \Id\|^2_{SV}\sqrt{\det{\bar\ba_{ijk}}} = \frac{h}{8} \|\bar\ba_{ijk}^{-1}\ba_{ijk} - \Id\|^2_{SV}\sqrt{\det{\bar\ba_{ijk}}},$$
 }%
 where the division by two is due to the canonical triangle $\mathcal{T}$ having area $\frac{1}{2}$. This energy is quartic in the positions of the mesh vertices, and is exactly the energy of constant-strain triangle stretching elements commonly used in cloth simulation. 
@@ -409,7 +409,7 @@ where $\bs^i$ is the discretized source term. This source term $\bs_i^{\pm}$ pre
 When the mechanism for swelling/shrinking is heat rather than moisture, the above diffusion formulation remains unchanged, with $m$ reinterpreted as temperature rather than moisture.
 
 \section{Numerical Issues}
-Integrating the physics~\eqref{eq:implicit} requires some care, as the scale-separation between the stretching and bending forces, along with the very high stiffnesses involved, pose numerical challenges. (The diffusion equation in Equation~\eqref{eq:discdiffusion} poses no numerical difficulties.)
+Integrating the physics~\eqref{eq:implicit} requires some care, as the scale-separation between the stretching and bending forces, along with high values of stiffness, pose numerical challenges. (The diffusion equation in Equation~\eqref{eq:discdiffusion} poses no numerical difficulties.)
 \paragraph{Newton's Method} 
 We recommend the usual technique of using the explicit Euler step $\tilde\bv = \bv^{i} + \Delta t\dot\bv^i$ as the initial guess in Newton's method each iteration; writing $\bv^{i+1} = \tilde \bv + \Delta t\delta \bv$, we have from Equation~\ref{eq:implicit}
 $$\Lambda\delta \bv - \Delta t \bF\left(\tilde \bv + \Delta t\delta \bv, \bv^{i}\right) = 0 = \sigma(\delta \bv),$$
@@ -448,7 +448,7 @@ We first test the method on examples where the equilibrium state can be computed
   \caption{The exact solutions (white) and simulated surfaces (colored) from the didactic examples. From left to right are the enlarged square, rhombus, spherical cap, hyperboloid, and cylindrical patch experiments.}
   \label{fig:didactic}
 \end{figure}
-\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. In cases where $\bar\bb=0$ and $\bar\ba$ is homogenous over the surface, our method must (and does) reproduce the exact solution. Examples with rest curvature are affected by discretization error; we ran the simulation using three mesh resolutions (XXX/YYY/ZZZ vertices) and for each, plot the distance of each point from the corresponding point on the exact solution in Figure~\ref{fig:didactic}.
+\paragraph{Swelling of Square} We take $\Omega$ to be a unit square, with $\br=\Id$, and assign static fields for both $\bar\ba$ and $\bar\bb$ to the entire shell. Table~\ref{tab:analytic} summarizes the values of $\bar\ba$ and $\bar\bb$ we tried, and the expected shape and curvatures of the exact solution. In cases where $\bar\bb=0$ and $\bar\ba$ is homogeneous over the surface, our method must (and does) reproduce the exact solution. Examples with rest curvature are affected by discretization error; we ran the simulation using three mesh resolutions (XXX/YYY/ZZZ vertices) and for each, plot the distance of each point from the corresponding point on the exact solution in Figure~\ref{fig:didactic}.
 \begin{table*}
 \begin{tabular}{cclccccc}
 $\bar\ba$ & $\bar\bb$ & Expected Shape & Mean Curv.  & Gauss Curv. & Error (one-sided Hausdorff) \\
@@ -462,9 +462,7 @@ $\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$  & Cylindrical Patch & $1$ &
 \label{tab:analytic}
 \end{table*}
 
-\paragraph{Isotropic Growth} The Riemann mapping theorem guarantees that every surface $M$ with disk topology can be parameterized by the unit disk, with metric conformally equivalent to the Euclidean metric. This insight was exploited by Kim et al~\shortcite{Kim2012} to grow an approximate sphere from a square. 
-
-When $M$ is not flat, we do not expect the shell to grow \emph{exactly} into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially when $M$ is convex and the shell thickness $h$ is small. Figure~\ref{ContractingSphere} shows the result of swelling the unit disk into a sphere: we stereographically project the sphere of radius $1/4$ units to the plane, and take the region bounded by the unit disk. Stereographic projection is conformal, so we set $\bar\ba$ on the unit disk per the conformal factor, and simulate the damped dynamics of the disk returning to its equilibrium state. Notice that the disk transitions through highly deformed intermediate states before ``popping'' back into a spherical shape. The rest state is not perfectly spherical at the boundary: the shell flares outward, as expected since the perfectly spherical configuration minimizes stretching energy while neglecting bending. A theoretical argument for this behavior at the boundary is given in \cite{Efrati2009_2}.
+\paragraph{Isotropic Growth} The Riemann mapping theorem guarantees that every surface $M$ with disk topology can be parameterized by the unit disk, with metric conformally equivalent to the Euclidean metric. This insight was exploited by Kim et al~\shortcite{Kim2012} to grow an approximate sphere from a square. When $M$ has finite thickness, however, we do not expect the shell to grow \emph{exactly} into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially when $M$ is convex and the shell thickness $h$ is small. Figure~\ref{ContractingSphere} shows the result of swelling the unit disk into a sphere: we stereographically project the sphere of radius $1/4$ units to the plane, and take the region bounded by the unit disk. The stereographic projection is conformal, so we set $\bar\ba$ on the unit disk per the conformal factor, and simulate the damped dynamics of the disk returning to its equilibrium state. Notice that the disk transitions through highly deformed intermediate states before ``popping'' back into a spherical shape. The rest state is not perfectly spherical at the boundary: the shell flares outward, as expected since the perfectly spherical configuration minimizes stretching energy while neglecting bending. A theoretical argument for this behavior at the boundary is given in \cite{Efrati2009_2}.
 
 \paragraph{Comparison to Finite Elements}
 We compare our method to finite elements to validate both the discretized elastic energy, and the equilibrium configuration, of a slab undergoing differential non-Euclidean growth. More specifically, for different growth magnitudes $G$ we prescribe the rest metric
@@ -476,7 +474,6 @@ Table~\ref{tab:energy} compares the limit energy values of the discrete methods 
 \begin{table*}
 \begin{tabular}{l|ccccccc}
 Method & $G=0.005$ & $0.03$ & $0.05$ & $0.08$ & $0.1$ & $0.3$ & $0.5$  \\
-\hline
 True Volumetric Energy & $1.6\cdot 10^{-6}$ & $5.64 \cdot 10^{-5}$ & $1.55 \cdot 10^{-4}$ & $3.87 \cdot 10^{-4}$ & $5.974 \cdot 10^{-4}$ & $4.77 \cdot 10^{-3}$ & $1.2 \cdot 10^{-2}$ \\
 Thin Limit Approximation & $1.6\cdot 10^{-6}$ & $5.77\cdot 10^{-5}$  &  $1.60\cdot10^{-4}$ & $4.10\cdot 10^{-4}$ & $6.40 \cdot 10^{-4}$ & $5.67 \cdot 10^{-3}$ & $1.54\cdot 10^{-2}$\\
 \hline
@@ -491,7 +488,7 @@ Volumetric Finite Elements & $1.6 \cdot 10^{-6}$ & $5.6 \cdot 10^{-5}$ & $1.53 \
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{Convergence.png}
-  \caption{ Comparision of energy convergence rate as a function of resolution of our method, hinge-based method, and FEM}
+  \caption{ Comparison of energy convergence rate as a function of resolution of our method, hinge-based method, and FEM}
   \label{fig:Convergence}
 \end{figure}
 
@@ -570,4 +567,3 @@ Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{MoistSim}
 \end{document}
-
