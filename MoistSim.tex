@@ -57,18 +57,22 @@
 \author{Hsiao-yu Chen}
 \affiliation{%
   \institution{University of Texas at Austin}}
-  
+  \email{hsiaoyu@ices.utexas.edu}
+
   \author{Arnav Sastry}
 \affiliation{%
   \institution{University of Texas at Austin}}
+\email{arnavsastry@gmail.com}
   
   \author{Wim van Rees}
 \affiliation{%
   \institution{Massachusetts Institute of Technology}}  
+\email{wvanrees@mit.edu}
 
 \author{Etienne Vouga}
 \affiliation{%
   \institution{University of Texas at Austin}}
+\email{evouga@cs.utexas.edu}
 
 % This command defines the author string for running heads.
 %\renewcommand{\shortauthors}{DeJohnette, Rowland-Smith, Badeeri, and Foyt}
@@ -79,23 +83,19 @@ We present a physically accurate low-order elastic shell model that incorporates
 \end{abstract}
 
 %CCS
+
 \begin{CCSXML}
-%<ccs2012>
-%<concept>
-%<concept_id>10010147.10010371.10010372</concept_id>
-%<concept_desc>Computing methodologies~Rendering</concept_desc>
-%<concept_significance>500</concept_significance>
-%</concept>
-%<concept>
-%<concept_id>10010147.10010371.10010372.10010374</concept_id>
-%<concept_desc>Computing methodologies~Ray tracing</concept_desc>
-%<concept_significance>500</concept_significance>
-%</concept>
-%</ccs2012>
+<ccs2012>
+<concept>
+<concept_id>10010147.10010371.10010352.10010379</concept_id>
+<concept_desc>Computing methodologies~Physical simulation</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
 \end{CCSXML}
 
-%\ccsdesc[500]{Computing methodologies~Rendering}
-%\ccsdesc[500]{Computing methodologies~Ray tracing}
+\ccsdesc[500]{Computing methodologies~Physical simulation}
+
 %
 %%keywords
 %\keywords{ray tracing, global illumination, octrees, quadtrees}
@@ -429,11 +429,11 @@ $$HE_{\mathrm{bending}} \approx \frac{h^3\sqrt{\det \bar\ba_{ijk}}}{12}\left(\na
 
 \section{Hinge-Based Shape Operator} \label{sec:gingold}
 Gingold et al.~\shortcite{Gingold2004} use a hinge-based shape operator instead, motivated from the observation that on the edges, the shape operator has rank one, and that averaging this per-edge shape operator over an area should yield an approximation to the smooth shape operator. The formulas as originally presented rely fundamentally on the existence of an embedded, Euclidean undeformed mesh, and so it is not obvious how to extend the formulation to the non-Euclidean setting where arbitrary $\bar\ba$ and $\bar\bb$ are prescribed. One possible extension of Gingold et al.'s formula is
-$$S_{\mathrm{gingold}}(\bm{\theta}) = \sum_{i=1}^3 \frac{\sqrt{\bw_i^T \bar\ba\bw_i} \tan\left(\theta_i/2\right)}{\|\bw_i\|^2\sqrt{\det\bar\ba}} \bw_i \bw_i^T$$
-which takes into account length and area distortions of the triangle's rest pose due to the metric $\bar\ba$. Here $i$ sums over the three edges of the canonical barycentric triangle $\mathcal{T}$; $\bw_i$ is the vector normal to edge $i$ and with magnitude equal to that of edge $i$, and $\theta_i$ is the hinge angle associated to edge $i$. Given rest hinge angles $\bar\theta_i$, the difference $S_{\mathrm{gingold}}(\bm{\theta}) - S_{\mathrm{gingold}}(\bar{\bm{\theta}})$ can be substituted in for $\bar\ba^{-1}(\bb-\bar\bb)$ in the Koiter energy. We compare this formulation, to the one above based on the mid-edge shape operator, in section~\ref{comparisons} below.
+$$S_{\mathrm{H}}(\bm{\theta}) = \sum_{i=1}^3 \frac{\sqrt{\bw_i^T \bar\ba\bw_i} \tan\left(\theta_i/2\right)}{\|\bw_i\|^2\sqrt{\det\bar\ba}} \bw_i \bw_i^T$$
+which takes into account length and area distortions of the triangle's rest pose due to the metric $\bar\ba$. Note that the above reduces to Gingold et al.'s formula in the case that $\bar\ba=\mathbf{I}$. Here $i$ sums over the three edges of the canonical barycentric triangle $\mathcal{T}$; $\bw_i$ is the vector normal to edge $i$ and with magnitude equal to that of edge $i$, and $\theta_i$ is the hinge angle associated to edge $i$. Given rest hinge angles $\bar\theta_i$, the difference $S_{\mathrm{H}}(\bm{\theta}) - S_{\mathrm{H}}(\bar{\bm{\theta}})$ can be substituted in for $\bar\ba^{-1}(\bb-\bar\bb)$ in the Koiter energy. We compare this formulation to the one above based on the mid-edge shape operator in the results below.
 
 \paragraph{Solving for Hinge Angles} Given a desired $\bar\bb$, rest angles $\bar\theta_i$ can be recovered by evaluating the shape operator in test directions $\bw_i$: we desire
-$$\frac{\bw_i^T \bar\bb \bw_i}{\bw_i \bar\ba \bw_i} = \bw_i^T S_{\mathrm{gingold}}(\bar{\bm{\theta}}) \bw_i, \quad i\in\{1,2,3\},$$
+$$\frac{\bw_i^T \bar\bb \bw_i}{\bw_i \bar\ba \bw_i} = \bw_i^T S_{\mathrm{H}}(\bar{\bm{\theta}}) \bw_i, \quad i\in\{1,2,3\},$$
 a system of three linear equations in $\tan(\bar\theta_i/2)$. Note that two neighboring faces might disagree on the value of the rest hinge angle of their common edge; to support non-Euclidean rest geometry, both values must be stored and used when computing the energy density of their respective triangles.
 
 \section{Results}
@@ -444,7 +444,7 @@ We first test the method on examples where the equilibrium state can be computed
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.5\textwidth]{didactic-new.png}
+  \includegraphics[width=\columnwidth]{didactic-new.png}
   \caption{Distance between our simulated solutions and analytic solutions for the test cases in table~\ref{tab:analytic}.}
   \label{fig:didactic}
 \end{figure}
@@ -573,7 +573,7 @@ Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8
 \section{Acknowledgements}
 We thank Yotam Gingold and Eitan Grinpspun for advice on adapting the hinge-based shape operator for non-Euclidean geometry, and Josh Vekhter for help creating figures.
 WMvR acknowledges support from the American Bureau of Shipping (ABS) through its career development chair. We also thank the National Science Foundation (DMS 1304211), Adobe Systems, Inc., and SideFX for their support.
-\clearpage
+
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{MoistSim}
 \end{document}
