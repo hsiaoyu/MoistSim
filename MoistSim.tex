@@ -56,12 +56,12 @@
 % Authors.
 \author{Hsiao-yu Chen}
 \affiliation{%
-  \institution{University of Texas at Austin}}
+  \institution{Department of Computer Science, University of Texas at Austin}}
   \email{hsiaoyu@ices.utexas.edu}
 
   \author{Arnav Sastry}
 \affiliation{%
-  \institution{University of Texas at Austin}}
+  \institution{Department of Computer Science, University of Texas at Austin}}
 \email{arnavsastry@gmail.com}
   
   \author{Wim M. van Rees}
@@ -71,7 +71,7 @@
 
 \author{Etienne Vouga}
 \affiliation{%
-  \institution{University of Texas at Austin}}
+  \institution{Department of Computer Science, University of Texas at Austin}}
 \email{evouga@cs.utexas.edu}
 
 % This command defines the author string for running heads.
@@ -497,7 +497,7 @@ We validate our simulated results against several experiments.
 Ordinary paper, when moistened on one side (by painting water on the top side, or placing the bottom side on a damp sponge), undergoes complex dynamic behavior. Water diffuses into the wet side, and that side swells, causing the paper to globally curl up out of plane due to this differential material growth. Over time, water penetrates the entire thickness of the paper and the water concentration becomes uniform; the paper flattens again. This process plays out over a time scale of about ten seconds. We compare experiment and simulation of this behavior, for a rectangular paper strip of dimensions. We use a brush to moisten a piece of real paper, and compare the video of the curling and uncurling of the paper to a simulation of the same phenomenon. Figure~\ref{WaterPainting} shows the experiment, the simulation, and a stylized, thickened cross-section of the paper showing the difference in moisture concentration through the paper thickness over time.
 
 \paragraph{Radial Swelling of Disk}
-Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geometry of non-Euclidean plates, induced non-uniform growth in a punctured disk of NIPA polymer by varying the cross-linking ratio as a function of the radius away from the disk's center. Our simulations are able to reproduce the geometries they observed experimentally. Figure~\ref{SwellingDisc} compares experiment and simulations.
+Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geometry of non-Euclidean plates, induced non-uniform growth in a punctured disk of NIPA polymer by varying the cross-linking ratio as a function of the radius away from the disk's center. Our simulations reproduce the geometries they observed experimentally (see figure~\ref{SwellingDisc}).
 
 \begin{figure}[h]
   \centering
@@ -513,7 +513,7 @@ One advantage of our formulation of swelling thin shells is that it supports phy
 Since it controls the relative importance of stretching and bending, the thickness of a shell is its most important physical parameter. Changing the thickness will often dramatically change how a shell deforms. For example, when a moist paper annulus dries, it rolls up. Depending on its thickness, the annulus transitions through several intermediate shapes before rolling up completely: the outer boundary of the annulus lifts to form an $n$-sided polygon, with $n$ decreasing over time as one metastable configuration cascades into the next. Figure~\ref{Annuli} shows the range of behavior for an annulus of inner radius $1$ cm and outer radius $2$ cm, and several paper thicknesses ($0.05$, $0.1$, $0.2$ and $0.5$ mm).
 
 \paragraph{Machine Direction}
-As mentioned above, when paper is manufactured, paper fibers tend to be arranged in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{Annuli} (right) we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure). Notice the dramatic change in the annulus dynamics, compared to Figure~\ref{Annuli} (left).
+As mentioned above, when paper is manufactured, its fibers arrange in a preferential direction, leading to anisotropic growth when the paper is moistened. In figure~\ref{Annuli} (right) we repeat the annulus experiment with paper whose fibers are aligned to the $x$ direction (left to right in the figure). Notice the dramatic change in the annulus dynamics, compared to figure~\ref{Annuli} (left).
 
 \begin{figure}[!h]
 %\begin{minipage}[t]{0.45\linewidth}
@@ -526,7 +526,7 @@ As mentioned above, when paper is manufactured, paper fibers tend to be arranged
 \begin{minipage}[t]{0.45\linewidth} 
     \centering
     \includegraphics[width=1\textwidth]{validations.png}
-    \caption{Visualization of distance between solutions using thin shell simulations using our method (left), and our method with hinge-based shape operator (right), compared to FEM for meshes with 1277, 3594, and 5538 vertices, plotted over the slab's material domain.}    
+    \caption{Visualization of distance between solutions using thin shell simulations of our method (left), and our method with hinge-based shape operator (right), compared to FEM for meshes with 1277, 3594, and 5538 vertices, plotted over the slab's material domain.}    
     \label{fig:validation}
 \end{minipage}
 \hspace{0.1cm}
@@ -562,7 +562,7 @@ Pasta & \ref{fig:pasta} & 9k & 19k & $10^{-4}$ &  23.6 \\
 Globe & \ref{ContractingSphere} & 5k & 10k & $10^{-4}$ & 0.5 \\
 Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8 
 \end{tabular}
-\caption{Timing numbers for the simulations shown in the paper. All simulations were run on an Intel Xeon E3-1270 desktop with 16GB RAM using one thread.}
+\caption{Timing numbers for the simulations shown in the paper. Each sim used one thread on an Intel Xeon E3-1270 desktop with 16GB RAM.}
 \label{tab:timing}
 \end{table}
 
