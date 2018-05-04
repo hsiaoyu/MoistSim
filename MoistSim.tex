@@ -102,8 +102,14 @@ We present a physically accurate low-order elastic shell model that incorporates
 %
 % A "teaser" figure, centered below the title and authors and above the body of the work.
 \begin{teaserfigure}
-  \centering
-  \includegraphics[width=\textwidth]{teasernew.png}
+\begin{tikzpicture}
+    \draw (0, 0) node[inner sep=0]  {\includegraphics[width=\textwidth]{teasernew.png}};
+    \draw (-.9, 2.2) node[anchor=west] {\textbf{isotropic}};
+    \draw (-.9, -.2) node[anchor=west] {\textbf{anisotropic}};
+    \draw [thick,->] (-.4,-2) -- (2,-2);
+    \draw (0.8, -2.25) node {thickness};
+  \end{tikzpicture}
+    \centering
   \caption{The geometry of thin materials often changes dramatically in response to heat and moisture. A plastic bunny and armadillo shrink in response to being heated (left). Colors on the surfaces indicate temperature (redder is hotter). Moist paper annuli curl up as they dry, and the amount and shape of curling is based on the paper's thickness and whether or not the paper's fibers are randomly or consistently oriented (right).}
 \end{teaserfigure}
 
