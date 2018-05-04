@@ -262,27 +262,25 @@ $$\bb_{ijk} = \frac{1}{2}\left[\begin{array}{cc}(\hn_i-\hn_j)\cdot(\bv_i-\bv_j) 
 
 \paragraph{Choosing Rest Fundamental Forms}
 Depending on the mechanism for growth being simulated, there are several choices for how to set and update $\bar\ba$ and $\bar\bb$:
-\begin{itemize}
-\item \textbf{No Growth}: A classic shell, whose rest state is fixed, simply has $\bar\ba=\ba^0$ and $\bar\bb=\bb^0$, where $\ba^0$ denotes the first fundamental form induced by $\bv^0$, the positions of the midsurface vertices at the beginning of the simulation. (And if the shell is pre-strained, $\bar\ba, \bar\bb$ can be adjusted appropriately).
-\item \textbf{Pullback Forms}: In the case where the shell's initial configuration is flat, it is natural to align it with a region of the $xy$ plane, and prescribe rest fundamental forms in Euclidean $(x,y)$ coordinates, instead of prescribing an $\bar\ba_{ijk}$ in the barycentric coordinates of each triangle. Let $\bar\ba^{xy}$ and $\bar\bb^{xy}$ be such prescribed forms; these can be sampled on each triangle $\bff_{ijk}$'s centroid and pulled back to the triangle's parameterization domain to give
+
+\vspace{.1in}
+\noindent \textbf{No Growth}: A classic shell, whose rest state is fixed, simply has $\bar\ba=\ba^0$ and $\bar\bb=\bb^0$, where $\ba^0$ denotes the first fundamental form induced by $\bv^0$, the positions of the midsurface vertices at the beginning of the simulation. (And if the shell is pre-strained, $\bar\ba, \bar\bb$ can be adjusted appropriately).
+
+\noindent \textbf{Pullback Forms}: In the case where the shell's initial configuration is flat, it is natural to align it with a region of the $xy$ plane, and prescribe rest fundamental forms in Euclidean $(x,y)$ coordinates, instead of prescribing an $\bar\ba_{ijk}$ in the barycentric coordinates of each triangle. Let $\bar\ba^{xy}$ and $\bar\bb^{xy}$ be such prescribed forms; these can be sampled on each triangle $\bff_{ijk}$'s centroid and pulled back to the triangle's parameterization domain to give
 $$\bar\ba = T^T\bar\ba^{xy}(\xi)T, \qquad  \bar\bb = T^T\bar\bb^{xy}(\xi)T$$
-in barycentric coordinates, where
-$$T = \left[\begin{array}{cc}\bv^0_{j} - \bv^0_{i} & \bv^0_{k}-\bv^0_{i}\end{array}\right]$$
+in barycentric coordinates, where $T = \left[\begin{array}{cc}\bv^0_{j} - \bv^0_{i} & \bv^0_{k}-\bv^0_{i}\end{array}\right]$
 maps from vectors in the barycentric coordinates of $\bff_{ijk}$ to Euclidean space, and $\xi = \frac{1}{3}(\bv_i+\bv_j+\bv_k)$ is the face centroid.
 
-\item \textbf{Isotropic Growth}: In many cases growth is isotropic and uniform through the thickness of the shell (for instance, when plastic shrinks in response to heat, or biological tissue grows through cell division). In this case 
+\noindent \textbf{Isotropic Growth}: In many cases growth is isotropic and uniform through the thickness of the shell (for instance, when plastic shrinks in response to heat, or biological tissue grows through cell division). In this case 
 $$\bar\ba = e^{2s_{ijk}}\ba^0, \qquad \bar\bb = \bb^0$$
 for a per-face conformal factor $s$ encoding the amount of growth (or shrinking, if negative).
 
-\item \textbf{Linear Differential Swelling}: Porous materials like paper swell when moistened, and differences in water concentration through the thickness of a thin shell can induce metric frustration and buckling. This mechanism is responsible for the buckling of paper when wet, and the curling of leaves as they dry. 
+\noindent \textbf{Linear Differential Swelling}: Porous materials like paper swell when moistened, and differences in water concentration through the thickness of a thin shell can induce metric frustration and buckling. This mechanism is responsible for the buckling of paper when wet, and the curling of leaves as they dry. 
 
 We model this swelling mechanism by assuming that the amount of moisture varies linearly in the thickness direction of the shell, and represent the percentage of additional moisture present in the material at the top and bottom of the shell by two scalars $m^+_{i}, m^-_{i}\in \mathbb{R}$ at each vertex $\bv_i$. We average these values to compute a moisture content $m^{\pm}_{ijk}$ per face $\bff_{ijk}$. The additional water content induces swelling, which changes the rest geometry; assuming a linear relationship between rest length and moisture concentration~\cite{iggesund1993paperboard}, we can write the rest metric of the volumetric shell as
 $$\bar\bg = \left[\begin{array}{cc} \bar\bg^-\left(\frac{1}{2}-\frac{z}{h}\right) + \bar\bg^+\left(\frac{1}{2}+\frac{z}{h}\right) & 0\\0 & 1\end{array}\right].$$
 Here $\bar\bg^+$ and $\bar\bg^-$ are the metric on the top and bottom of the shell,
-\begin{align*}
-\bar\bg^+ &= (1 + m^+\mu)^2(\ba^0 - h \bb^0)\\
-\bar\bg^- &= (1+m^-\mu)^2(\ba^0 + h \bb^0),
-\end{align*}
+$$\bar\bg^+ = (1 + m^+\mu)^2(\ba^0 - h \bb^0);\quad \bar\bg^- = (1+m^-\mu)^2(\ba^0 + h \bb^0)$$
 for moisture expansion coefficient $\mu$. Then
 {\scriptsize
 \begin{align*}
@@ -291,7 +289,7 @@ for moisture expansion coefficient $\mu$. Then
 \end{align*}
 }%
 
-\item\textbf{Piecewise Constant Differential Swelling} Instead of a linear moisture gradient through the thickness, in some cases it is more appropriate to model a piecewise constant moisture profile, such as when modeling bilayers with different material properties. For example, Wang et al~\shortcite{Wang2017} fabricate exotic pasta geometries by cooking pasta composed of two layers of different porosity. van Rees et al~\shortcite{vanRees17} showed that a bilayer of thickness $h$ with piecewise-constant rest metric
+\noindent\textbf{Piecewise Constant Differential Swelling} Instead of a linear moisture gradient through the thickness, in some cases it is more appropriate to model a piecewise constant moisture profile, such as when modeling bilayers with different material properties. For example, Wang et al~\shortcite{Wang2017} fabricate exotic pasta geometries by cooking pasta composed of two layers of different porosity. van Rees et al~\shortcite{vanRees17} showed that a bilayer of thickness $h$ with piecewise-constant rest metric
 $$\bar\bg(z) = \left[\begin{array}{cc}\begin{cases}\bar\bg^+, z>0\\ \bar\bg^-, z<0\end{cases} & 0\\ 0 & 1\end{array}\right]$$
 is \emph{energetically equivalent} to a shell with linearly-varying metric
 $$\bar\ba = \frac{\bg^+ +\bg^-}{2}, \qquad \bar\bb = \frac{3}{4h}(\bg^--\bg^+);$$
@@ -308,19 +306,17 @@ where $\mu^+$ and $\mu^-$ encode the differing moisture-length relationship in t
 \end{align*}
 }%
 
-\item\textbf{Linear Differential Swelling with Machine Direction} In paper, leaves, and other materials composed of microscopic fibers, swelling induced by moisture is \emph{anisotropic}, since fibers swell more in their circumferential than axial direction. We can model this behavior by storing a \emph{machine direction} $\bd_{ijk}$ per triangle face; this direction, a vector in the barycentric coordinates of the triangle, is the direction in which the fibers are aligned. Given this direction, we can compute the intrinsically orthogonal direction $\bd_{ijk}^{\perp}$ (with $\bd_{ijk}^T \ba_{ijk}^0 \bd_{ijk}^{\perp} =0$), and impose different moisture-length constants $\mu$ and $\mu_{\perp}$ in the $\bd$ and $\bd^{\perp}$ directions, respectively. Then the desired rest metrics at the top and bottom of the shell are 
+\noindent \textbf{Linear Differential Swelling with Machine Direction} In paper, leaves, and other materials composed of microscopic fibers, swelling induced by moisture is \emph{anisotropic}, since fibers swell more in their circumferential than axial direction. We can model this behavior by storing a \emph{machine direction} $\bd_{ijk}$ per triangle face; this direction, a vector in the barycentric coordinates of the triangle, is the direction in which the fibers are aligned. Given this direction, we can compute the intrinsically orthogonal direction $\bd_{ijk}^{\perp}$ (with $\bd_{ijk}^T \ba_{ijk}^0 \bd_{ijk}^{\perp} =0$), and impose different moisture-length constants $\mu$ and $\mu_{\perp}$ in the $\bd$ and $\bd^{\perp}$ directions, respectively. Then the desired rest metrics at the top and bottom of the shell are 
 \begin{align*}
 \bar\bg^+ &= T^T M^+ T^{-T} (\ba^0 - h \bb^0) T^{-1}M^+T,\\
 \bar\bg^- &= T^T M^- T^{-T} (\ba^0 + h \bb^0) T^{-1}M^-T.
 \end{align*}
-where 
-$$T = \left[\begin{array}{cc} \bd & \bd^{\perp}\end{array}\right]^{-1}$$
-transforms from the triangle's barycentric coordinates to the $\bd,\bd^{\perp}$ coordinate system, and
+where  $T = \left[\begin{array}{cc} \bd & \bd^{\perp}\end{array}\right]^{-1}$ transforms from the triangle's barycentric coordinates to the $\bd,\bd^{\perp}$ coordinate system, and
 $$M^{\pm} = \left[\begin{array}{cc}
 (1 + m^{\pm}\mu) & 0\\0 & (1+m^{\pm} \mu_{\perp})\end{array}\right]$$
 anisotropically stretches in the machine direction. As in the previous cases, the rest fundamental forms can be computed from these metrics using the formula
 $$\bar\ba = \frac{\bar\bg^++\bar\bg^-}{2}, \qquad \bar\bb = \frac{\bar\bg^- - \bar\bg^+}{2h}.$$
-\end{itemize}
+
 
 \begin{figure*}[h]
   \centering
@@ -340,26 +336,22 @@ $$\lambda_i = \sum_{\bff\sim \bv_i} \frac{\rho h}{3}\sqrt{\det \bar\ba_{\bff}}/2
 here the sum is over all faces $\bff$ incident to $\bv_i$ and yields the usual ``lumped'' or barycentric mass matrix $\Lambda$.\footnote{For absorption/evaporation, one might also want to model the fact that water has a different density than the shell material; we do not do so in our examples.}
 
 \paragraph{Viscous Damping} Since the growth and swelling phenomena we want to simulate all take place at relatively long time scales, and paper and plastic are viscoelastic, a damping model is needed to dissipate the elastic waves in the material. We implement a simple Kelvin-Voigt damping model by including a damping potential
-\begin{align*}
-E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) &= \frac{\eta}{E}\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\left(W_{\mathrm{s}} + W_{\mathrm{b}}\right)\\
-W_{\mathrm{s}} &= \frac{h}{4} \left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}\\
-W_{\mathrm{b}} &= \frac{h^3}{12}\left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\bb_{ijk}-\bb_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}.
-\end{align*}
+$$E_{\mathrm{damp}}(\bv, \bv^{\mathrm{prev}}) = \frac{\eta}{E}\Delta t \sum_{\bff_{ijk}\in F} \frac{\sqrt{\det \bar\ba_{ijk}}}{2}\left(W_{\mathrm{s}} + W_{\mathrm{b}}\right)$$
+{\scriptsize
+$$W_{\mathrm{s}} = \frac{h}{4} \left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\ba_{ijk} - \ba_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV},\quad W_{\mathrm{b}} = \frac{h^3}{12}\left\|\left[\ba_{ijk}^{\mathrm{prev}}\right]^{-1}\frac{\bb_{ijk}-\bb_{ijk}^{\mathrm{prev}}}{\Delta t}\right\|^2_{SV}.$$
+}%
 where $\Delta t$ is the time step size, $\bv^{\mathrm{prev}}$ denotes the values of $\bv$ in the previous time step (and likewise for $\ba^{\mathrm{prev}}$, etc), and $\eta$ is a viscosity parameter.
 \begin{table}[htb]
-\begin{tabular}{lc}
-Thickness &  $0.1\ \mathrm{mm}$\\
-Young's Modulus $E$ & $2\times 10^9\ \mathrm{Pa}$\\
-Poisson's Ratio $\nu$ & $0.3$\\
-Density $\rho$ & $250\ \mathrm{kg/m^3}$\\
-Viscosity $\eta$ & $5\times 10^{-13}\ \mathrm{Pa}\cdot\mathrm{s}$\\
-Swelling constant $\mu$ & $0.0025$\\
-Swelling constant $\mu^{\perp}$ & $0.001$
+\begin{tabular}{lr|lr}
+Thickness &  $0.1\ \mathrm{mm}$ & Viscosity $\eta$ & \hspace{-0.3in}$5\cdot 10^{-13}\ \mathrm{Pa}\cdot\mathrm{s}$\\
+Young's Mod. $E$ & $2\times 10^9\ \mathrm{Pa}$ & Swelling const. $\mu$ & $0.0025$\\
+Poisson's Ratio $\nu$ & $0.3$ & Swelling const. $\mu^{\perp}$ & $0.001$\\
+Density $\rho$ & $250\ \mathrm{kg/m^3}$
 \end{tabular}
 \caption{Table of reasonable physical parameters for ordinary paper.}
 \label{tab:params}
 \end{table}
-\paragraph{Summary} In the discrete simulation, we track the following variables:
+\paragraph{Summary} In the simulation we track the following variables:
 \begin{itemize} 
 \item The configuration $\bv$ and configurational velocity $\dot\bv$. These vertex positions completely encode the kinematics of the discrete shell. 
 \item Two matrices $\bar \ba$ and $\bar \bb$ per face in $F$, both symmetric, and with $\bar \ba$ positive-definite. These matrices store information about the rest state of the discrete shell, and may change over the course of the simulation. In most of our simulations, the mechanism for changes in the shell rest state is either change in temperature or absorption/evaporation of moisture; in this case we store two scalars $m^+$ and $m^-$ per vertex, indicating temperature/moisture concentration on the top and bottom boundary of the shell, and $\bar\ba$ and $\bar\bb$ are computed from these scalars, as described above.
@@ -367,10 +359,9 @@ Swelling constant $\mu^{\perp}$ & $0.001$
 In addition, we track a machine direction $\bd$ per face, which stays constant over the course of the simulation; finally Table~\ref{tab:params} lists the physical parameters and constants on which the simulation depends, as well as reasonable values of these parameters for the special case of ordinary paper. We use these default values in all experiments described below, unless specified otherwise.
 
 \paragraph{Time Integration} We integrate the equations of motion using implicit Euler time integration:
-\begin{align}
-\Lambda\frac{\dot\bv^{i+1}-\dot\bv^{i}}{\Delta t} &= \bF\left(\bv^{i+1},\bv^i\right) \notag\\
-\bv^{i+1} &= \bv^i + \Delta t \dot\bv^{i+1},\label{eq:implicit}
-\end{align}
+\begin{equation}
+\Lambda\frac{\dot\bv^{i+1}-\dot\bv^{i}}{\Delta t} = \bF\left(\bv^{i+1},\bv^i\right) \qquad  \bv^{i+1} = \bv^i + \Delta t \dot\bv^{i+1},\label{eq:implicit}
+\end{equation}
 where superscripts denote the time step index, and the total force is given by
 $$\bF\left(\bv^{i+1},\bv^i\right) = \bF_{\mathrm{ext}} - \nabla E_{\mathrm{elastic}}\left(\bv^{i+1}\right) - \nabla E_{\mathrm{damp}}\left(\bv^{i+1},\bv^i\right)$$
 where $\bF_{\mathrm{ext}}$ encapsulates contact forces and external forces like gravity. Solving these equations requires computing first and second derivatives of the elastic energy; the derivatives of a triangle's stretching term depend only on the vertices of that triangle, whereas the derivatives of the bending term also depend on vertices of the neighboring three triangles (due to the dependence of $\bb$ on the mid-edge normals). The bending term in particular is somewhat unpleasant to differentiate due to its high degree of nonlinearity, and special cases that arise for triangles adjacent to the mesh boundary. We provide source code for calculating the derivatives in the supplemental material.
@@ -396,7 +387,9 @@ m(u_1,u_2,z) &= \sum_{v\in \{i,j,k\}} \left(m_v^+ \psi_v^+ + m_v^- \psi_v^-\righ
 s(u_1,u_2,z) &= \sum_{v\in \{i,j,k\}} \left(s_v^+ \psi_v^+ + s_v^- \psi_v^-\right)
 \end{align*}
 parameterized over the prism $\mathcal{T}\times [-h/2,h/2]$ surrounding the canonical unit triangle. In other words
-$$\psi_i^\pm = \frac{(1-u_1-u_2)}{h}\left(\frac{h}{2}\pm z\right); \psi_j^{\pm} = \frac{u_1}{h}\left(\frac{h}{2}\pm z\right); \psi_k^{\pm} = \frac{u_2}{h}\left(\frac{h}{2}\pm z\right).$$
+{\scriptsize
+$$\psi_i^\pm = \frac{(1-u_1-u_2)}{h}\left(\frac{h}{2}\pm z\right);\quad \psi_j^{\pm} = \frac{u_1}{h}\left(\frac{h}{2}\pm z\right);\quad \psi_k^{\pm} = \frac{u_2}{h}\left(\frac{h}{2}\pm z\right).$$
+}%
 %wim: changed phi to psi since phi is used for embedding
 % Formulas for the Galerkin mass and stiffness matrices $M_G$ and $K_G$ are listed in Appendix~\ref{XXX}\todo{Copy in formulas}; 
 
@@ -417,11 +410,10 @@ which is well-scaled for using Newton's method to solve $\sigma(\delta \bv)=0$. 
 
 The Newton gradient $\nabla \sigma = \Lambda + \Delta t^2 \nabla \bF$ is symmetric and almost always positive-definite, and thus amenable to sparse Cholesky decomposition for small-to-medium sized meshes. We use the CHOLMOD solver of the SuiteSparse library~\cite{Chen08} for solving the Newton linear system. In the (rare) cases where $\nabla \sigma$ is detected by the solver to be indefinite, we regularize by using $\nabla \sigma = (1+\alpha)\Lambda + \Delta t^2 \nabla F$ for progressively larger multiples of $\alpha$, until the Cholesky decomposition succeeds. For larger meshes, where the Cholesky factors do not fit in main memory, we solve the equations using Alglib's implementation of LBFGS~\cite{Alglib}. Iterative methods (conjugate gradients) could also be used.
 \paragraph{Inexact Hessian} The Hessian of the bending energy is expensive to compute, and almost always dominated by the Hessian of the (much stiffer) stretching term; we observed improved performance replacing the exact bending Hessian with a partial approximation. In particular, we can rewrite the bending energy on face $\bff_{ijk}$ as
-\begin{align*}
-E_{\mathrm{bending}}(\bv) &= \frac{h^3\sqrt{\det \bar\ba_{ijk}}}{24}\left(r_1(\bv)^2 + r_2(\bv)^2\right)\\
-r_1(\bv) &= \sqrt{\alpha/2} \tr\left(\bar\ba_{ijk}^{-1}(\bb - \bar\bb_{ijk})\right)\\
-r_2(\bv) &= \sqrt{\beta \tr\left(\left[\bar\ba_{ijk}^{-1}(\bb - \bar\bb_{ijk})\right]^2\right)}
-\end{align*}
+$$E_{\mathrm{bending}}(\bv) = \frac{h^3\sqrt{\det \bar\ba_{ijk}}}{24}\left(r_1(\bv)^2 + r_2(\bv)^2\right)$$
+{\scriptsize
+$$r_1(\bv) = \sqrt{\alpha/2} \tr\left(\bar\ba_{ijk}^{-1}(\bb - \bar\bb_{ijk})\right); \quad r_2(\bv) = \sqrt{\beta \tr\left(\left[\bar\ba_{ijk}^{-1}(\bb - \bar\bb_{ijk})\right]^2\right)}$$
+}%
 (note that the trace of the square of any real matrix is guaranteed to be nonnegative). This allows approximation of the Hessian by the Gauss-Newton-esque
 $$HE_{\mathrm{bending}} \approx \frac{h^3\sqrt{\det \bar\ba_{ijk}}}{12}\left(\nabla r_1 \nabla r_1^T + \nabla r_2 \nabla r_2^T\right).$$
 \paragraph{Inverted Triangles} We observed a somewhat subtle failure case when running simulations containing neighboring triangles with very different prescribed metrics $\bar\ba$: if the two triangles are exactly coplanar, and one triangle collapses completely and inverts, then the mid-edge normal on the common edge is undefined (as its direction is now the mean of two anti-parallel vectors). This failure case can be prevented by either maintaining a minimum vertex/edge/face distance using continuous-time collision detection, by adaptively remeshing triangles undergoing excessive deformation~\cite{Narain2012}, or by adjusting the initial mesh. The usual advice of using an intrinsic Delaunay triangulation, and avoiding adjacent triangles of very disparate size, applies.
@@ -465,8 +457,7 @@ $\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$  & Cylindrical Patch & $1$ &
 \paragraph{Isotropic Growth} The Riemann mapping theorem guarantees that every surface $M$ with disk topology can be parameterized by the unit disk, with metric conformally equivalent to the Euclidean metric. This insight was exploited by Kim et al~\shortcite{Kim2012} to grow an approximate sphere from a square. When $M$ has finite thickness, however, we do not expect the shell to grow \emph{exactly} into the shape $M$, since embedding the shell as the shape $M$ minimizes stretching energy while ignoring bending energy. Nevertheless, we expect the steady state geometry to closely resemble $M$, especially when $M$ is convex and the shell thickness $h$ is small. Figure~\ref{ContractingSphere} shows the result of swelling the unit disk into a sphere: we stereographically project the sphere of radius $1/4$ units to the plane, and take the region bounded by the unit disk. The stereographic projection is conformal, so we set $\bar\ba$ on the unit disk per the conformal factor, and simulate the damped dynamics of the disk returning to its equilibrium state. Notice that the disk transitions through highly deformed intermediate states before ``popping'' back into a spherical shape. The rest state is not perfectly spherical at the boundary: the shell flares outward, as expected since the perfectly spherical configuration minimizes stretching energy while neglecting bending. A theoretical argument for this behavior at the boundary is given in \cite{Efrati2009_2}.
 
 \paragraph{Comparison to Finite Elements}
-We compare our method to finite elements to validate both the discretized elastic energy, and the equilibrium configuration, of a slab undergoing differential non-Euclidean growth. More specifically, for different growth magnitudes $G$ we prescribe the rest metric
-$$\bar\bg = \left [\frac{(1 + G)z}{h} + \left(1 - \frac{z}{h}\right)\right]^2$$
+We compare our method to finite elements to validate both the discretized elastic energy, and the equilibrium configuration, of a slab undergoing differential non-Euclidean growth. More specifically, for different growth magnitudes $G$ we prescribe the rest metric $\bar\bg^{xy} = \left [\frac{(1 + G)z}{h} + \left(1 - \frac{z}{h}\right)\right]^2\mathbf{I}$
 throughout the volume of a 20 by 10 mm slab of thickness $h=0.1$ mm, and evaluate its elastic energy using three methods: (i) tetrahedral finite elements using a St. Venant-Kirchhoff material model, where each tetrahedron is assigned a piecewise constant rest metric by evaluating $\bar\bg$ at its centroid; (ii) our method, as described in section~\ref{sec:discretization}; (iii) our method, using Gingold et al.'s hinge-based shape operator, as discussed in section~\ref{sec:gingold}. All finite element energies and simulations were computed using the Vega library~\cite{Vega}. We also compute two ground truth energy values: the true elastic energy of a St. Venant-Kirchhoff material integrated over the shell volume, and the energy of the midsurface-based thin limit approximation in equation~\ref{eq:koiter}. 
 Figure~\ref{fig:Convergence} shows convergence plots of the elastic energy of the finite element and shell methods as a function of mesh resolution. For a fixed value $G=0.03$, we compute the energy of a non-equilibrium embedding of the slab $\br(x,y) = \left(\sin[100x], 100y, \cos[100x]\right)$. Both shell-based methods converge quadratically (albeit to different limit energies) with the mid-edge operator formulation more accurate in the limit. Figure~\ref{fig:validation} plots the error of both shell methods relative to the FEM solution, for different levels of refinement; on a coarse mesh our method slightly underestimates the curvature of the FEM solution; the formulation using Gingold et al.'s operator overestimates it.
 
