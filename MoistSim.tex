@@ -540,7 +540,11 @@ As mentioned above, when paper is manufactured, paper fibers tend to be arranged
 
 \begin{figure*}[h]
   \centering
-  \includegraphics[width=\textwidth]{Annuli.png}
+  \begin{tikzpicture}
+    \draw (0, 0) node[inner sep=0]  {  \includegraphics[width=\textwidth]{Annuli.png}};
+    \draw (-8.9, 4.6) node[anchor=west] {\textbf{isotropic}};
+    \draw (.2, 4.6) node[anchor=west] {\textbf{anisotropic}};
+\end{tikzpicture}
   \caption{The left figure shows the curling behavior of moist paper annuli as they dry, with time increasing from top to bottom. Varying the thickness (from left to right, the thicknesses of the annuli are 0.05 mm, 0.1 mm, 0.2 mm, and 0.5 mm) demonstrates that the amount and type of curling is strongly dependent on the thickness of the material. The right figure shows the same annuli endowed with a principal machine direction along the $x$ axis (directed from left-to-right in the figure): the dynamics are markedly different from the case of no machine direction. }
   \label{Annuli}
 \end{figure*}
