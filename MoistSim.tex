@@ -34,7 +34,7 @@
 % You MUST replace them with the lines specific to your accepted work.
 \setcopyright{acmlicensed}
 \acmJournal{TOG}
-\acmYear{2018}\acmVolume{37}\acmNumber{4}\acmArticle{1}\acmMonth{8} \acmDOI{10.1145/3197517.3201395}
+\acmYear{2018}\acmVolume{37}\acmNumber{4}\acmArticle{146}\acmMonth{8} \acmDOI{10.1145/3197517.3201395}
 
 
 % Use the "authoryear" citation style, and make sure citations are in [square brackets].
@@ -98,7 +98,7 @@ We present a physically accurate low-order elastic shell model that incorporates
 
 %
 %%keywords
-%\keywords{ray tracing, global illumination, octrees, quadtrees}
+\keywords{differential growth, thin shell}
 %
 % A "teaser" figure, centered below the title and authors and above the body of the work.
 \begin{teaserfigure}
@@ -485,6 +485,7 @@ Volumetric Finite Elements & $1.60 \cdot 10^{-6}$ & $5.60 \cdot 10^{-5}$ & $1.53
 \end{table*}
 
 \begin{figure}[h]
+  \setlength{\belowcaptionskip}{-10pt}
   \centering
   \includegraphics[width=\columnwidth]{convergenceEnergy.pdf}
   \caption{ Comparison of energy convergence rate as a function of resolution of our method, the alternative hinge-based formulation, and volumetric FEM. The FEM energy was compared to the analytic volumetric elastic energy. For both shell methods, the computed energy was compared to the analytic thin-limit energy in equation~\eqref{eq:koiter}. Both our method and FEM show linear convergence to their respective exact energies.}
@@ -501,8 +502,9 @@ Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geomet
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\linewidth]{SwellingDisc.png}
+  \includegraphics[width=\linewidth]{SwellingDiscnew.png}
   \caption{We compare the experiments of Sharon and Efrati~\shortcite{Sharon2010} using polymer disks (top) with our simulation (bottom) for two prescribed radially-varying rest metrics. Blue regions correspond to higher growth rates. }
+  \setlength{\belowcaptionskip}{-10pt}
   \label{SwellingDisc}
 \end{figure}
 
