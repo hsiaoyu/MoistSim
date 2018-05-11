@@ -457,7 +457,7 @@ $4\Id$ & $0$ & Enlarged Square & $0$ & $0$ & $1.38\cdot 10^{-5}$ \\
 $\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ & 0 & Rhombus & $0$ & $0$ & $4.82\cdot 10^{-11}$ \\
 $\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$  & Cylindrical Patch & $1$ & $0$ & $2.23\cdot 10^{-2}$\,//\,$1.08 \cdot 10^{-2}$\,//\,$1.61\cdot 10^{-2}$
 \end{tabular}
-\caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed over the square, and in each case we compare the simulated steady state to the expected analytic solution.}
+\caption{Didactic experiments on a unit square. Different $\bar\ba$ and $\bar\bb$ are prescribed over the square, and in each case we compare the simulated steady state to the expected analytic solution with mesh resolution of 820 (//2686//39210) vertices.}
 \label{tab:analytic}
 \end{table*}
 
@@ -466,7 +466,7 @@ $\Id$ & $\begin{pmatrix} 1 & 0\\0 & 0\end{pmatrix}$  & Cylindrical Patch & $1$ &
 \paragraph{Comparison to Finite Elements}
 We compare our method to finite elements to validate both the discretized elastic energy, and the equilibrium configuration, of a slab undergoing differential non-Euclidean growth. More specifically, for different growth magnitudes $G$ we prescribe the rest metric $\bar\bg^{xy} = \left [\frac{(1 + G)z}{h} + \left(1 - \frac{z}{h}\right)\right]^2\mathbf{I}$
 throughout the volume of a 20 by 10 mm slab of thickness $h=0.1$ mm, and evaluate its elastic energy using three methods: (i) tetrahedral finite elements using a St. Venant-Kirchhoff material model, where each tetrahedron is assigned a piecewise constant rest metric by evaluating $\bar\bg$ at its centroid; (ii) our method, as described in section~\ref{sec:discretization}; (iii) our method, using Gingold et al.'s hinge-based shape operator, as discussed in section~\ref{sec:gingold}. All finite element energies and simulations were computed using the Vega library~\cite{Vega}. We also compute two ground truth energy values: the true elastic energy of a St. Venant-Kirchhoff material integrated over the shell volume, and the energy of the midsurface-based thin limit approximation in equation~\ref{eq:koiter}. 
-Figure~\ref{fig:Convergence} shows convergence plots of the elastic energy of the finite element and shell methods as a function of mesh resolution. For a fixed value $G=0.03$, we compute the energy of a non-equilibrium embedding of the slab $\br(x,y) = \left(\sin[100x], 100y, \cos[100x]\right)$. Our method converge linearly to the Koiter energy~\eqref{eq:koiter}, in agreement with previous studies of Euclidean shells discretized using the mid-edge $\bb$~\cite{Weischedel2012}. Figure~\ref{fig:validation} plots the error of both shell methods relative to the FEM solution, for different levels of refinement; on a coarse mesh our method slightly underestimates the curvature of the FEM solution; the formulation using Gingold et al.'s operator overestimates it. The overall one-sided Hausdorff distance between the simulation and ground truth (as computed using volumetric FEM) for our method, from coarse to fine, is $2.25\cdot 10^{-4}, 8,93 \times 10^{-5}$, and $8.09 \cdot 10^{-5}$ m. Using the hinge-based shape operator instead, the distance is $2.9\cdot 10^{-4}$, $2.45\times 10^{-4}$, and $2.34\times 10^{-4}$ m.
+Figure~\ref{fig:Convergence} shows convergence plots of the elastic energy of the finite element and shell methods as a function of mesh resolution. For a fixed value $G=0.03$, we compute the energy of a non-equilibrium embedding of the slab $\br(x,y) = \left(\sin[100x], 100y, \cos[100x]\right)$. Our method converge linearly to the Koiter energy~\eqref{eq:koiter}, in agreement with previous studies of Euclidean shells discretized using the mid-edge $\bb$~\cite{Weischedel2012}. Our converged energy is slightly higher than the ground truth shell energy due to locking induced by the discretization, i.e. it is generally impossible to bend a discretized surface without stretching any triangles, and such spurious force increase resistance to reaching the exact curvature~\shortcite{English2008}. Figure~\ref{fig:validation} plots the error of both shell methods relative to the FEM solution, for different levels of refinement; on a coarse mesh our method slightly underestimates the curvature of the FEM solution; the formulation using Gingold et al.'s operator overestimates it. The overall one-sided Hausdorff distance between the simulation and ground truth (as computed using volumetric FEM) for our method, from coarse to fine, is $2.25\cdot 10^{-4}, 8,93 \times 10^{-5}$, and $8.09 \cdot 10^{-5}$ m. Using the hinge-based shape operator instead, the distance is $2.9\cdot 10^{-4}$, $2.45\times 10^{-4}$, and $2.34\times 10^{-4}$ m.
 
 Table~\ref{tab:energy} compares the limit energy values of the discrete methods to the ground truths, for different values of $G$ (the meshes used for this experiment contain 22881 tetrahedra/ 5538 triangles).  Our method shows good agreement with the Koiter energy. Notice that for high values of $G$, even the exact Koiter energy does not agree with the true volumetric elastic energy; this is because as $G$ grows large, the modeling assumption that strain is small relative to the thickness of the shell no longer holds for this imposed embedding.
 \begin{table*}
@@ -479,13 +479,12 @@ Thin Limit Approximation & $1.60\cdot 10^{-6}$ & $5.77\cdot 10^{-5}$  &  $1.60\c
 Our Energy & $1.60 \cdot 10^{-6}$ & $5.77 \cdot 10^{-5}$ & $1.60 \cdot 10^{-4}$ & $4.10 \cdot 10^{-4}$ & $6.40 \cdot 10^{-4}$ & $5.67 \cdot 10^{-3}$ & $1.54 \cdot 10^{-2}$ \\
 Hinge-based Formulation & $2.20 \cdot 10^{-6}$ & $8.01 \cdot 10^{-5}$ & $2.29 \cdot 10^{-4}$ & $6.11 \cdot 10^{-4}$ & $9.83 \cdot 10^{-4}$ & $1.23 \cdot 10^{-2}$ & $5.01 \cdot 10^{-2}$ \\
 Volumetric Finite Elements & $1.60 \cdot 10^{-6}$ & $5.60 \cdot 10^{-5}$ & $1.53 \cdot 10^{-4}$ & $3.85 \cdot 10^{-4}$ & $5.93 \cdot 10^{-4}$ & $4.74 \cdot 10^{-3}$ & $1.19 \cdot 10^{-2}$
-\end{tabular}
+\end{tabular} 
 \caption{Comparison of the elastic energy of a thin slab, simulated using tetrahedral finite elements, our method using the mid-edge shape operator, and using Gingold's hinge-based shape operator. Higher $G$ induces more differential growth.}
 \label{tab:energy}
 \end{table*}
 
 \begin{figure}[h]
-  \setlength{\belowcaptionskip}{-10pt}
   \centering
   \includegraphics[width=\columnwidth]{convergenceEnergy.pdf}
   \caption{ Comparison of energy convergence rate as a function of resolution of our method, the alternative hinge-based formulation, and volumetric FEM. The FEM energy was compared to the analytic volumetric elastic energy. For both shell methods, the computed energy was compared to the analytic thin-limit energy in equation~\eqref{eq:koiter}. Both our method and FEM show linear convergence to their respective exact energies.}
@@ -504,7 +503,6 @@ Sharon and Efrati~\shortcite{Sharon2010}, in their pioneering work on the geomet
   \centering
   \includegraphics[width=\linewidth]{SwellingDiscnew.png}
   \caption{We compare the experiments of Sharon and Efrati~\shortcite{Sharon2010} using polymer disks (top) with our simulation (bottom) for two prescribed radially-varying rest metrics. Blue regions correspond to higher growth rates. }
-  \setlength{\belowcaptionskip}{-10pt}
   \label{SwellingDisc}
 \end{figure}
 
@@ -566,7 +564,9 @@ Annuli  & \ref{Annuli} & 1.5k & 3k & $10^{-4}$ & 8
 \end{tabular}
 \caption{Timing numbers for the simulations shown in the paper. Each sim used one thread on an Intel Xeon E3-1270 desktop with 16GB RAM.}
 \label{tab:timing}
+\vspace*{-10pt}
 \end{table}
+
 
 %\paragraph{The Spoon}
 %Common plastic spoons are made of polypropylene, a thermoplastic which shrinks when heated. Applying heat to the curved portion of a spoon thus induces a dramatic change in shape; figure~\ref{Spoon} compares a simulation of this process to video of a real-world experiment~\cite{youtube}.
